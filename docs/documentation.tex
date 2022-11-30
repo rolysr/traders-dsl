@@ -1,0 +1,98 @@
+\documentclass{article}
+\usepackage[spanish]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\begin{document}
+\chapter{Traders DSL}\\ \\
+
+\underline{Grammar}: \\
+
+program $\rightarrow$ declarationList \\
+
+\underline{Declarations}: \\
+
+declarationList $\rightarrow$ declaration declarationList  $\vert$ $\epsilon$ \\
+
+declaration $\rightarrow$ envDecl $\vert$ agentDecl $\vert$ behaveDecl $\vert$ varDecl $\vert$ fieldAssign\\
+
+envDecl $\rightarrow$ $"env"$ id $"\{"$ envBody $"\}"$ \\
+
+agentDecl $\rightarrow$ $"agent"$ id $"\{"$ agentBody $"\}"$ \\
+
+behaveDecl $\rightarrow$ $"behave"$ id $"\{"$ behaveBody $"\}"$ \\
+
+varDecl $\rightarrow$ type id $"="$ expression $";"$ \\
+
+fieldAssign $\rightarrow$ id $"."$ id $"="$ expression $";"$ \\
+
+\underline{Bodies}: \\
+
+envBody $\rightarrow$ varDeclList \\
+
+agentBody $\rightarrow$ varDeclList \\
+
+behaveBody $\rightarrow$ statementList \\
+
+varDeclList $\rightarrow$ varDecl varDeclList $\vert$ $\epsilon$ \\
+
+statementList $\rightarrow$ statement statementList $\vert$ $\epsilon$ \\
+
+\underline{Statements}: \\
+
+statement $\rightarrow$ exprStmt $\vert$ varDecl $\vert$ repeatStmt $\vert$ incaseStmt $\vert$ primFuncStmt \\
+
+exprStmt $\rightarrow$ expression $";"$ \\
+
+repeatStmt $\rightarrow$ $"repeat"$  $"when"$  expression $"\{"$ statementList  $"\}"$ \\
+
+incaseStmt $\rightarrow$  $"in"$  $"case"$ expression $"\{"$ statementList  $"\}" inothercaseStmt$\\
+
+inothercaseStmt $\rightarrow$  $"in"$ $"other"$  $"case"$ expression $"\{"$ statementList  $"\}"$ inothercaseStmt $\vert$ $"otherwise"$ $"\{"$ statementList  $"\}"$ $\vert$ $\epsilon$ \\  
+
+primFuncStmt $\rightarrow$ $"print"$ expression $";"$  $\vert$ $"move"$ expression expression $";"$ $\vert$ $"trade"$ expression expression expression $";"$ $\vert$ $"find"$ $\vert$ $"random"$ expression expression \\
+
+\underline{Expressions}: \\
+
+expression $\rightarrow$ logicExpr \\
+
+logicExpr $\rightarrow$ logicAnd  $\vert$ logicAnd $"or"$ logicExpr \\
+
+logicAnd $\rightarrow$ equality $\vert$ equality $"and"$ logicAnd \\
+
+equality $\rightarrow$ comparison $\vert$ comparison equalityTail \\
+
+equalityTail $\rightarrow$ $"!="$ comparison equalityTail $\vert$ $"=="$ comparison equalityTail $\vert$ $\epsilon$ \\
+
+comparison $\rightarrow$ term $\vert$ term comparisonTail \\
+
+comparisonTail $\rightarrow$ $"<"$ term comparisonTail $\vert$ $"<="$ term comparisonTail $\vert$ $">="$ term comparisonTail $\vert$ $">"$ term comparisonTail $\vert$ $\epsilon$ \\
+
+term $\rightarrow$ factor $\vert$ factor termTail \\
+
+termTail $\rightarrow$ $"+"$ factor termTail $\vert$ $"-"$ factor termTail $\vert$ $\epsilon$ \\
+
+factor $\rightarrow$ unary $\vert$ unary factorTail \\
+
+factorTail $\rightarrow$ $"*"$ unary factorTail $\vert$ $"/"$ unary factorTail $\vert$ $\epsilon$ \\
+
+unary $\rightarrow$ call $\vert$ $"!"$ call $\vert$ $"-"$ call \\
+
+call $\rightarrow$ primary $\vert$ id dotTail \\
+
+dotTail $\rightarrow$ $"."$ idTail $\vert$ $\epsilon$ \\
+
+idTail $\rightarrow$ id dotTail $\vert$ listFunc dotTail \\
+
+listFunc $\rightarrow$ $"get"$ expression $\vert$ $"push"$ expression $\vert$ $"size"$ $\vert$ $"pop"$ $\vert$ $"reverse"$ \\
+
+primary $\rightarrow$ $"true"$ $\vert$ $"false"$ $\vert$ number $\vert$ string $\vert$ $"("$ expression $")"$ \\
+
+\underline{Lexical Grammar}
+
+type $\rightarrow$ $"number"$ $\vert$ $"bool"$ $\vert$ $"string"$ $\vert$ $"list"$ \\
+
+
+
+
+
+\end{document}
