@@ -1,13 +1,55 @@
 from traders_lexer import TradersLexer
 from traders_parser import TradersParser
+from traders_interpreter import Process
+import sys
 
-if __name__ == '__main__':
+
+def repl():
     lexer = TradersLexer()
     parser = TradersParser()
+    env = {}
+    program = Process((), env=env)
     while True:
         try:
-            text = input('calc > ')
+            text = input('>> ')
+        except KeyboardInterrupt:
+            break
         except EOFError:
             break
         if text:
-            parser.parse(lexer.tokenize(text))
+            tokens = lexer.tokenize(text)
+
+            try:
+                tree = parser.parse(tokens)
+                program.tree = tree
+                program.run()
+            except TypeError as e:
+                if str(e).startswith("'NoneType' object is not iterable"):
+                    print("Syntax Error")
+                else:
+                    print(e)
+
+
+def exec_file():
+    lexer = TradersLexer()
+    parser = TradersParser()
+    with open(sys.argv[1]) as opened_file:
+        tokens = lexer.tokenize(opened_file.read())
+
+        # for token in tokens:
+        #     print(token)
+
+        tree = parser.parse(tokens)
+        # print(tree)
+
+        program = Process(tree)
+        program.run()
+        # print(program.env)
+
+
+
+if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        repl()
+    else:
+        exec_file()
