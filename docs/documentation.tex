@@ -13,7 +13,7 @@ program $\rightarrow$ declarationList \\
 
 declarationList $\rightarrow$ declaration declarationList  $\vert$ $\epsilon$ \\
 
-declaration $\rightarrow$ envDecl $\vert$ agentDecl $\vert$ behaveDecl $\vert$ varDecl $\vert$ fieldAssign\\
+declaration $\rightarrow$ envDecl $\vert$ agentDecl $\vert$ behaveDecl $\vert$ varDecl $\vert$ fieldAssign $\vert$ envFunc\\
 
 envDecl $\rightarrow$ $"env"$ id $"\{"$ envBody $"\}"$ \\
 
@@ -24,6 +24,8 @@ behaveDecl $\rightarrow$ $"behave"$ id $"\{"$ behaveBody $"\}"$ \\
 varDecl $\rightarrow$ type id $"="$ expression $";"$ \\
 
 fieldAssign $\rightarrow$ id $"."$ id $"="$ expression $";"$ \\
+
+envFunc $\rightarrow$ id $"."$ $"reset"$ $";"$ $\vert$ id $"."$ $"run"$ expression $";"$\\
 
 \underline{Bodies}: \\
 
