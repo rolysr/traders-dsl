@@ -6,15 +6,23 @@ class TradersLexer(Lexer):
     """
 
     tokens = {ID, INT, FLOAT, ASSIGN, STRING, LET,
-              IF, ELSE, EQEQ, SEP, NOTEQ, LESS,
-              GREATER, LESSEQ, GREATEREQ, NIL, WHILE,
-              FOR, FN, RETURN, LAMBDA, ARROW, TRUE, FALSE,
+
+              IN, CASE, OTHER, OTHERWISE, EQEQ, SEP, NOTEQ, LESS,
+              GREATER, LESSEQ, GREATEREQ, REPEAT,
+              WHEN, BEHAVIOR, STOP, RUN,
+
+              TRUE, FALSE,
+
               AND, OR, SHR, SHL, INC, DEC, PLUSASGN,
               MINUSASGN, STARASGN, SLASHASGN, MODULOASGN,
               ANDASGN, ORASGN, XORASGN, SHLASGN, SHRASGN,
-              IMPORT, STRUCT, INT_TYPE, FLOAT_TYPE, BOOL_TYPE,
-              LIST_TYPE, DICT_TYPE, STRING_TYPE, TYPEOF,
-              LEFTARROW, PIPE, CLASS, DOUBLECOLON}
+
+              AGENT, ENVIRONMENT, INT_TYPE, FLOAT_TYPE, BOOL_TYPE,
+              LIST_TYPE, STRING_TYPE, PIPE,
+
+              FIND, PEERS, MOVE, UP, LEFT, RIGHT, DOWN,
+              TRADE, PICK, PUT, AT }
+
     ignore = ' \t'
     ignore_comment_slash = r'//.*'
 
@@ -37,10 +45,8 @@ class TradersLexer(Lexer):
     XORASGN = r'^='
     SHLASGN = r'<<='
     SHRASGN = r'>>='
-    ARROW = r'=>'
     LESSEQ = r'<='
     GREATEREQ = r'>='
-    LEFTARROW = r'<-'
     SHR = r'>>'
     SHL = r'<<'
     LESS = r'<'
@@ -49,32 +55,42 @@ class TradersLexer(Lexer):
     EQEQ = r'=='
     ASSIGN = r'='
     SEP = r';'
-    DOUBLECOLON = r'::'
 
     ID = r'[a-zA-Z_][a-zA-Z0-9_]*'
     ID['let'] = LET
-    ID['if'] = IF
-    ID['else'] = ELSE
-    ID['nil'] = NIL
-    ID['while'] = WHILE
-    ID['for'] = FOR
-    ID['fn'] = FN
-    ID['return'] = RETURN
-    ID['lambda'] = LAMBDA
+
+    ID['in'] = IN
+    ID['case'] = CASE
+    ID['other'] = OTHER
+    ID['otherwise'] = OTHERWISE
+    ID['repeat'] = REPEAT
+    ID['when'] = WHEN
+    ID['behavior'] = BEHAVIOR
+    ID['agent'] = AGENT
+    ID['environment'] = ENVIRONMENT
+    ID['stop'] = STOP
+    ID['run'] = RUN
+    ID['find'] = FIND
+    ID['peers'] = PEERS
+    ID['move'] = MOVE
+    ID['UP'] = UP
+    ID['left'] = LEFT
+    ID['right'] = RIGHT
+    ID['down'] = DOWN
+    ID['trade'] = TRADE
+    ID['pick'] = PICK
+    ID['put'] = PUT
+    ID['AT'] = AT
+
     ID['true'] = TRUE
     ID['false'] = FALSE
     ID['and'] = AND
     ID['or'] = OR
-    ID['import'] = IMPORT
-    ID['struct'] = STRUCT
     ID['int'] = INT_TYPE
     ID['float'] = FLOAT_TYPE
     ID['string'] = STRING_TYPE
     ID['bool'] = BOOL_TYPE
     ID['list'] = LIST_TYPE
-    ID['dict'] = DICT_TYPE
-    ID['typeof'] = TYPEOF
-    ID['class'] = CLASS
 
     @_(r'\d+\.\d+')
     def FLOAT(self, t):
