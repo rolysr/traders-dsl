@@ -9,7 +9,7 @@ class TradersLexer(Lexer):
 
               IN, CASE, OTHER, OTHERWISE, EQEQ, SEP, NOTEQ, LESS,
               GREATER, LESSEQ, GREATEREQ, REPEAT,
-              WHEN, BEHAVIOR, STOP, RUN,
+              WHEN, BEHAVE, STOP, RUN,
 
               TRUE, FALSE,
 
@@ -65,7 +65,7 @@ class TradersLexer(Lexer):
     ID['otherwise'] = OTHERWISE
     ID['repeat'] = REPEAT
     ID['when'] = WHEN
-    ID['behavior'] = BEHAVIOR
+    ID['behave'] = BEHAVE
     ID['agent'] = AGENT
     ID['environment'] = ENVIRONMENT
     ID['stop'] = STOP
