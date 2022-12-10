@@ -73,7 +73,7 @@ class TradersLexer(Lexer):
     ID['find'] = FIND
     ID['peers'] = PEERS
     ID['move'] = MOVE
-    ID['UP'] = UP
+    ID['up'] = UP
     ID['left'] = LEFT
     ID['right'] = RIGHT
     ID['down'] = DOWN
