@@ -1,0 +1,9 @@
+let i = 1;
+
+repeat when i <= 1000 {
+  print(i);
+  i *= 2;
+}
+
+print("");
+print("");
