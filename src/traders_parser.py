@@ -28,93 +28,89 @@ class TradersParser(Parser):
         ('right', '!'),
     )
 
-    @_('statements')
+    @_('declarationList')
     def program(self, p):
-        return p.statements
+        return p.declarations
 
     @_('empty')
     def program(self, p):
         return ()
 
-    @_('statement')
-    def statements(self, p):
-        return (p.statement, )
+    @_('declaration')
+    def declarationList(self, p):
+        return (p.declaration, )
 
-    @_('statements statement')
-    def statements(self, p):
-        return p.statements + (p.statement, )
+    @_('declaration declarationList')
+    def declarationList(self, p):
+        return (p.declaration, ) + p.declarations
 
-    @_('import_statement')
-    def statement(self, p):
-        return p.import_statement
+    @_('behaveDecl')
+    def declaration(self, p):
+        return p.behaveDecl
 
-    @_('function_definition')
-    def statement(self, p):
-        return p.function_definition
-
-    @_('return_statement')
-    def statement(self, p):
-        return p.return_statement
+    @_('varDecl')
+    def declaration(self, p):
+        return p.varDecl
 
     @_('while_statement')
-    def statement(self, p):
+    def declaration(self, p):
         return p.while_statement
     
-    @_('for_statement')
-    def statement(self, p):
-        return p.for_statement
+    @_('fieldAssign')
+    def declaration(self, p):
+        return p.fieldAssign
     
-    @_('if_statement')
-    def statement(self, p):
-        return p.if_statement
+    @_('envFunc')
+    def declaration(self, p):
+        return p.envFunc
 
-    @_('struct_definition')
-    def statement(self, p):
-        return p.struct_definition
+    @_('envDecl')
+    def declaration(self, p):
+        return p.envDecl
 
-    @_('class_definition')
-    def statement(self, p):
-        return p.class_definition
+    @_('agentDecl')
+    def declaration(self, p):
+        return p.agentDecl
 
-    @_('CLASS ID "{" function_definitions "}"')
-    def class_definition(self, p):
-        return ('class', p.ID, ('functions', p.function_definitions))
+    @_('ENV ID "{" envBody "}"')
+    def envDecl(self, p):
+        return ('env', p.ID, ('varDeclList', p.varDeclList))
 
-    @_('empty')
-    def function_definitions(self, p):
-        return []
+    @_('AGENT ID "{" agentBody "}"')
+    def envDecl(self, p):
+        return ('agent', p.ID, ('varDeclList', p.varDeclList))
 
-    @_('function_definition')
-    def function_definitions(self, p):
-        return [p.function_definition]
+    @_('BEHAVE ID "{" behaveBody "}"')
+    def envDecl(self, p):
+        return ('behave', p.ID, ('statementList', p.statementList))
 
-    @_('function_definitions function_definition')
-    def function_definitions(self, p):
-        return p.function_definitions + [p.function_definition]
+    @_('ID "." ID ASSIGN expression SEP')
+    def fieldAssign(self, p):
+        return ('assign', ('get', p.ID0, p.ID1), p.expression)
 
-    @_('STRUCT ID "{" struct_fields "}" SEP')
-    def struct_definition(self, p):
-        return ('struct', p.ID, p.struct_fields)
+    @_('ID "." RESET SEP')
+    def envFunc(self, p):
+        return ('reset', p.ID)
 
-    @_('struct_field')
-    def struct_fields(self, p):
-        return p.struct_field
-
-    @_('struct_fields struct_field')
-    def struct_fields(self, p):
-        return p.struct_fields + p.struct_field
+    @_('ID "." RUN expression SEP')
+    def envFunc(self, p):
+        return ('run', p.ID, p.expression)
 
     @_('LET ID ":" var_type SEP')
-    def struct_field(self, p):
+    def varDecl(self, p):
         return [(p.ID, p.var_type)]
 
-    @_('INT_TYPE')
-    def var_type(self, p):
-        return 'int'
+    @_('LET ID ":" var_type ASSIGN expression SEP')
+    def varDecl(self, p):
+        return [(p.ID, p.var_type, p.expression)]
 
-    @_('FLOAT_TYPE')
+    @_('ID ASSIGN expression SEP')
+    def varDecl(self, p):
+        return ('var_assign', p.ID, p.expression)
+
+    @_('NUMBER_TYPE')
     def var_type(self, p):
-        return 'float'
+        return 'number'
 
     @_('STRING_TYPE')
     def var_type(self, p):
@@ -128,17 +124,13 @@ class TradersParser(Parser):
     def var_type(self, p):
         return 'list'
 
-    @_('DICT_TYPE')
-    def var_type(self, p):
-        return 'dict'
+    @_('varDeclList')
+    def envBody(self, p):
+        return p.varDeclList
 
-    @_('IMPORT STRING SEP')
-    def import_statement(self, p):
-        return ('import', p.STRING)
-
-    @_('var_define SEP')
-    def statement(self, p):
-        return p.var_define
+    @_('varDeclList')
+    def agentBody(self, p):
+        return p.varDeclList
 
     @_('FN ID "(" params ")" block')
     def function_definition(self, p):
