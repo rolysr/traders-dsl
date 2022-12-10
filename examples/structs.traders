@@ -1,9 +1,0 @@
-struct Person {
-  let age: int;
-  let name: string;
-};
-
-let john = Person <- { 15, "John Smith" };
-
-print(john.age);
-print(john.name);
