@@ -1,4 +1,4 @@
-from sly import Lexer, Parser
+from sly import Lexer
 
 class TradersLexer(Lexer):
     """
@@ -9,7 +9,7 @@ class TradersLexer(Lexer):
 
               IN, CASE, OTHER, OTHERWISE, EQEQ, SEP, NOTEQ, LESS,
               GREATER, LESSEQ, GREATEREQ, REPEAT,
-              WHEN, BEHAVE, STOP, RUN,
+              WHEN, BEHAVIOR, STOP, RUN,
 
               TRUE, FALSE,
 
@@ -18,7 +18,7 @@ class TradersLexer(Lexer):
               ANDASGN, ORASGN, XORASGN, SHLASGN, SHRASGN,
 
               AGENT, ENVIRONMENT, INT_TYPE, FLOAT_TYPE, BOOL_TYPE,
-              LIST_TYPE, STRING_TYPE, PIPE,
+              LIST_TYPE, STRING_TYPE, DICT_TYPE, NIL,
 
               FIND, PEERS, MOVE, UP, LEFT, RIGHT, DOWN,
               TRADE, PICK, PUT, AT }
@@ -34,7 +34,6 @@ class TradersLexer(Lexer):
 
     INC = r'\+\+'
     DEC = r'--'
-    PIPE = r'\|>'
     PLUSASGN = r'\+='
     MINUSASGN = r'-='
     STARASGN = r'\*='
@@ -65,7 +64,7 @@ class TradersLexer(Lexer):
     ID['otherwise'] = OTHERWISE
     ID['repeat'] = REPEAT
     ID['when'] = WHEN
-    ID['behave'] = BEHAVE
+    ID['behavior'] = BEHAVIOR
     ID['agent'] = AGENT
     ID['environment'] = ENVIRONMENT
     ID['stop'] = STOP
@@ -80,7 +79,7 @@ class TradersLexer(Lexer):
     ID['trade'] = TRADE
     ID['pick'] = PICK
     ID['put'] = PUT
-    ID['AT'] = AT
+    ID['at'] = AT
 
     ID['true'] = TRUE
     ID['false'] = FALSE

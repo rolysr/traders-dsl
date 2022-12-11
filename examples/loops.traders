@@ -1,6 +1,6 @@
 let i = 1;
 
-repeat when i <= 1000 {
+repeat when i <= 10 {
   print(i);
   i *= 2;
 }

@@ -1,13 +1,10 @@
 from sly import Parser
-from traders_lexer import TradersLexer
+from src.traders_lexer import TradersLexer
+
 
 class TradersParser(Parser):
     """
-        Traders DSL Parser
-    """
-
-    """
-    Parser for the Traders Language
+    Parser for the Traders DLS
     """
     tokens = TradersLexer.tokens
 
@@ -28,89 +25,53 @@ class TradersParser(Parser):
         ('right', '!'),
     )
 
-    @_('declarationList')
+    @_('statements')
     def program(self, p):
-        return p.declarations
+        return p.statements
 
     @_('empty')
     def program(self, p):
         return ()
 
-    @_('declaration')
-    def declarationList(self, p):
-        return (p.declaration, )
+    @_('statement')
+    def statements(self, p):
+        return (p.statement, )
 
-    @_('declaration declarationList')
-    def declarationList(self, p):
-        return (p.declaration, ) + p.declarations
+    @_('statements statement')
+    def statements(self, p):
+        return p.statements + (p.statement, )
 
-    @_('behaveDecl')
-    def declaration(self, p):
-        return p.behaveDecl
+    @_('behavior_statement')
+    def statement(self, p):
+        return p.behavior_statement
 
-    @_('varDecl')
-    def declaration(self, p):
-        return p.varDecl
+    @_('stop_statement')
+    def statement(self, p):
+        return p.stop_statement
 
-    @_('while_statement')
-    def declaration(self, p):
-        return p.while_statement
+    @_('repeat_when_statement')
+    def statement(self, p):
+        return p.repeat_when_statement
     
-    @_('fieldAssign')
-    def declaration(self, p):
-        return p.fieldAssign
-    
-    @_('envFunc')
-    def declaration(self, p):
-        return p.envFunc
+    @_('in_case_statement')
+    def statement(self, p):
+        return p.in_case_statement
 
-    @_('envDecl')
-    def declaration(self, p):
-        return p.envDecl
+    @_('empty')
+    def behavior_statement(self, p):
+        return []
 
-    @_('agentDecl')
-    def declaration(self, p):
-        return p.agentDecl
+    @_('behavior_definition')
+    def behavior_statement(self, p):
+        return [p.behavior_definition]
 
-    @_('ENV ID "{" envBody "}"')
-    def envDecl(self, p):
-        return ('env', p.ID, ('varDeclList', p.varDeclList))
-
-    @_('AGENT ID "{" agentBody "}"')
-    def envDecl(self, p):
-        return ('agent', p.ID, ('varDeclList', p.varDeclList))
-
-    @_('BEHAVE ID "{" behaveBody "}"')
-    def envDecl(self, p):
-        return ('behave', p.ID, ('statementList', p.statementList))
-
-    @_('ID "." ID ASSIGN expression SEP')
-    def fieldAssign(self, p):
-        return ('assign', ('get', p.ID0, p.ID1), p.expression)
-
-    @_('ID "." RESET SEP')
-    def envFunc(self, p):
-        return ('reset', p.ID)
-
-    @_('ID "." RUN expression SEP')
-    def envFunc(self, p):
-        return ('run', p.ID, p.expression)
-
-    @_('LET ID ":" var_type SEP')
-    def varDecl(self, p):
-        return [(p.ID, p.var_type)]
-
-    @_('LET ID ":" var_type ASSIGN expression SEP')
-    def varDecl(self, p):
-        return [(p.ID, p.var_type, p.expression)]
-
-    @_('ID ASSIGN expression SEP')
-    def varDecl(self, p):
-        return ('var_assign', p.ID, p.expression)
-
-    @_('NUMBER_TYPE')
+    @_('INT_TYPE')
     def var_type(self, p):
-        return 'number'
+        return 'int'
+
+    @_('FLOAT_TYPE')
+    def var_type(self, p):
+        return 'float'
 
     @_('STRING_TYPE')
     def var_type(self, p):
@@ -124,34 +85,18 @@ class TradersParser(Parser):
     def var_type(self, p):
         return 'list'
 
-    @_('varDeclList')
-    def envBody(self, p):
-        return p.varDeclList
+    @_('DICT_TYPE')
+    def var_type(self, p):
+        return 'dict'
 
-    @_('varDeclList')
-    def agentBody(self, p):
-        return p.varDeclList
+    @_('var_define SEP')
+    def statement(self, p):
+        return p.var_define
 
-    @_('FN ID "(" params ")" block')
-    def function_definition(self, p):
-        return ('fn', p.ID, ('params', p.params), ('block', p.block))
+    @_('BEHAVIOR ID "(" params ")" block')
+    def behavior_definition(self, p):
+        return ('behavior', p.ID, ('params', p.params), ('block', p.block))
 
-    @_('ID LEFTARROW "{" struct_init_exprs "}" ')
-    def expr(self, p):
-        return ('init_struct', p.ID, p.struct_init_exprs)
-
-    @_('expr')
-    def struct_init_exprs(self, p):
-        return [p.expr]
-
-    @_('struct_init_exprs "," expr')
-    def struct_init_exprs(self, p):
-        return p.struct_init_exprs + [p.expr]
-
-    @_('LAMBDA "(" params ")" ARROW expr')
-    def expr(self, p):
-        return ('lambda', ('params', p.params), ('block', ('return', p.expr)))
-        
     @_('LET var ASSIGN expr')
     def var_define(self, p):
         return ('var_define', p.var, p.expr)
@@ -164,16 +109,12 @@ class TradersParser(Parser):
     def statement(self, p):
         return ('var_define_no_expr', p.var, p.var_type)
 
-    @_('TYPEOF expr')
-    def expr(self, p):
-        return ('typeof', p.expr)
-
     @_('var_assign SEP')
     def statement(self, p):
         return p.var_assign
 
-    @_('RETURN expr SEP')
-    def return_statement(self, p):
+    @_('STOP expr SEP')
+    def stop_statement(self, p):
         return ('return', p.expr)
 
     @_('var ASSIGN expr')
@@ -220,37 +161,41 @@ class TradersParser(Parser):
     def var_assign(self, p):
         return ('var_assign', p.var, ('>>', ('var', p.var), p.expr))
         
-    @_('IF expr block ELSE block')
-    def if_statement(self, p):
-        return ('if', ('condition', p.expr), ('block', p.block0), ('block', p.block1))
+    @_('IN CASE expr block OTHERWISE block')
+    def in_case_statement(self, p):
+        return ('in_case', ('condition', p.expr), ('block', p.block0), ('block', p.block1))
 
-    @_('IF expr block')
-    def if_statement(self, p):
-        return ('if', ('condition', p.expr), ('block', p.block), None)
+    @_('IN CASE expr block in_other_case_statement')
+    def in_case_statement(self, p):
+        return ('in_case', ('condition', p.expr), ('block', p.block), (p.in_other_case_statement))
 
-    @_('WHILE expr block')
-    def while_statement(self, p):
-        return ('while', ('condition', p.expr), ('block', p.block))
+    @_('IN CASE expr block')
+    def in_case_statement(self, p):
+        return ('in_case', ('condition', p.expr), ('block', p.block), None)
 
-    @_('FOR var_assign SEP expr SEP var_assign block')
-    def for_statement(self, p):
-        return (p.var_assign0, ('while', ('condition', p.expr), ('block', p.block + (p.var_assign1, ))))
+    @_('IN OTHER CASE expr block in_other_case_statement')
+    def in_other_case_statement(self, p):
+        return ('in_case', ('condition', p.expr), ('block', p.block), (p.in_other_case_statement))
 
-    @_('expr "?" expr ":" expr')
-    def expr(self, p):
-        return ('?:', p.expr0, p.expr1, p.expr2)
+    @_('IN OTHER CASE expr block OTHERWISE block')
+    def in_other_case_statement(self, p):
+        return ('in_case', ('condition', p.expr), ('block', p.block0), ('block', p.block1))
+
+    @_('IN OTHER CASE expr block')
+    def in_other_case_statement(self, p):
+        return ('in_case', ('condition', p.expr), ('block', p.block))
+
+    @_('REPEAT WHEN expr block')
+    def repeat_when_statement(self, p):
+        return ('repeat_when', ('condition', p.expr), ('block', p.block))
 
     @_('ID "(" args ")"')
     def expr(self, p):
         return ('call', p.ID, ('args', p.args))
 
-    @_('ID DOUBLECOLON ID "(" args ")"')
+    @_('expr "?" expr ":" expr')
     def expr(self, p):
-        return ('class_func_call', p.ID0, p.ID1, ('args', p.args))
-
-    @_('expr PIPE ID "(" args ")"')
-    def expr(self, p):
-        return ('call', p.ID, ('args', [p.expr] + p.args))
+        return ('?:', p.expr0, p.expr1, p.expr2)
 
     @_('expr EQEQ expr')
     def expr(self, p):

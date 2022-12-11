@@ -1,6 +1,6 @@
-from traders_lexer import TradersLexer
-from traders_parser import TradersParser
-from traders_interpreter import Process
+from src.traders_lexer import TradersLexer
+from src.traders_parser import TradersParser
+from src.traders_interpreter import Process
 import sys
 
 

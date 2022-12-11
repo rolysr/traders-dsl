@@ -16,5 +16,3 @@ print(my_list[0]);
 
 let v = true ? "yes" : "false";
 print(v);
-
-print(typeof 1);
