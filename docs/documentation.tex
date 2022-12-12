@@ -124,7 +124,7 @@ program $\rightarrow$ declarationList \\
 
 declarationList $\rightarrow$ declaration declarationList  $\vert$ $\epsilon$ \\
 
-declaration $\rightarrow$ envDecl $\vert$ agentDecl $\vert$ behaveDecl $\vert$ varDecl $\vert$ fieldAssign $\vert$ envFunc\\
+declaration $\rightarrow$ envDecl $\vert$ agentDecl $\vert$ behaveDecl $\vert$ varDecl $\vert$ varAssign $\vert$ envFunc\\
 
 envDecl $\rightarrow$ $"env"$ id $"\{"$ envBody $"\}"$ \\
 
@@ -132,11 +132,11 @@ agentDecl $\rightarrow$ $"agent"$ id $"\{"$ agentBody $"\}"$ \\
 
 behaveDecl $\rightarrow$ $"behave"$ id $"\{"$ behaveBody $"\}"$ \\
 
-varDecl $\rightarrow$ type id $"="$ expression $";"$ \\
+varDecl $\rightarrow$ $"let" id  [: type ]$ $"="$ expression $";"$ \\
 
-fieldAssign $\rightarrow$ id $"."$ id $"="$ expression $";"$ \\
+varAssign $\rightarrow$ getter $"="$ expression $";"$ \\
 
-envFunc $\rightarrow$ id $"."$ $"reset"$ $";"$ $\vert$ id $"."$ $"run"$ expression $";"$\\
+envFunc $\rightarrow$ id $"."$ $"reset"$ $"("$ $")"$ $";"$ $\vert$ id $"."$ $"run"$ $"("$ expression $")"$ $";"$\\
 
 \underline{Bodies}: \\
 
@@ -152,7 +152,7 @@ statementList $\rightarrow$ statement statementList $\vert$ $\epsilon$ \\
 
 \underline{Statements}: \\
 
-statement $\rightarrow$ exprStmt $\vert$ varDecl $\vert$ repeatStmt $\vert$ incaseStmt $\vert$ primFuncStmt \\
+statement $\rightarrow$ exprStmt $\vert$ varDecl $\vert$ varAssign $\vert$ repeatStmt $\vert$ incaseStmt $\vert$ primFuncStmt\\
 
 exprStmt $\rightarrow$ expression $";"$ \\
 
@@ -162,7 +162,11 @@ incaseStmt $\rightarrow$  $"in"$  $"case"$ expression $"\{"$ statementList  $"\}
 
 inothercaseStmt $\rightarrow$  $"in"$ $"other"$  $"case"$ expression $"\{"$ statementList  $"\}"$ inothercaseStmt $\vert$ $"otherwise"$ $"\{"$ statementList  $"\}"$ $\vert$ $\epsilon$ \\  
 
-primFuncStmt $\rightarrow$ $"print"$ expression $";"$  $\vert$ $"move"$ expression expression $";"$ $\vert$ $"trade"$ expression expression expression $";"$ $\vert$ $"find"$ $\vert$ $"random"$ expression expression \\
+primFuncStmt $\rightarrow$ $"print"$ $"("$ expression $")"$ $";"$  $\vert$  moveStmt $";"$ $\vert$ buyStmt $";"$ $\vert$ $"stop"$ $"("$ expression $")"$ $";"$ $\vert$ $"pick"$ $"("$ expression $")"$ $";"$ $\vert$ $"put"$ $"("$ expression $","$ expression $")"$ $";"$ $\vert$ id $"="$ $"random"$ $"("$ expression $","$ expression $")"$ $\vert$ id $"="$ $"find"$ $";"$ $\vert$ id $"="$ $"peers"$ $";"$\\
+
+moveStmt $\rightarrow$ $"move"$ $"("$ expression $","$ expression $")"$ $\vert$ $"move"$ $"up"$ $\vert$ $"move"$ $"down"$ $\vert$ $"move"$ $"left"$ $\vert$ $"move"$ $"right"$ \\
+
+buyStmt $\rightarrow$ $"buy"$ $"("$ expression $","$ expression $","$ expression $")"$ $\vert$ $"buy"$ $"("$ expression $")"$\\
 
 \underline{Expressions}: \\
 
@@ -191,6 +195,8 @@ factorTail $\rightarrow$ $"*"$ unary factorTail $\vert$ $"/"$ unary factorTail $
 unary $\rightarrow$ call $\vert$ $"!"$ call $\vert$ $"-"$ call \\
 
 call $\rightarrow$ primary $\vert$ id dotTail \\
+
+getter $\rightarrow$ id dotTail \\
 
 dotTail $\rightarrow$ $"."$ idTail $\vert$ $\epsilon$ \\
 

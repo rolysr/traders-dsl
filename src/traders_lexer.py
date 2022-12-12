@@ -21,7 +21,7 @@ class TradersLexer(Lexer):
               LIST_TYPE, STRING_TYPE, DICT_TYPE, NIL,
 
               FIND, PEERS, MOVE, UP, LEFT, RIGHT, DOWN,
-              TRADE, PICK, PUT, AT }
+              BUY, PICK, PUT, AT, PRINT }
 
     ignore = ' \t'
     ignore_comment_slash = r'//.*'
@@ -76,10 +76,11 @@ class TradersLexer(Lexer):
     ID['left'] = LEFT
     ID['right'] = RIGHT
     ID['down'] = DOWN
-    ID['trade'] = TRADE
+    ID['buy'] = BUY
     ID['pick'] = PICK
     ID['put'] = PUT
     ID['at'] = AT
+    ID['print'] = PRINT
 
     ID['true'] = TRUE
     ID['false'] = FALSE

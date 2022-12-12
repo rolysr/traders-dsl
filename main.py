@@ -40,10 +40,10 @@ def exec_file():
         #     print(token)
 
         tree = parser.parse(tokens)
-        # print(tree)
+        print(tree)
 
-        program = Process(tree)
-        program.run()
+        # program = Process(tree)
+        # program.run()
         # print(program.env)
 
 
