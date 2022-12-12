@@ -132,67 +132,72 @@ agentDecl $\rightarrow$ $"agent"$ id $"\{"$ agentBody $"\}"$ \\
 
 behaveDecl $\rightarrow$ $"behave"$ id $"\{"$ behaveBody $"\}"$ \\
 
-varDecl $\rightarrow$ $"let" id  [: type ]$ $"="$ expression $";"$ \\
+varDecl $\rightarrow$ $"let"$ id $":"$ type $";"$ $\vert$ $"let"$ id $":"$ type $"="$ expr $";"$ \\
 
-varAssign $\rightarrow$ getter $"="$ expression $";"$ \\
+varAssign $\rightarrow$ getter $"="$ expr $";"$ \\
 
-envFunc $\rightarrow$ id $"."$ $"reset"$ $"("$ $")"$ $";"$ $\vert$ id $"."$ $"run"$ $"("$ expression $")"$ $";"$\\
+envFunc $\rightarrow$ id $"."$ $"reset"$ $"("$ $")"$ $";"$ \\
+$\vert$ id $"."$ $"run"$ $"("$ expr $")"$ $";"$\\
+$\vert$ id $"."$ $"put"$ $"("$ expr $","$ expr $","$ expr $","$ expr $")"$ $";"$\\
 
 \underline{Bodies}: \\
 
-envBody $\rightarrow$ varDeclList \\
+envBody $\rightarrow$ varList \\
 
-agentBody $\rightarrow$ varDeclList \\
+agentBody $\rightarrow$ varList \\
 
 behaveBody $\rightarrow$ statementList \\
 
-varDeclList $\rightarrow$ varDecl varDeclList $\vert$ $\epsilon$ \\
+varList $\rightarrow$ varDecl varList $\vert$ varAssign varList $\vert$ $\epsilon$ \\
 
 statementList $\rightarrow$ statement statementList $\vert$ $\epsilon$ \\
 
 \underline{Statements}: \\
 
-statement $\rightarrow$ exprStmt $\vert$ varDecl $\vert$ varAssign $\vert$ repeatStmt $\vert$ incaseStmt $\vert$ primFuncStmt\\
+statement $\rightarrow$ varDecl $\vert$ varAssign $\vert$ repeatStmt $\vert$ foreachStmt $\vert$ incaseStmt $\vert$ primFuncStmt \\
 
-exprStmt $\rightarrow$ expression $";"$ \\
+repeatStmt $\rightarrow$ $"repeat"$ $"when"$ expr $"\{"$ statementList  $"\}"$ \\
 
-repeatStmt $\rightarrow$ $"repeat"$  $"when"$  expression $"\{"$ statementList  $"\}"$ \\
+foreachStmt $\rightarrow$ $"foreach"$ id $"in"$ expr $"\{"$ statementList  $"\}"$ \\
 
-incaseStmt $\rightarrow$  $"in"$  $"case"$ expression $"\{"$ statementList  $"\}" inothercaseStmt$\\
+incaseStmt $\rightarrow$  $"in"$  $"case"$ expr $"\{"$ statementList  $"\}" inothercaseStmt$\\
 
-inothercaseStmt $\rightarrow$  $"in"$ $"other"$  $"case"$ expression $"\{"$ statementList  $"\}"$ inothercaseStmt $\vert$ $"otherwise"$ $"\{"$ statementList  $"\}"$ $\vert$ $\epsilon$ \\  
+inothercaseStmt $\rightarrow$  $"in"$ $"other"$  $"case"$ expr $"\{"$ statementList  $"\}"$ inothercaseStmt $\vert$ $"otherwise"$ $"\{"$ statementList  $"\}"$ $\vert$ $\epsilon$ \\  
 
-primFuncStmt $\rightarrow$ $"print"$ $"("$ expression $")"$ $";"$  $\vert$  moveStmt $";"$ $\vert$ buyStmt $";"$ $\vert$ $"stop"$ $"("$ expression $")"$ $";"$ $\vert$ $"pick"$ $"("$ expression $")"$ $";"$ $\vert$ $"put"$ $"("$ expression $","$ expression $")"$ $";"$ $\vert$ id $"="$ $"random"$ $"("$ expression $","$ expression $")"$ $\vert$ id $"="$ $"find"$ $";"$ $\vert$ id $"="$ $"peers"$ $";"$\\
+primFuncStmt 
+$\rightarrow$ $"print"$ $"("$ expr $")"$ $";"$ \\ 
+$\vert$  moveStmt $";"$ \\
+$\vert$ buyStmt $";"$ \\
+$\vert$ $"sell"$ $"("$ expr $","$ expr $","$ expr $")"$ $";"$ \\
+$\vert$ $"restart"$ $"behave"$ \\
+$\vert$ $"stop"$ $"("$ expr $")"$ $";"$ \\
+$\vert$ $"pick"$ $"("$ expr $")"$ $";"$ \\
+$\vert$ $"put"$ $"("$ expr $","$ expr $")"$ $";"$ \\
+$\vert$ id $"="$ $"random"$ $"("$ expr $","$ expr $")"$ \\
+$\vert$ id $"="$ $"find"$ $";"$ \\
+$\vert$ id $"="$ $"peers"$ $";"$\\
 
-moveStmt $\rightarrow$ $"move"$ $"("$ expression $","$ expression $")"$ $\vert$ $"move"$ $"up"$ $\vert$ $"move"$ $"down"$ $\vert$ $"move"$ $"left"$ $\vert$ $"move"$ $"right"$ \\
+moveStmt $\rightarrow$ $"move"$ $"("$ expr $","$ expr $")"$ $\vert$ $"move"$ $"up"$ $\vert$ $"move"$ $"down"$ $\vert$ $"move"$ $"left"$ $\vert$ $"move"$ $"right"$ \\
 
-buyStmt $\rightarrow$ $"buy"$ $"("$ expression $","$ expression $","$ expression $")"$ $\vert$ $"buy"$ $"("$ expression $")"$\\
+buyStmt $\rightarrow$ $"buy"$ $"("$ expr $","$ expr $","$ expr $")"$ $\vert$ $"buy"$ $"("$ expr $")"$\\
 
 \underline{Expressions}: \\
 
-expression $\rightarrow$ logicExpr \\
-
-logicExpr $\rightarrow$ logicAnd  $\vert$ logicAnd $"or"$ logicExpr \\
-
-logicAnd $\rightarrow$ equality $\vert$ equality $"and"$ logicAnd \\
-
-equality $\rightarrow$ comparison $\vert$ comparison equalityTail \\
-
-equalityTail $\rightarrow$ $"!="$ comparison equalityTail $\vert$ $"=="$ comparison equalityTail $\vert$ $\epsilon$ \\
-
-comparison $\rightarrow$ term $\vert$ term comparisonTail \\
-
-comparisonTail $\rightarrow$ $"<"$ term comparisonTail $\vert$ $"<="$ term comparisonTail $\vert$ $">="$ term comparisonTail $\vert$ $">"$ term comparisonTail $\vert$ $\epsilon$ \\
-
-term $\rightarrow$ factor $\vert$ factor termTail \\
-
-termTail $\rightarrow$ $"+"$ factor termTail $\vert$ $"-"$ factor termTail $\vert$ $\epsilon$ \\
-
-factor $\rightarrow$ unary $\vert$ unary factorTail \\
-
-factorTail $\rightarrow$ $"*"$ unary factorTail $\vert$ $"/"$ unary factorTail $\vert$ $\epsilon$ \\
-
-unary $\rightarrow$ call $\vert$ $"!"$ call $\vert$ $"-"$ call \\
+expr $\rightarrow$ expr $"or"$ expr \\
+$\vert$ expr $"and"$ expr \\
+$\vert$ expr $"!="$ expr \\
+$\vert$ expr $"=="$ expr \\
+$\vert$ expr $"<"$ expr \\
+$\vert$ expr $"<="$ expr \\
+$\vert$ expr $">="$ expr \\
+$\vert$ expr $">"$ expr \\
+$\vert$ expr $"+"$ expr \\
+$\vert$ expr $"-"$ expr \\
+$\vert$ expr $"*"$ expr \\
+$\vert$ expr $"/"$ expr \\
+$\vert$ $"!"$ expr \\
+$\vert$ $"-"$ expr \\
+$\vert$ call \\
 
 call $\rightarrow$ primary $\vert$ id dotTail \\
 
@@ -202,13 +207,15 @@ dotTail $\rightarrow$ $"."$ idTail $\vert$ $\epsilon$ \\
 
 idTail $\rightarrow$ id dotTail $\vert$ listFunc dotTail \\
 
-listFunc $\rightarrow$ $"get"$ expression $\vert$ $"push"$ expression $\vert$ $"size"$ $\vert$ $"pop"$ $\vert$ $"reverse"$ \\
+listFunc $\rightarrow$ $"get"$ $"("$ expr $")"$ $\vert$ $"push"$ $"("$ expr $")"$ $\vert$ $"size"$ $"("$ $")"$ $\vert$ $"pop"$ $"("$ $")"$ $\vert$ $"reverse"$ $"("$ $")"$ \\
 
-primary $\rightarrow$ $"true"$ $\vert$ $"false"$ $\vert$ number $\vert$ string $\vert$ $"("$ expression $")"$ \\
+primary $\rightarrow$ $"true"$ $\vert$ $"false"$ $\vert$ number $\vert$ string $\vert$ $"["$ listItems $"]"$ $\vert$ $"\{"$ bookItems $"\}"$ $\vert$ $"("$ expr $")"$ \\
 
-\underline{Lexical Grammar}
+listItems $\rightarrow$ expr $","$ listItems $\vert$ $\epsilon$ \\
 
-type $\rightarrow$ $"number"$ $\vert$ $"bool"$ $\vert$ $"string"$ $\vert$ $"list"$ \\
+bookItems $\rightarrow$ string $":"$ $"("$ listItems $")"$ $","$ bookItems $\vert$ $\epsilon$ \\
+
+type $\rightarrow$ $"number"$ $\vert$ $"bool"$ $\vert$ $"string"$ $\vert$ $"list"$ $\vert$ $"book"$ \\
 
 
 
