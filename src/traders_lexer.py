@@ -1,15 +1,16 @@
 from sly import Lexer
 
+
 class TradersLexer(Lexer):
     """
         Traders DSL Lexer
     """
 
-    tokens = {ID, INT, FLOAT, ASSIGN, STRING, LET,
+    tokens = {ID, NUMBER, ASSIGN, STRING, LET,
 
               IN, CASE, OTHER, OTHERWISE, EQEQ, SEP, NOTEQ, LESS,
               GREATER, LESSEQ, GREATEREQ, REPEAT,
-              WHEN, BEHAVIOR, STOP, RUN,
+              WHEN, FOREACH, BEHAVE, RESTART, STOP, RUN, RESET,
 
               TRUE, FALSE,
 
@@ -17,11 +18,11 @@ class TradersLexer(Lexer):
               MINUSASGN, STARASGN, SLASHASGN, MODULOASGN,
               ANDASGN, ORASGN, XORASGN, SHLASGN, SHRASGN,
 
-              AGENT, ENVIRONMENT, INT_TYPE, FLOAT_TYPE, BOOL_TYPE,
-              LIST_TYPE, STRING_TYPE, DICT_TYPE, NIL,
+              AGENT, ENV, NUMBER_TYPE, BOOK_TYPE, BOOL_TYPE,
+              LIST_TYPE, STRING_TYPE,
 
               FIND, PEERS, MOVE, UP, LEFT, RIGHT, DOWN,
-              BUY, PICK, PUT, AT, PRINT }
+              SELL, BUY, PICK, PUT, AT, PRINT}
 
     ignore = ' \t'
     ignore_comment_slash = r'//.*'
@@ -64,11 +65,14 @@ class TradersLexer(Lexer):
     ID['otherwise'] = OTHERWISE
     ID['repeat'] = REPEAT
     ID['when'] = WHEN
-    ID['behavior'] = BEHAVIOR
+    ID['foreach'] = FOREACH
+    ID['behave'] = BEHAVE
     ID['agent'] = AGENT
-    ID['environment'] = ENVIRONMENT
+    ID['env'] = ENV
+    ID['restart'] = RESTART
     ID['stop'] = STOP
     ID['run'] = RUN
+    ID['reset'] = RESET
     ID['find'] = FIND
     ID['peers'] = PEERS
     ID['move'] = MOVE
@@ -76,6 +80,7 @@ class TradersLexer(Lexer):
     ID['left'] = LEFT
     ID['right'] = RIGHT
     ID['down'] = DOWN
+    ID['sell'] = SELL
     ID['buy'] = BUY
     ID['pick'] = PICK
     ID['put'] = PUT
@@ -86,14 +91,14 @@ class TradersLexer(Lexer):
     ID['false'] = FALSE
     ID['and'] = AND
     ID['or'] = OR
-    ID['int'] = INT_TYPE
-    ID['float'] = FLOAT_TYPE
-    ID['string'] = STRING_TYPE
+    ID['number'] = NUMBER_TYPE
     ID['bool'] = BOOL_TYPE
+    ID['string'] = STRING_TYPE
     ID['list'] = LIST_TYPE
+    ID['book'] = BOOK_TYPE
 
     @_(r'\d+\.\d+')
-    def FLOAT(self, t):
+    def NUMBER(self, t):
         """
         Parsing float numbers
         """
@@ -101,7 +106,7 @@ class TradersLexer(Lexer):
         return t
 
     @_(r'\d+')
-    def INT(self, t):
+    def NUMBER(self, t):
         """
         Parsing integers
         """
