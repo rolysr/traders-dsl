@@ -21,6 +21,8 @@ class TradersLexer(Lexer):
               AGENT, ENV, NUMBER_TYPE, BOOK_TYPE, BOOL_TYPE,
               LIST_TYPE, STRING_TYPE,
 
+              GET, PUSH, POP, SIZE, REVERSE,
+
               FIND, PEERS, MOVE, UP, LEFT, RIGHT, DOWN,
               SELL, BUY, PICK, PUT, AT, PRINT}
 
@@ -86,6 +88,12 @@ class TradersLexer(Lexer):
     ID['put'] = PUT
     ID['at'] = AT
     ID['print'] = PRINT
+
+    ID['get'] = GET
+    ID['push'] = PUSH
+    ID['pop'] = POP
+    ID['size'] = SIZE
+    ID['reverse'] = REVERSE
 
     ID['true'] = TRUE
     ID['false'] = FALSE
