@@ -1,6 +1,6 @@
-from traders_lexer import TradersLexer
-from traders_parser import TradersParser
-from traders_interpreter import Process
+from src.traders_lexer import TradersLexer
+from src.traders_parser import TradersParser
+from src.traders_interpreter import Process
 import sys
 
 
@@ -34,16 +34,17 @@ def exec_file():
     lexer = TradersLexer()
     parser = TradersParser()
     with open(sys.argv[1]) as opened_file:
-        tokens = lexer.tokenize(opened_file.read())
+        text = opened_file.read()
+        tokens = lexer.tokenize(text)
 
-        # for token in tokens:
-        #     print(token)
+        for token in lexer.tokenize(text):
+            print(token)
 
         tree = parser.parse(tokens)
-        # print(tree)
+        print(tree)
 
-        program = Process(tree)
-        program.run()
+        # program = Process(tree)
+        # program.run()
         # print(program.env)
 
 

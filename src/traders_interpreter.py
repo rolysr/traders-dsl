@@ -2,8 +2,8 @@ from random import randint
 from math import sin, cos, tan, asin, acos, atan, sinh, cosh, tanh ,ceil, floor, sqrt, degrees, radians, log
 from os.path import exists, dirname, join
 from os import getenv
-from traders_lexer import TradersLexer
-from traders_parser import TradersParser
+from src.traders_lexer import TradersLexer
+from src.traders_parser import TradersParser
 
 def standard_library():
     """
@@ -148,89 +148,20 @@ class Process:
             return parsed
         else:
             action = parsed[0]
-            if action == 'class_func_call':
-                instance = self.env.find(parsed[1]).value
-                method = instance.find_method(parsed[2])
-                args = [self.evaluate(arg) for arg in parsed[3][1]]
-                self.depth += 1
-                res = method(*args)
-                self.depth -= 1
-                return res
-            elif action == 'class':
-                name = parsed[1]
-                if name in self.env:
-                    raise NameError('Cannot redefine variable \'%s\'' % name)
-                    return None
+            print(action)
 
-                class_process = Process((), env=Env(self.env))
-
-                for function in parsed[2][1]:
-                    class_process.evaluate(function)
-
-                # print(class_process.env)
-
-                self.env.update({ name: TradersClass(name, class_process.env) })
-            elif action == 'typeof':
-                try:
-                    if len(parsed[1]) == 2:
-                        var = self.env.find(parsed[1][1])
-                        return var.type
-                    elif len(parsed[1]) == 3:
-                        var = self.env.find(parsed[1][1][1])
-                        index = self.evaluate(parsed[1][2])
-                        return self.rtypes[type(var.value[index])]
-                except TypeError as e:
-                    return self.rtypes[type(parsed[1])]
-            elif action == 'struct':
-                name = parsed[1]
-                if name in self.env:
-                    raise NameError('Cannot redefine variable \'%s\'' % name)
-                    return None
-
-                fields = parsed[2]
-
-                self.env.update({ name: { "__fields__": fields } })
-            elif action == 'init_struct':
-                name = parsed[1]
-                struct_definition = self.env.find(name)
-                if struct_definition is None:
-                    raise UnboundLocalError('Struct %s is undefined' % name)
-                    return None
-                fields = struct_definition['__fields__']
-                values = [self.evaluate(value) for value in parsed[2]]
-
-                struct = {}
-                for i in range(len(fields)):
-                    if i < len(values):
-                        if type(values[i]) != self.types[fields[i][1]]:
-                            raise ValueError("Type for field '{}' should be '{}' but instead got '{}'".format(fields[i][0], fields[i][1], self.rtypes[type(values[i])]))
-                        struct.update({ fields[i][0]: values[i] })
-                    else:
-                        struct.update({ fields[i][0]: None })
-
-                return struct
-            elif action == 'import':
-                base_dir = getenv('OPATH')
-                if base_dir is None:
-                    base_dir = dirname(__file__)
-                rel_path = 'include/' + parsed[1] + '.traders'
-                path = join(base_dir, rel_path)
-                if exists(path):
-                    fp = open(path)
-                    self.import_contents(fp.read())
-            elif action == 'fn':
+            if action == 'behavior':
                 params = parsed[2]
                 body = parsed[3]
                 self.env.update({parsed[1]: Function(
                     self, params[1], body, self.env)})
                 return None
+
             elif action == 'call':
                 func = self.env.find(parsed[1])
                 if isinstance(func, Value):
                     func = func.get()
 
-                if isinstance(func, TradersClass):
-                    return func()
                 elif not isinstance(func, Function):
                     if type(func) == type(lambda x: x):
                         args = [self.evaluate(arg) for arg in parsed[2][1]]
@@ -247,12 +178,7 @@ class Process:
                 self.depth -= 1
                 return res
 
-            elif action == 'lambda':
-                body = parsed[2]
-                params = parsed[1]
-                return Function(self, params[1], body, self.env)
-
-            elif action == 'return':
+            elif action == 'stop':
                 result = self.evaluate(parsed[1])
                 self.should_return = True
                 return result
@@ -288,13 +214,13 @@ class Process:
                     index = self.evaluate(parsed[1][2])
                     value = self.evaluate(parsed[2])
                     var[index] = value
-            elif action == 'if':
+            elif action == 'in_case':
                 cond = self.evaluate(parsed[1])
                 if cond:
                     return self.evaluate(parsed[2])
                 if parsed[3] is not None:
                     return self.evaluate(parsed[3])
-            elif action == 'while':
+            elif action == 'repeat_when':
                 cond = self.evaluate(parsed[1])
                 while cond:
                     self.evaluate(parsed[2])
@@ -449,7 +375,7 @@ class Env(dict):
 
 class Function(object):
     """
-    Function object for Traders Functions and annoymous functions (lambdas)
+    Function object for O Functions and annoymous functions (lambdas)
     """
     def __init__(self, process, params, body, env):
         self.process, self.params, self.body, self.env = process, params, body, env
@@ -462,7 +388,7 @@ class Function(object):
                 raise TypeError("Type of parameter {} should be {} but got {}.".format(self.params[i][0], self.params[i][1], self.process.rtypes[type(args[i])]))
             params.append(self.params[i][0])
         return self.process.run(self.body, Env(params, args, self.env))
-
+        
 class Value(object):
     """
     Class container for values inside the Traders Language
@@ -479,35 +405,3 @@ class Value(object):
 
     def get(self):
         return self.value
-
-class TradersClass(object):
-    """
-    Object for classes in Traders
-    """
-    def __init__(self, name, env):
-        self.name = name
-        self.env = env
-        self.type = 'class'
-
-    def __str__(self):
-        return "<{} class>".format(self.name)
-
-    def __call__(self):
-        return TradersInstance(self)
-
-class TradersInstance(object):
-    """
-    Object for instances of a class in Traders
-    """
-    def __init__(self, oclass):
-        self.oclass = oclass
-        self.type = 'instance'
-        init_method = self.oclass.env.get('init')
-        if init_method is not None:
-            init_method()
-
-    def __str__(self):
-        return "<{} instance>".format(self.oclass.name)
-
-    def find_method(self, name):
-        return self.oclass.env.find(name)

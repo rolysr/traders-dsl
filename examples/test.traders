@@ -1,0 +1,6 @@
+let a : number = 6;
+a = 9;
+
+env base{
+    sizee = 1;
+}
