@@ -29,39 +29,17 @@ class TradersParser(Parser):
 
     @_('declarationList')
     def program(self, p):
-        return p.declarations
+        return ('program', p.declarationList)
 
-    @_('empty')
-    def program(self, p):
-        return ()
-
-    @_('declaration')
-    def declarationList(self, p):
-        return (p.declaration, )
+    #Declarations productions:
 
     @_('declaration declarationList')
     def declarationList(self, p):
-        return (p.declaration, ) + p.declarations
+        return (p.declaration, ) + p.declarationList
 
-    @_('behaveDecl')
-    def declaration(self, p):
-        return p.behaveDecl
-
-    @_('varDecl')
-    def declaration(self, p):
-        return p.varDecl
-
-    @_('while_statement')
-    def declaration(self, p):
-        return p.while_statement
-
-    @_('fieldAssign')
-    def declaration(self, p):
-        return p.fieldAssign
-
-    @_('envFunc')
-    def declaration(self, p):
-        return p.envFunc
+    @_('empty')
+    def declarationList(self, p):
+        return ()
 
     @_('envDecl')
     def declaration(self, p):
@@ -71,169 +49,243 @@ class TradersParser(Parser):
     def declaration(self, p):
         return p.agentDecl
 
+    @_('behaveDecl')
+    def declaration(self, p):
+        return p.behaveDecl
+
+    @_('varDecl')
+    def declaration(self, p):
+        return p.varDecl
+
+    @_('varAssign')
+    def declaration(self, p):
+        return p.varAssign
+
+    @_('envFunc')
+    def declaration(self, p):
+        return p.envFunc
+
     @_('ENV ID "{" envBody "}"')
     def envDecl(self, p):
         return ('env', p.ID, p.envBody)
 
     @_('AGENT ID "{" agentBody "}"')
-    def envDecl(self, p):
+    def agentDecl(self, p):
         return ('agent', p.ID, p.agentBody)
 
     @_('BEHAVE ID "{" behaveBody "}"')
-    def envDecl(self, p):
+    def behaveDecl(self, p):
         return ('behave', p.ID, p.behaveBody)
 
-    @_('ID "." ID ASSIGN expression SEP')
-    def fieldAssign(self, p):
-        return ('assign', ('get', p.ID0, p.ID1), p.expression)
+    @_('LET ID ":" type SEP')
+    def varDecl(self, p):
+        return ('varDecl_0', p.ID, p.type)
 
-    @_('ID "." RESET SEP')
+    @_('LET ID ":" type ASSIGN expr SEP')
+    def varDecl(self, p):
+        return ('varDecl_1', p.ID, p.type, p.expr)
+
+    @_('getter ASSIGN expr SEP')
+    def varAssign(self, p):
+        return ('varAssign', p.getter , p.expr)
+
+    @_('ID "." RESET "(" ")" SEP')
     def envFunc(self, p):
-        return ('reset', p.ID)
+        return ('resetEnv', p.ID)
 
-    @_('ID "." RUN expression SEP')
+    @_('ID "." RUN "(" expr ")" SEP')
     def envFunc(self, p):
-        return ('run', p.ID, p.expression)
+        return ('runEnv', p.ID, p.expr)
 
-    @_('LET ID ":" var_type SEP')
-    def varDecl(self, p):
-        return [(p.ID, p.var_type)]
+    @_('ID "." PUT "(" expr "," expr "," expr "," expr ")" SEP')
+    def envFunc(self, p):
+        return ('putEnv', p.ID, p.expr0, p.expr1, p.expr2, p.expr3)
 
-    @_('LET ID ":" var_type ASSIGN expression SEP')
-    def varDecl(self, p):
-        return [(p.ID, p.var_type, p.expression)]
+    #Declarations productions end
 
-    @_('var_assign SEP')
-    def varDecl(self, p):
-        return p.var_assign
+    #Bodies productions:
 
-    @_('NUMBER_TYPE')
-    def var_type(self, p):
-        return 'number'
-
-    @_('STRING_TYPE')
-    def var_type(self, p):
-        return 'string'
-
-    @_('BOOL_TYPE')
-    def var_type(self, p):
-        return 'bool'
-
-    @_('LIST_TYPE')
-    def var_type(self, p):
-        return 'list'
-
-    @_('varDeclList')
+    @_('varList')
     def envBody(self, p):
-        return p.varDeclList
+        return ('envBody', p.varList)
 
-    @_('varDeclList')
+    @_('varList')
     def agentBody(self, p):
-        return p.varDeclList
+        return ('agentBody', p.varList)
 
     @_('statementList')
     def behaveBody(self, p):
-        return p.statementList
+        return ('behaveBody', p.statementList)
 
-    @_('varDecl varDeclList')
-    def varDeclList(self, p):
-        return (p.varDecl, ) + p.varDeclList
+    @_('varDecl varList')
+    def varList(self, p):
+        return (p.varDecl, ) + p.varList
 
-    @_('var_assign SEP')
+    @_('varAssign varList')
+    def varList(self, p):
+        return (p.varAssign, ) + p.varList
+
+    @_('empty')
+    def varList(self, p):
+        return ( )
+
+    @_('statement statementList')
+    def statementList(self, p):
+        return (p.statement, ) + p.statementList
+
+    @_('empty')
+    def statementList(self, p):
+        return ( )
+
+    #Bodies productions end
+    
+    #Statements productions:
+    
+    ##Statement types
+    @_('varDecl')
     def statement(self, p):
-        return p.var_assign
+        return p.varDecl
 
-    @_('STOP expr SEP')
-    def stop_statement(self, p):
-        return ('return', p.expr)
+    @_('varAssign')
+    def statement(self, p):
+        return p.varAssign
+        
+    @_('repeatStmt')
+    def statement(self, p):
+        return p.repeatStmt
+        
+    @_('foreachStmt')
+    def statement(self, p):
+        return p.foreachStmt
+        
+    @_('incaseStmt')
+    def statement(self, p):
+        return p.incaseStmt
+        
+    @_('primFuncStmt')
+    def statement(self, p):
+        return p.primFuncStmt
 
-    @_('var ASSIGN expr')
-    def var_assign(self, p):
-        return ('var_assign', p.var, p.expr)
+    ## Loops and conditionals
+    @_('REPEAT WHEN expr "{" statementList "}" ')
+    def repeatStmt(self, p):
+        return ('repeatStmt', p.expr, p.statementList)
 
-    @_('var PLUSASGN expr')
-    def var_assign(self, p):
-        return ('var_assign', p.var, ('+', ('var', p.var), p.expr))
+    @_('FOREACH ID IN expr "{" statementList "}" ')
+    def foreachStmt(self, p):
+        return ('foreachStmt', p.ID, p.expr, p.statementList)
 
-    @_('var MINUSASGN expr')
-    def var_assign(self, p):
-        return ('var_assign', p.var, ('-', ('var', p.var), p.expr))
+    @_('IN CASE expr "{" statementList "}" inothercaseStmt')
+    def incaseStmt(self, p):
+        return ('incaseStmt', p.expr, p.statementList, p.inothercaseStmt)
 
-    @_('var STARASGN expr')
-    def var_assign(self, p):
-        return ('var_assign', p.var, ('*', ('var', p.var), p.expr))
+    @_('IN OTHER CASE expr "{" statementList "}" inothercaseStmt')
+    def inothercaseStmt(self, p):
+        return ('inothercaseStmt_0', p.expr, p.statementList, p.inothercaseStmt)
 
-    @_('var SLASHASGN expr')
-    def var_assign(self, p):
-        return ('var_assign', p.var, ('/', ('var', p.var), p.expr))
+    @_('OTHERWISE "{" statementList "}"')
+    def inothercaseStmt(self, p):
+        return ('inothercaseStmt_1', p.statementList)
 
-    @_('var MODULOASGN expr')
-    def var_assign(self, p):
-        return ('var_assign', p.var, ('%', ('var', p.var), p.expr))
+    @_('empty')
+    def inothercaseStmt(self, p):
+        return ( )
+    
+    ##Primitive Functions Statements
 
-    @_('var ANDASGN expr')
-    def var_assign(self, p):
-        return ('var_assign', p.var, ('&', ('var', p.var), p.expr))
+    @_('PRINT "(" expr ")" SEP')
+    def primFuncStmt(self, p):
+        return ('print', p.expr)
 
-    @_('var ORASGN expr')
-    def var_assign(self, p):
-        return ('var_assign', p.var, ('|', ('var', p.var), p.expr))
+    @_('moveStmt SEP')
+    def primFuncStmt(self, p):
+        return ('moveStmt', p.moveStmt)
 
-    @_('var XORASGN expr')
-    def var_assign(self, p):
-        return ('var_assign', p.var, ('^', ('var', p.var), p.expr))
+    @_('buyStmt SEP')
+    def primFuncStmt(self, p):
+        return ('buyStmt', p.buyStmt)
 
-    @_('var SHLASGN expr')
-    def var_assign(self, p):
-        return ('var_assign', p.var, ('<<', ('var', p.var), p.expr))
+    @_('SELL "(" expr "," expr "," expr ")" SEP')
+    def primFuncStmt(self, p):
+        return ('sell', p.expr0, p.expr1, p.expr2)
+        
+    @_('RESTART BEHAVE')
+    def primFuncStmt(self, p):
+        return ('restart')
+        
+    @_('STOP "(" expr ")" SEP')
+    def primFuncStmt(self, p):
+        return ('stop', p.expr)
+        
+    @_('PICK "(" expr ")" SEP')
+    def primFuncStmt(self, p):
+        return ('pick', p.expr)
+        
+    @_('PUT "(" expr "," expr ")" SEP')
+    def primFuncStmt(self, p):
+        return ('put', p.expr0, p.expr1)
+        
+    @_('ID ASSIGN RANDOM "(" expr "," expr ")" SEP')
+    def primFuncStmt(self, p):
+        return ('varAssign', ('getter', p.ID), ('random', p.expr0, p.expr1))
+        
+    @_('ID ASSIGN FIND SEP')
+    def primFuncStmt(self, p):
+        return ('varAssign', ('getter', p.ID, ()), ('find'))
+        
+    @_('ID ASSIGN PEERS SEP')
+    def primFuncStmt(self, p):
+        return ('varAssign', ('getter', p.ID), ('peers'))
 
-    @_('var SHRASGN expr')
-    def var_assign(self, p):
-        return ('var_assign', p.var, ('>>', ('var', p.var), p.expr))
+    @_('MOVE "(" expr "," expr ")"')
+    def moveStmt(self, p):
+        return ('moveStmt_0', p.expr0, p.expr1)
 
-    @_('IN CASE expr block OTHERWISE block')
-    def in_case_statement(self, p):
-        return ('in_case', ('condition', p.expr), ('block', p.block0), ('block', p.block1))
+    @_('MOVE UP')
+    def moveStmt(self, p):
+        return ('moveStmt_1', 'up')
 
-    @_('IN CASE expr block in_other_case_statement')
-    def in_case_statement(self, p):
-        return ('in_case', ('condition', p.expr), ('block', p.block), (p.in_other_case_statement))
+    @_('MOVE DOWN')
+    def moveStmt(self, p):
+        return ('moveStmt_1', 'down')
 
-    @_('IN CASE expr block')
-    def in_case_statement(self, p):
-        return ('in_case', ('condition', p.expr), ('block', p.block), None)
+    @_('MOVE LEFT')
+    def moveStmt(self, p):
+        return ('moveStmt_1', 'left')
 
-    @_('IN OTHER CASE expr block in_other_case_statement')
-    def in_other_case_statement(self, p):
-        return ('in_case', ('condition', p.expr), ('block', p.block), (p.in_other_case_statement))
+    @_('MOVE RIGHT')
+    def moveStmt(self, p):
+        return ('moveStmt_1', 'down')
 
-    @_('IN OTHER CASE expr block OTHERWISE block')
-    def in_other_case_statement(self, p):
-        return ('in_case', ('condition', p.expr), ('block', p.block0), ('block', p.block1))
+    @_('BUY "(" expr "," expr "," expr ")"')
+    def buyStmt(self, p):
+        return ('buyStmt_0', p.expr0, p.expr1, p.expr2)
 
-    @_('IN OTHER CASE expr block')
-    def in_other_case_statement(self, p):
-        return ('in_case', ('condition', p.expr), ('block', p.block))
+    @_('BUY "(" expr ")"')
+    def buyStmt(self, p):
+        return ('buyStmt_1', p.expr)
+    
 
-    @_('REPEAT WHEN expr block')
-    def repeat_when_statement(self, p):
-        return ('repeat_when', ('condition', p.expr), ('block', p.block))
-
-    @_('ID "(" args ")"')
+    #Expression productions
+    @_('expr OR expr')
     def expr(self, p):
-        return ('call', p.ID, ('args', p.args))
+        return ('or', p.expr0, p.expr1)
 
-    @_('expr "?" expr ":" expr')
+    @_('expr AND expr')
     def expr(self, p):
-        return ('?:', p.expr0, p.expr1, p.expr2)
+        return ('and', p.expr0, p.expr1)
+
+    @_('expr NOTEQ expr')
+    def expr(self, p):
+        return ('!=', p.expr0, p.expr1)
 
     @_('expr EQEQ expr')
     def expr(self, p):
         return ('==', p.expr0, p.expr1)
 
-    @_('expr NOTEQ expr')
+    @_('expr LESS expr')
     def expr(self, p):
-        return ('!=', p.expr0, p.expr1)
+        return ('<', p.expr0, p.expr1)
 
     @_('expr LESSEQ expr')
     def expr(self, p):
@@ -243,69 +295,9 @@ class TradersParser(Parser):
     def expr(self, p):
         return ('>=', p.expr0, p.expr1)
 
-    @_('expr AND expr')
-    def expr(self, p):
-        return ('and', p.expr0, p.expr1)
-
-    @_('expr OR expr')
-    def expr(self, p):
-        return ('or', p.expr0, p.expr1)
-
-    @_('expr LESS expr')
-    def expr(self, p):
-        return ('<', p.expr0, p.expr1)
-
     @_('expr GREATER expr')
     def expr(self, p):
         return ('>', p.expr0, p.expr1)
-
-    @_('expr SHL expr')
-    def expr(self, p):
-        return ('<<', p.expr0, p.expr1)
-
-    @_('expr SHR expr')
-    def expr(self, p):
-        return ('>>', p.expr0, p.expr1)
-
-    @_('expr "&" expr')
-    def expr(self, p):
-        return ('&', p.expr0, p.expr1)
-
-    @_('expr "^" expr')
-    def expr(self, p):
-        return ('^', p.expr0, p.expr1)
-
-    @_('expr "|" expr')
-    def expr(self, p):
-        return ('|', p.expr0, p.expr1)
-
-    @_('"~" expr %prec LOGICALNOT')
-    def expr(self, p):
-        return ('~', p.expr)
-
-    @_('expr SEP')
-    def statement(self, p):
-        return p.expr
-
-    @_('"-" expr %prec UMINUS')
-    def expr(self, p):
-        return ('neg', p.expr)
-
-    @_('"+" expr %prec UPLUS')
-    def expr(self, p):
-        return p.expr
-
-    @_('"!" expr')
-    def expr(self, p):
-        return ('!', p.expr)
-
-    @_('INC var')
-    def var_assign(self, p):
-        return ('var_assign', p.var, ('+', ('var', p.var), 1))
-
-    @_('DEC var')
-    def var_assign(self, p):
-        return ('var_assign', p.var, ('-', ('var', p.var), 1))
 
     @_('expr "+" expr')
     def expr(self, p):
@@ -323,146 +315,130 @@ class TradersParser(Parser):
     def expr(self, p):
         return ('/', p.expr0, p.expr1)
 
-    @_('expr "%" expr')
+    @_('"!" expr')
     def expr(self, p):
-        return ('%', p.expr0, p.expr1)
+        return ('!', p.expr)
 
-    @_('"(" expr ")"')
+    @_('"-" expr %prec UMINUS')
     def expr(self, p):
-        return p.expr
+        return ('neg', p.expr)
 
-    @_('INT')
+    @_('call')
     def expr(self, p):
-        return p.INT
+        return p.call
 
-    @_('FLOAT')
-    def expr(self, p):
-        return p.FLOAT
+    #Expression productions end
 
-    @_('STRING')
-    def expr(self, p):
-        return p.STRING
+    #Calling productions
+
+    @_('primary')
+    def call(self, p):
+        return p.primary
+
+    @_('ID dotTail')
+    def call(self, p):
+        return ('call', p.ID, p.dotTail)
+
+    @_('ID dotTail')
+    def getter(self, p):
+        return ('call', p.ID, p.dotTail)
+
+    @_('"." idTail')
+    def dotTail(self, p):
+        return ('dotTail', p.idTail)
+
+    @_('empty')
+    def dotTail(self, p):
+        return ()
+
+    @_('ID dotTail')
+    def idTail(self, p):
+        return ('idTail', p.ID, p.dotTail)
+
+    @_('listFunc dotTail')
+    def idTail(self, p):
+        return ('idTail', p.listFunc, p.dotTail)
+
+    @_('GET "(" expr ")"')
+    def listFunc(self, p):
+        return ('get', p.expr)
+
+    @_('PUSH "(" expr ")"')
+    def listFunc(self, p):
+        return ('push', p.expr)
+
+    @_('SIZE "(" ")"')
+    def listFunc(self, p):
+        return ('size')
+
+    @_('POP "(" ")"')
+    def listFunc(self, p):
+        return ('pop')
+
+    @_('REVERSE "(" ")"')
+    def listFunc(self, p):
+        return ('reverse')
 
     @_('TRUE')
-    def expr(self, p):
-        return True
+    def primary(self, p):
+        return ('primary_bool', True)
 
     @_('FALSE')
-    def expr(self, p):
-        return False
+    def primary(self, p):
+        return ('primary_bool', False)
 
-    @_('list_val')
-    def expr(self, p):
-        return p.list_val
+    @_('NUMBER')
+    def primary(self, p):
+        return ('primary_number', p.NUMBER)
 
-    @_('"[" exprs "]"')
-    def list_val(self, p):
-        return p.exprs
+    @_('STRING')
+    def primary(self, p):
+        return ('primary_string', p.STRING)
 
-    @_('empty')
-    def exprs(self, p):
-        return []
+    @_('"[" listItems "]"')
+    def primary(self, p):
+        return ('primary_list', p.listItems)
 
-    @_('expr')
-    def exprs(self, p):
-        return [p.expr]
+    @_('"{" bookItems "}"')
+    def primary(self, p):
+        return ('primary_book', p.bookItems)
 
-    @_('exprs "," expr')
-    def exprs(self, p):
-        return p.exprs + [p.expr]
-
-    @_('var "[" expr "]"')
-    def expr(self, p):
-        return ('indexing', ('var', p.var), p.expr)
-
-    @_('var')
-    def expr(self, p):
-        return ('var', p.var)
-
-    @_('ID')
-    def var(self, p):
-        return p.ID
-
-    @_('var "[" expr "]"')
-    def var(self, p):
-        return ('indexing', ('var', p.var), p.expr)
-
-    @_('NIL')
-    def expr(self, p):
-        return None
-
-    @_('')
-    def empty(self, p):
-        pass
-
-    @_('"{" program "}"')
-    def block(self, p):
-        return p.program
-
-    @_('statement')
-    def block(self, p):
-        return (p.statement, )
-
-    @_('params "," param')
-    def params(self, p):
-        return p.params + [p.param]
-
-    @_('param')
-    def params(self, p):
-        return [p.param]
-
-    @_('empty')
-    def params(self, p):
-        return []
-
-    @_('ID ":" var_type')
-    def param(self, p):
-        return (p.ID, p.var_type)
-
-    @_('args "," arg')
-    def args(self, p):
-        return p.args + [p.arg]
-
-    @_('arg')
-    def args(self, p):
-        return [p.arg]
-
-    @_('empty')
-    def args(self, p):
-        return []
-
-    @_('expr')
-    def arg(self, p):
+    @_('"(" expr ")"')
+    def primary(self, p):
         return p.expr
 
-    @_('"{" member_list "}"')
-    def expr(self, p):
-        return p.member_list
+    @_('expr "," listItems')
+    def listItems(self, p):
+        return (p.expr, ) + p.listItems
 
     @_('empty')
-    def member_list(self, p):
-        return {}
+    def listItems(self, p):
+        return ( )
 
-    @_('member')
-    def member_list(self, p):
-        return p.member
+    @_('STRING ":" "(" listItems ")" "," bookItems')
+    def bookItems(self, p):
+        return (p.expr, ) + p.listItems
 
-    @_('member_list "," member')
-    def member_list(self, p):
-        return {**p.member_list, **p.member}
+    @_('empty')
+    def bookItems(self, p):
+        return ( )
 
-    @_('STRING ":" expr')
-    def member(self, p):
-        return {p.STRING: p.expr}
+    @_('NUMBER_TYPE')
+    def type(self, p):
+        return 'number'
 
-    @_('getter "." ID')
-    def getter(self, p):
-        return ('.', p.getter, p.ID)
+    @_('BOOL_TYPE')
+    def type(self, p):
+        return 'bool'
 
-    @_('ID')
-    def getter(self, p):
-        return p.ID
+    @_('STRING_TYPE')
+    def type(self, p):
+        return 'string'
 
-    @_('getter')
-    def expr(self, p):
-        return p.getter
+    @_('LIST_TYPE')
+    def type(self, p):
+        return 'list'
+
+    @_('BOOK_TYPE')
+    def type(self, p):
+        return 'book'
