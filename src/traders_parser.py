@@ -15,15 +15,12 @@ class TradersParser(Parser):
          MODULOASGN, ANDASGN, ORASGN, XORASGN, SHLASGN, SHRASGN),
         ('left', OR),
         ('left', AND),
-        ('left', '|'),
-        ('left', '^'),
-        ('left', '&'),
         ('left', EQEQ, NOTEQ),
         ('left', LESS, LESSEQ, GREATER, GREATEREQ),
         ('left', SHL, SHR),
         ('left', '+', '-'),
-        ('left', '*', '/', '%'),
-        ('right', 'UMINUS', 'UPLUS', 'LOGICALNOT', INC, DEC),
+        ('left', '*', '/'),
+        ('right', 'UMINUS', INC, DEC),
         ('right', '!'),
     )
 
@@ -442,3 +439,7 @@ class TradersParser(Parser):
     @_('BOOK_TYPE')
     def type(self, p):
         return 'book'
+    
+    @_('')
+    def empty(self, p):
+        pass

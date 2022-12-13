@@ -23,7 +23,7 @@ class TradersLexer(Lexer):
 
               GET, PUSH, POP, SIZE, REVERSE,
 
-              FIND, PEERS, MOVE, UP, LEFT, RIGHT, DOWN,
+              RANDOM, FIND, PEERS, MOVE, UP, LEFT, RIGHT, DOWN,
               SELL, BUY, PICK, PUT, AT, PRINT}
 
     ignore = ' \t'
@@ -75,6 +75,7 @@ class TradersLexer(Lexer):
     ID['stop'] = STOP
     ID['run'] = RUN
     ID['reset'] = RESET
+    ID['random'] = RANDOM
     ID['find'] = FIND
     ID['peers'] = PEERS
     ID['move'] = MOVE

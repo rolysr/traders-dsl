@@ -34,10 +34,11 @@ def exec_file():
     lexer = TradersLexer()
     parser = TradersParser()
     with open(sys.argv[1]) as opened_file:
-        tokens = lexer.tokenize(opened_file.read())
+        text = opened_file.read()
+        tokens = lexer.tokenize(text)
 
-        # for token in tokens:
-        #     print(token)
+        for token in lexer.tokenize(text):
+            print(token)
 
         tree = parser.parse(tokens)
         print(tree)
