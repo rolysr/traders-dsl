@@ -124,7 +124,9 @@ program $\rightarrow$ declarationList \\
 
 declarationList $\rightarrow$ declaration declarationList  $\vert$ $\epsilon$ \\
 
-declaration $\rightarrow$ envDecl $\vert$ agentDecl $\vert$ behaveDecl $\vert$ varDecl $\vert$ varAssign $\vert$ envFunc\\
+declaration $\rightarrow$ envDecl $\vert$ agentDecl $\vert$ behaveDecl $\vert$ varDecl $\vert$ itemDecl  $\vert$ varAssign $\vert$ envFunc\\
+
+itemDecl $\rightarrow$ $"item"$ id $"\{"$ itemBody $"\}"$ \\
 
 envDecl $\rightarrow$ $"env"$ id $"\{"$ envBody $"\}"$ \\
 
@@ -136,13 +138,15 @@ varDecl $\rightarrow$ $"let"$ id $":"$ type $";"$ $\vert$ $"let"$ id $":"$ type 
 
 varAssign $\rightarrow$ getter $"="$ expr $";"$ \\
 
-envFunc $\rightarrow$ id $"."$ $"reset"$ $"("$ $")"$ $";"$ \\
-$\vert$ id $"."$ $"run"$ $"("$ expr $")"$ $";"$\\
-$\vert$ id $"."$ $"put"$ $"("$ expr $","$ expr $","$ expr $","$ expr $")"$ $";"$\\
+envFunc $\rightarrow$ $"reset"$ id $";"$ \\
+$\vert$ $"run"$ id $"with"$ expr $"iterations"$ $";"$\\
+$\vert$ $"add"$ id $"in"$ id $"at"$ expr $","$ expr  $";"$\\
 
 \underline{Bodies}: \\
 
 envBody $\rightarrow$ varList \\
+
+itemBody $\rightarrow$ varList \\
 
 agentBody $\rightarrow$ varList \\
 
@@ -165,21 +169,21 @@ incaseStmt $\rightarrow$  $"in"$  $"case"$ expr $"\{"$ statementList  $"\}" inot
 inothercaseStmt $\rightarrow$  $"in"$ $"other"$  $"case"$ expr $"\{"$ statementList  $"\}"$ inothercaseStmt $\vert$ $"otherwise"$ $"\{"$ statementList  $"\}"$ $\vert$ $\epsilon$ \\  
 
 primFuncStmt 
-$\rightarrow$ $"print"$ $"("$ expr $")"$ $";"$ \\ 
+$\rightarrow$ $"talk"$ expr $";"$ \\ 
 $\vert$  moveStmt $";"$ \\
 $\vert$ buyStmt $";"$ \\
-$\vert$ $"sell"$ $"("$ expr $","$ expr $","$ expr $")"$ $";"$ \\
-$\vert$ $"restart"$ $"behave"$ \\
-$\vert$ $"stop"$ $"("$ expr $")"$ $";"$ \\
-$\vert$ $"pick"$ $"("$ expr $")"$ $";"$ \\
-$\vert$ $"put"$ $"("$ expr $","$ expr $")"$ $";"$ \\
-$\vert$ id $"="$ $"random"$ $"("$ expr $","$ expr $")"$ \\
+$\vert$ $"sell"$ expr $","$ expr $","$ expr $";"$ \\
+$\vert$ $"restart"$ $"behave"$ $";"$ \\
+$\vert$ $"stop"$ $";"$ \\
+$\vert$ $"pick"$ expr $";"$ \\
+$\vert$ $"put"$ expr $","$ expr $";"$ \\
+$\vert$ id $"="$ $"random"$ $"from"$ expr $"to"$ expr $")"$ \\
 $\vert$ id $"="$ $"find"$ $";"$ \\
 $\vert$ id $"="$ $"peers"$ $";"$\\
 
-moveStmt $\rightarrow$ $"move"$ $"("$ expr $","$ expr $")"$ $\vert$ $"move"$ $"up"$ $\vert$ $"move"$ $"down"$ $\vert$ $"move"$ $"left"$ $\vert$ $"move"$ $"right"$ \\
+moveStmt $\rightarrow$ $"move"$ expr $","$ expr $\vert$ $"move"$ $"up"$ $\vert$ $"move"$ $"down"$ $\vert$ $"move"$ $"left"$ $\vert$ $"move"$ $"right"$ \\
 
-buyStmt $\rightarrow$ $"buy"$ $"("$ expr $","$ expr $","$ expr $")"$ $\vert$ $"buy"$ $"("$ expr $")"$\\
+buyStmt $\rightarrow$ $"buy"$ expr $","$ expr $","$ expr $\vert$ $"buy"$  expr\\
 
 \underline{Expressions}: \\
 
