@@ -9,7 +9,7 @@ class TradersLexer(Lexer):
     tokens = {ID, NUMBER, ASSIGN, STRING, LET,
 
               IN, CASE, OTHER, OTHERWISE, EQEQ, SEP, NOTEQ, LESS,
-              GREATER, LESSEQ, GREATEREQ, REPEAT,
+              GREATER, LESSEQ, GREATEREQ, REPEAT, WITH, ITERATIONS,
               WHEN, FOREACH, BEHAVE, RESTART, STOP, RUN, RESET,
 
               TRUE, FALSE,
@@ -23,8 +23,8 @@ class TradersLexer(Lexer):
 
               GET, PUSH, POP, SIZE, REVERSE,
 
-              RANDOM, FIND, PEERS, MOVE, UP, LEFT, RIGHT, DOWN,
-              SELL, BUY, PICK, PUT, AT, PRINT}
+              RANDOM, FROM, TO, OBJECTS, FIND, PEERS, MOVE, UP, LEFT, RIGHT, DOWN,
+              SELL, BUY, PICK, PUT, AT, TALK}
 
     ignore = ' \t'
     ignore_comment_slash = r'//.*'
@@ -88,7 +88,12 @@ class TradersLexer(Lexer):
     ID['pick'] = PICK
     ID['put'] = PUT
     ID['at'] = AT
-    ID['print'] = PRINT
+    ID['talk'] = TALK
+    ID['with'] = WITH 
+    ID['iterations'] = ITERATIONS
+    ID['from'] = FROM
+    ID['to'] = TO
+    ID['objects'] = OBJECTS
 
     ID['get'] = GET
     ID['push'] = PUSH

@@ -86,15 +86,15 @@ class TradersParser(Parser):
     def varAssign(self, p):
         return ('varAssign', p.getter , p.expr)
 
-    @_('ID "." RESET "(" ")" SEP')
+    @_('RESET ID')
     def envFunc(self, p):
         return ('resetEnv', p.ID)
 
-    @_('ID "." RUN "(" expr ")" SEP')
+    @_('RUN ID WITH expr ITERATIONS')
     def envFunc(self, p):
         return ('runEnv', p.ID, p.expr)
 
-    @_('ID "." PUT "(" expr "," expr "," expr "," expr ")" SEP')
+    @_('PUT ID IN ID AT expr, expr')
     def envFunc(self, p):
         return ('putEnv', p.ID, p.expr0, p.expr1, p.expr2, p.expr3)
 
@@ -190,9 +190,9 @@ class TradersParser(Parser):
     
     ##Primitive Functions Statements
 
-    @_('PRINT "(" expr ")" SEP')
+    @_('TALK expr SEP')
     def primFuncStmt(self, p):
-        return ('print', p.expr)
+        return ('talk', p.expr)
 
     @_('moveStmt SEP')
     def primFuncStmt(self, p):
@@ -202,7 +202,7 @@ class TradersParser(Parser):
     def primFuncStmt(self, p):
         return ('buyStmt', p.buyStmt)
 
-    @_('SELL "(" expr "," expr "," expr ")" SEP')
+    @_('SELL expr "," expr "," expr SEP')
     def primFuncStmt(self, p):
         return ('sell', p.expr0, p.expr1, p.expr2)
         
@@ -210,55 +210,55 @@ class TradersParser(Parser):
     def primFuncStmt(self, p):
         return ('restart')
         
-    @_('STOP "(" expr ")" SEP')
+    @_('STOP SEP')
     def primFuncStmt(self, p):
         return ('stop', p.expr)
         
-    @_('PICK "(" expr ")" SEP')
+    @_('PICK expr SEP')
     def primFuncStmt(self, p):
         return ('pick', p.expr)
         
-    @_('PUT "(" expr "," expr ")" SEP')
+    @_('PUT expr "," expr SEP')
     def primFuncStmt(self, p):
         return ('put', p.expr0, p.expr1)
         
-    @_('ID ASSIGN RANDOM "(" expr "," expr ")" SEP')
+    @_('RANDOM FROM expr TO expr')
     def primFuncStmt(self, p):
-        return ('varAssign', ('getter', p.ID), ('random', p.expr0, p.expr1))
+        return ('random', p.expr0, p.expr1)
         
-    @_('ID ASSIGN FIND SEP')
+    @_('FIND OBJECTS')
     def primFuncStmt(self, p):
-        return ('varAssign', ('getter', p.ID, ()), ('find'))
+        return ('find', 'objects')
         
-    @_('ID ASSIGN PEERS SEP')
+    @_('FID PEERS')
     def primFuncStmt(self, p):
-        return ('varAssign', ('getter', p.ID), ('peers'))
+        return ('find', 'peers')
 
-    @_('MOVE "(" expr "," expr ")"')
+    @_('MOVE SEP expr "," expr SEP')
     def moveStmt(self, p):
         return ('moveStmt_0', p.expr0, p.expr1)
 
-    @_('MOVE UP')
+    @_('MOVE UP SEP')
     def moveStmt(self, p):
         return ('moveStmt_1', 'up')
 
-    @_('MOVE DOWN')
+    @_('MOVE DOWN SEP')
     def moveStmt(self, p):
         return ('moveStmt_1', 'down')
 
-    @_('MOVE LEFT')
+    @_('MOVE LEFT SEP')
     def moveStmt(self, p):
         return ('moveStmt_1', 'left')
 
-    @_('MOVE RIGHT')
+    @_('MOVE RIGHT SEP')
     def moveStmt(self, p):
         return ('moveStmt_1', 'down')
 
-    @_('BUY "(" expr "," expr "," expr ")"')
+    @_('BUY expr "," expr "," expr SEP')
     def buyStmt(self, p):
         return ('buyStmt_0', p.expr0, p.expr1, p.expr2)
 
-    @_('BUY "(" expr ")"')
+    @_('BUY expr SEP')
     def buyStmt(self, p):
         return ('buyStmt_1', p.expr)
     

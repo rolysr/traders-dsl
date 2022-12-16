@@ -48,7 +48,7 @@ def standard_library():
         'exit': lambda val : exit(val),
         'trim': lambda val : val.strip(),
         'split': lambda val, delimeter=" " : val.split(delimeter),
-        'print': lambda val : print(val),
+        'talk': lambda val : print(val),
     })
     return env
 

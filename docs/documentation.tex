@@ -140,7 +140,7 @@ varAssign $\rightarrow$ getter $"="$ expr $";"$ \\
 
 envFunc $\rightarrow$ $"reset"$ id $";"$ \\
 $\vert$ $"run"$ id $"with"$ expr $"iterations"$ $";"$\\
-$\vert$ $"add"$ id $"in"$ id $"at"$ expr $","$ expr  $";"$\\
+$\vert$ $"put"$ id $"in"$ id $"at"$ expr $","$ expr  $";"$\\
 
 \underline{Bodies}: \\
 
@@ -177,9 +177,9 @@ $\vert$ $"restart"$ $"behave"$ $";"$ \\
 $\vert$ $"stop"$ $";"$ \\
 $\vert$ $"pick"$ expr $";"$ \\
 $\vert$ $"put"$ expr $","$ expr $";"$ \\
-$\vert$ id $"="$ $"random"$ $"from"$ expr $"to"$ expr $")"$ \\
-$\vert$ id $"="$ $"find"$ $";"$ \\
-$\vert$ id $"="$ $"peers"$ $";"$\\
+$\vert$ $"random"$ $"from"$ expr $"to"$ expr $")"$ \\
+$\vert$ $"find objects"$ \\
+$\vert$ $"find peers"$ \\
 
 moveStmt $\rightarrow$ $"move"$ expr $","$ expr $\vert$ $"move"$ $"up"$ $\vert$ $"move"$ $"down"$ $\vert$ $"move"$ $"left"$ $\vert$ $"move"$ $"right"$ \\
 
