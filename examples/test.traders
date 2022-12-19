@@ -1,0 +1,12 @@
+let a : number = 6;
+a = 9;
+
+behave normal{
+    in case roly_es_un_gran_tipo{
+        print("xxx");
+    }
+}
+
+env base{
+    sizee = 1;
+}
