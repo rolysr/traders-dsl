@@ -1,15 +1,12 @@
 let a : number = 6;
 a = 9;
 
-<<<<<<< HEAD
 behave normal{
     in case roly_es_un_gran_tipo{
         print("xxx");
     }
 }
 
-=======
->>>>>>> dev
 env base{
     sizee = 1;
 }

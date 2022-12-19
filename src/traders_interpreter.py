@@ -388,11 +388,6 @@ class Function(object):
                 raise TypeError("Type of parameter {} should be {} but got {}.".format(self.params[i][0], self.params[i][1], self.process.rtypes[type(args[i])]))
             params.append(self.params[i][0])
         return self.process.run(self.body, Env(params, args, self.env))
-<<<<<<< HEAD
-
-=======
-        
->>>>>>> dev
 class Value(object):
     """
     Class container for values inside the Traders Language
