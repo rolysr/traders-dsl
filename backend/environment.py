@@ -10,16 +10,28 @@ class Environment:
         trade among them 
     """
 
+<<<<<<< HEAD
     def __init__(self, rows, columns, number_iterations, log, agents) -> None:
         """
             Class constructor
         """
         self.type = "env"
+=======
+    def __init__(self, rows, columns, number_iterations, log) -> None:
+        """
+            Class constructor
+        """
+
+>>>>>>> dev
         self.rows = rows
         self.columns = columns
         self.number_iterations = number_iterations
         self.number_executed_iterations = 0
+<<<<<<< HEAD
         self.agents = agents
+=======
+        self.agents = []
+>>>>>>> dev
         self.log = log
         self.logger = Logger()
 
@@ -65,7 +77,11 @@ class Environment:
             return
         
         self.agents.append(agent)
+<<<<<<< HEAD
         self.matrix[(row, column)].append(agent)
+=======
+        self.matrix[row, column].append(agent)
+>>>>>>> dev
 
     def add_item(self, item, row, column):
         """
@@ -75,4 +91,8 @@ class Environment:
         if 0 <= row < self.rows and 0 <= column < self.columns:
             return
         
+<<<<<<< HEAD
         self.matrix[(row, column)].append(item)
+=======
+        self.matrix[row, column].append(item)
+>>>>>>> dev

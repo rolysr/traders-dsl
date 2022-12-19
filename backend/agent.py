@@ -1,12 +1,16 @@
 from backend.item import Item
 from backend.offer import Offer
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> dev
 class Agent:
     """
         A class that represents a trader agent
     """
 
+<<<<<<< HEAD
     def __init__(self, name, attributes) -> None:
         """
             Class constructor
@@ -14,6 +18,18 @@ class Agent:
         self.type = "agent"
         self.name = name
         self.attributes = attributes
+=======
+    def __init__(self, name, balance, behavior) -> None:
+        """
+            Class constructor
+        """
+        self.name = name
+        self.balance = balance
+        self.behavior = behavior
+        self.on_keep = {}
+        self.on_sale = {}
+        self.location = (-1, -1)  
+>>>>>>> dev
 
     def buy_to_agent(self, agent):
         """
@@ -58,17 +74,28 @@ class Agent:
         try:
             sale_price = agent.on_sale[name].price
             sale_amount = agent.on_sale[name].item.amount
+<<<<<<< HEAD
             final_amount = min(sale_amount, amount,
                                self.balance // sale_amount)
 
             if self.balance >= sale_price*amount or final_amount > 0:
 
+=======
+            final_amount = min(sale_amount, amount, self.balance // sale_amount)
+
+            if self.balance >= sale_price*amount or final_amount > 0:
+                
+>>>>>>> dev
                 agent.on_sale[name].item.amount -= amount
                 agent.balance += sale_price*amount
 
                 if agent.on_sale[name].amount == 0:
                     agent.on_sale.pop(name)
+<<<<<<< HEAD
 
+=======
+                
+>>>>>>> dev
                 self.balance -= sale_price*amount
 
                 try:
@@ -77,4 +104,8 @@ class Agent:
                     self.on_keep[name] = Item(name, amount)
 
         except:
+<<<<<<< HEAD
             pass
+=======
+            pass
+>>>>>>> dev

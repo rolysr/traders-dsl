@@ -94,7 +94,11 @@ class TradersParser(Parser):
     def envFunc(self, p):
         return ('runEnv', p.ID, p.expr)
 
+<<<<<<< HEAD
     @_('PUT ID IN ID AT expr "," expr')
+=======
+    @_('PUT ID IN ID AT expr, expr')
+>>>>>>> dev
     def envFunc(self, p):
         return ('putEnv', p.ID, p.expr0, p.expr1, p.expr2, p.expr3)
 
@@ -230,7 +234,11 @@ class TradersParser(Parser):
     def primFuncStmt(self, p):
         return ('find', 'objects')
         
+<<<<<<< HEAD
     @_('FIND PEERS')
+=======
+    @_('FID PEERS')
+>>>>>>> dev
     def primFuncStmt(self, p):
         return ('find', 'peers')
 
