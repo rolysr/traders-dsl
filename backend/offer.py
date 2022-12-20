@@ -11,6 +11,6 @@ class Offer:
         """
             Class contructor
         """
-
+        self.type = "offer"
         self.item = Item(name, amount)
         self.price = price

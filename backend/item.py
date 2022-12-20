@@ -8,6 +8,6 @@ class Item:
         """
             Class contructor
         """
-
+        self.type = "item"
         self.name = name
         self.amount = amount

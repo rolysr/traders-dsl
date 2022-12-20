@@ -414,7 +414,7 @@ class TradersParser(Parser):
 
     @_('STRING ":" "(" listItems ")" "," bookItems')
     def bookItems(self, p):
-        return (p.expr, ) + p.listItems
+        return ((p.STRING, p.listItems), ) + p.bookItems
 
     @_('empty')
     def bookItems(self, p):

@@ -1,12 +1,14 @@
 let a : number = 6;
-a = 9;
+a = a + 5;
+let b: number = 2;
+a=b*a;
+b=b -                                                 a;                                      
+a=(-b);
+let l1: list = ["kk", "xxxx", ":)", ];
+let book1: book = { "carne" : (2, 300, ), "aceite" : (2, 300, ), };
 
 behave normal{
-    in case roly_es_un_gran_tipo{
-        print("xxx");
+    foreach item in book1{
+        talk a;
     }
-}
-
-env base{
-    sizee = 1;
 }

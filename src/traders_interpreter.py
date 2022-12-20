@@ -4,54 +4,13 @@ from os.path import exists, dirname, join
 from os import getenv
 from src.traders_lexer import TradersLexer
 from src.traders_parser import TradersParser
-
-def standard_library():
-    """
-    Function that generates a dictionary that contains all the basic functions
-    """
-    env = Env()
-    env.update({
-        'input': lambda prompt: input(prompt),
-        'random': lambda max: randint(0, max),
-        'is_float': lambda val: isinstance(val, float),
-        'is_int': lambda val: isinstance(val, int),
-        'is_string': lambda val: isinstance(val, str),
-        'is_list': lambda val: isinstance(val, list),
-        'is_bool': lambda val: isinstance(val, bool),
-        'to_float': lambda val: float(val),
-        'to_int': lambda val: int(val),
-        'to_string': lambda val: str(val),
-        'to_list': lambda val: list(val),
-        'to_bool': lambda val: bool(val),
-        'append': lambda lst, val: lst.append(val),
-        'pop': lambda lst: lst.pop(),
-        'pop_at': lambda lst, idx: lst.pop(idx),
-        'extend': lambda lst1, lst2: lst1.extend(lst2),
-        'len': lambda obj : len(obj),
-        'sin': lambda val : sin(val),
-        'cos': lambda val : cos(val),
-        'tan': lambda val : tan(val),
-        'asin': lambda val : asin(val),
-        'acos': lambda val : acos(val),
-        'atan': lambda val : atan(val),
-        'sinh': lambda val : sinh(val),
-        'cosh': lambda val : cosh(val),
-        'tanh': lambda val : tanh(val),
-        'ceil': lambda val : ceil(val),
-        'floor': lambda val : floor(val),
-        'abs': lambda val : abs(val),
-        'sqrt': lambda val : sqrt(val),
-        'pow': lambda base, exponent : pow(base, exponent),
-        'deg': lambda val : degrees(val),
-        'rad': lambda val : radians(val),
-        'log': lambda val : log(val),
-        'exit': lambda val : exit(val),
-        'trim': lambda val : val.strip(),
-        'split': lambda val, delimeter=" " : val.split(delimeter),
-        'talk': lambda val : print(val),
-    })
-    return env
-
+from backend.list import *
+from backend.agent import *
+from backend.basic_types import *
+from backend.behavior import *
+from backend.book import *
+from backend.environment import *
+from backend.offer import *
 
 class Process:
     """
@@ -62,7 +21,7 @@ class Process:
         self.file_path = filename
         if not isinstance(env, Env):
             _env = env
-            env = Env(outer=standard_library())
+            env = Env(outer={})
             env.update(_env)
         self.env = Env(outer=env)
         self.should_return = False
@@ -372,7 +331,6 @@ class Env(dict):
 
         raise UnboundLocalError("{} is undefined".format(name))
 
-
 class Function(object):
     """
     Function object for O Functions and annoymous functions (lambdas)
@@ -388,6 +346,7 @@ class Function(object):
                 raise TypeError("Type of parameter {} should be {} but got {}.".format(self.params[i][0], self.params[i][1], self.process.rtypes[type(args[i])]))
             params.append(self.params[i][0])
         return self.process.run(self.body, Env(params, args, self.env))
+
 class Value(object):
     """
     Class container for values inside the Traders Language
