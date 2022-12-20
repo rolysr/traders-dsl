@@ -7,7 +7,7 @@ class TradersParser(Parser):
     Parser for the Traders DLS
     """
     tokens = TradersLexer.tokens
-    start = 'program'
+    start = 'statementList'
     debugfile = 'aiuda.pofavo'
 
     precedence = (
@@ -414,7 +414,7 @@ class TradersParser(Parser):
 
     @_('STRING ":" "(" listItems ")" "," bookItems')
     def bookItems(self, p):
-        return ((p.STRING, p.listItems), ) + p.bookItems
+        return ((p.STRING, ('primary_list', p.listItems)), ) + p.bookItems
 
     @_('empty')
     def bookItems(self, p):

@@ -81,3 +81,12 @@ class Agent:
 
         except:
             pass
+
+    def copy(self, other):
+        self.name = other.name
+        self.balance = other.balance
+        self.behavior = other.behavior
+        self.on_keep = other.on_keep
+        self.on_sale = other.on_sale
+        self.location = other.location  
+        self.attributes = other.attributes

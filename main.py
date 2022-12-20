@@ -54,3 +54,9 @@ if __name__ == "__main__":
         repl()
     else:
         exec_file()
+
+# behave normal{
+#     foreach item in book1{
+#         talk a;
+#     }
+# }

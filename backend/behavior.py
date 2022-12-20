@@ -11,3 +11,6 @@ class Behavior:
         self.type = "behave"
         self.name = name
         self.statement_list = statement_list
+
+    def copy(self, other):
+        self.statement_list = other.statement_list

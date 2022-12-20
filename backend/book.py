@@ -46,3 +46,7 @@ class Book:
             if self.type[1][0] == 2:
                 self.value[product] = List("number", [Number(0), Number(0)])
         self.value[product].set(1, price)
+
+    def copy(self, other):
+        self.type = other.type
+        self.value = other.value

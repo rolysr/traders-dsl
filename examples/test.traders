@@ -1,14 +1,16 @@
 let a : number = 6;
+talk a;
 a = a + 5;
+talk a;
 let b: number = 2;
+talk b;
 a=b*a;
-b=b -                                                 a;                                      
+talk a;
+b=b -                                                 a;     
+talk b;                                 
 a=(-b);
+talk a;
 let l1: list = ["kk", "xxxx", ":)", ];
+talk l1;
 let book1: book = { "carne" : (2, 300, ), "aceite" : (2, 300, ), };
-
-behave normal{
-    foreach item in book1{
-        talk a;
-    }
-}
+talk book1;

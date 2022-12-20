@@ -1,5 +1,5 @@
 from random import randint
-from math import sin, cos, tan, asin, acos, atan, sinh, cosh, tanh ,ceil, floor, sqrt, degrees, radians, log
+from math import sin, cos, tan, asin, acos, atan, sinh, cosh, tanh, ceil, floor, sqrt, degrees, radians, log
 from os.path import exists, dirname, join
 from os import getenv
 from src.traders_lexer import TradersLexer
@@ -12,22 +12,26 @@ from backend.book import *
 from backend.environment import *
 from backend.offer import *
 
+
 class Process:
     """
     The main process the executes Traders Abstract Syntax Tree
     """
+
     def __init__(self, tree, filename="?", env={}):
         self.tree = tree
         self.file_path = filename
         if not isinstance(env, Env):
             _env = env
-            env = Env(outer={})
+            env = Env(outer=Env({}))
             env.update(_env)
         self.env = Env(outer=env)
         self.should_return = False
         self.depth = 0
-        self.types  =  { 'int': int, 'float': float, 'string': str, 'bool': bool, 'list': list, 'dict': dict }
-        self.rtypes = { int: 'int', float: 'float', str: 'string', bool: 'bool', list: 'list', dict: 'dict' }
+        self.types = {'int': int, 'float': float, 'string': str,
+                      'bool': bool, 'list': list, 'dict': dict}
+        self.rtypes = {int: 'int', float: 'float', str: 'string',
+                       bool: 'bool', list: 'list', dict: 'dict'}
 
     def run(self, tree=None, env={}):
         current_env = self.env
@@ -87,16 +91,22 @@ class Process:
         """
         Preparing values for printing
         """
-        if type(expr) == dict:
-            return str(expr)
+        if type(expr) in {Number, Bool, String}:
+            return str(expr.value)
+        if type(expr) == List:
+            ans = "["
+            for item in expr.value:
+                ans+=self.stringify(item)+","
+            ans+="]"
+            return ans
+        if type(expr) == Book:
+            ans = "{"
+            for item in expr.value.keys():
+                ans+=item+":"+self.stringify(expr.value[item])+","
+            ans+="}"
+            return ans
         elif expr is None:
             return "nil"
-        elif expr is True:
-            return "true"
-        elif expr is False:
-            return "false"
-        elif expr in self.rtypes:
-            return self.rtypes[expr]
         return str(expr)
 
     def evaluate(self, parsed):
@@ -107,7 +117,7 @@ class Process:
             return parsed
         else:
             action = parsed[0]
-            print(action)
+            # print(action)
 
             if action == 'behavior':
                 params = parsed[2]
@@ -118,8 +128,8 @@ class Process:
 
             elif action == 'call':
                 func = self.env.find(parsed[1])
-                if isinstance(func, Value):
-                    func = func.get()
+                if isinstance(func, Number) or isinstance(func, Bool) or isinstance(func, String) or isinstance(func, List) or isinstance(func, Book):
+                    return func
 
                 elif not isinstance(func, Function):
                     if type(func) == type(lambda x: x):
@@ -137,42 +147,90 @@ class Process:
                 self.depth -= 1
                 return res
 
+            elif action == 'talk':
+                print(self.stringify(self.evaluate(parsed[1])))
+                return None
             elif action == 'stop':
                 result = self.evaluate(parsed[1])
                 self.should_return = True
                 return result
 
-            elif action == 'var_define':
-                name = parsed[1]
-                if name in self.env:
-                    raise NameError('Cannot redefine variable \'%s\'' % name)
-                result = self.evaluate(parsed[2])
-                self.env.update({name: Value(result, type(result))})
-                return None
-            elif action == 'var_define_no_expr':
-                name = parsed[1]
-                if name in self.env:
-                    raise NameError('Cannot redefine variable \'%s\'' % name)
-                self.env.update({name: Value(None, self.types[parsed[2]])})
-                return None
-            elif action == 'var_assign':
-                if type(parsed[1]) is not tuple:
-                    if parsed[1] not in self.env:
-                        raise UnboundLocalError('Cannot assign to undefined variable \'%s\'' %
-                              parsed[1])
-                    result = self.evaluate(parsed[2])
-                    var = self.env.find(parsed[1])
-                    if type(result) != var.type:
-                        raise ValueError("Type of variable '{}' should be '{}' but instead got '{}'".format(parsed[1], self.rtypes[var.type], self.rtypes[type(result)]))
+            elif action == 'primary_bool':
+                return Bool(parsed[1])
+            elif action == 'primary_number':
+                return Number(parsed[1])
+            elif action == 'primary_string':
+                return String(parsed[1])
+            elif action == 'primary_list':
+                list_value = []
+                # print(parsed[1])
+                for expr in parsed[1]:
+                    list_value.append(self.evaluate(expr))
 
-                    # self.env.update({parsed[1]: result})
-                    var.value = result
-                    return None
+                if len(list_value) == 0:
+                    raise Exception("List must not be empty.")
+
+                for i in range(1, len(list_value)):
+                    if list_value[i].type != list_value[0].type:
+                        raise Exception(
+                            "Every list element must be of the same type.")
+
+                return List(list_value[0].type, list_value)
+            elif action == 'primary_book':
+                dict_value = {}
+                for expr in parsed[1]:
+                    dict_value[expr[0]] = self.evaluate(expr[1])
+
+                if len(parsed[1]) == 0:
+                    raise Exception("Book must not be empty.")
+                element_type = (
+                    len(dict_value[parsed[1][0][0]].value), )+dict_value[parsed[1][0][0]].type
+                for p_name in dict_value.keys():
+                    if (len(dict_value[p_name].value), )+dict_value[p_name].type != element_type:
+                        raise Exception(
+                            "Every dict element must be of the same type.")
+
+                return Book(element_type, dict_value)
+
+            elif action == 'varDecl_0':
+                name = parsed[1]
+                if name in self.env:
+                    raise NameError('Cannot redefine variable \'%s\'' % name)
+                if parsed[2] == "number":
+                    instance = Number(0)
+                elif parsed[2] == "bool":
+                    instance = Bool(0)
+                elif parsed[2] == "string":
+                    instance = String("")
                 else:
-                    var = self.evaluate(parsed[1][1])
-                    index = self.evaluate(parsed[1][2])
-                    value = self.evaluate(parsed[2])
-                    var[index] = value
+                    raise Exception(
+                        "List and Book variables must be declared by value")
+                self.env.update({name: instance})
+                return None
+            elif action == 'varDecl_1':
+                name = parsed[1]
+                # print(parsed)
+                if name in self.env:
+                    raise NameError('Cannot redefine variable \'%s\'' % name)
+                value = self.evaluate(parsed[3])
+                # print(value.type)
+                if not ((value.type in ["number", "bool", "string"] and value.type == parsed[2]) or value.type[0] == parsed[2]):
+                    raise Exception(
+                        "Declaration type and expression assignment does not match")
+                self.env.update({name: value})
+                return None
+            elif action == 'varAssign':
+                # print(parsed)
+
+                var = self.evaluate(parsed[1])
+                result = self.evaluate(parsed[2])
+                if result.type != var.type:
+                    raise ValueError("Type of variable '{}' should be '{}' but instead got '{}'".format(
+                        parsed[1], self.rtypes[var.type], self.rtypes[type(result)]))
+                # print(result.value)
+                # self.env.update({parsed[1]: result})
+                var.copy(result)
+                return None
             elif action == 'in_case':
                 cond = self.evaluate(parsed[1])
                 if cond:
@@ -206,15 +264,23 @@ class Process:
             elif action == '+':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                return result + result2
+                if result.type == 'string' and result2.type == 'string':
+                    return String(result.value+result2.value)
+                if result.type == 'number' and result2.type == 'number':
+                    return Number(result.value+result2.value)
+                raise Exception("unsupported operand type(s) for +: {0} and {1}".format(result.type, result2.type))
             elif action == '-':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                return result - result2
+                if result.type == 'number' and result2.type == 'number':
+                    return Number(result.value-result2.value)
+                raise Exception("unsupported operand type(s) for -: {0} and {1}".format(result.type, result2.type))
             elif action == '*':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                return result * result2
+                if result.type == 'number' and result2.type == 'number':
+                    return Number(result.value*result2.value)
+                raise Exception("unsupported operand type(s) for *: {0} and {1}".format(result.type, result2.type))
             elif action == '/':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -278,6 +344,11 @@ class Process:
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
                 return result or result2
+            elif action == 'neg':
+                result = self.evaluate(parsed[1])
+                if result.type == 'number':
+                    return Number(-result.value)
+                raise Exception("unsupported operand type(s) for negation: {0}".format(result.type)) 
             elif action == '!':
                 result = self.evaluate(parsed[1])
                 if result == True:
@@ -315,10 +386,12 @@ class Process:
         program.run()
         self.env.update(program.env)
 
+
 class Env(dict):
     """
     Environment Class
     """
+
     def __init__(self, params=(), args=(), outer=None):
         self.update(zip(params, args))
         self.outer = outer
@@ -331,10 +404,12 @@ class Env(dict):
 
         raise UnboundLocalError("{} is undefined".format(name))
 
+
 class Function(object):
     """
     Function object for O Functions and annoymous functions (lambdas)
     """
+
     def __init__(self, process, params, body, env):
         self.process, self.params, self.body, self.env = process, params, body, env
         self.type = 'function'
@@ -343,14 +418,17 @@ class Function(object):
         params = []
         for i in range(len(self.params)):
             if type(args[i]) != self.process.types[self.params[i][1]]:
-                raise TypeError("Type of parameter {} should be {} but got {}.".format(self.params[i][0], self.params[i][1], self.process.rtypes[type(args[i])]))
+                raise TypeError("Type of parameter {} should be {} but got {}.".format(
+                    self.params[i][0], self.params[i][1], self.process.rtypes[type(args[i])]))
             params.append(self.params[i][0])
         return self.process.run(self.body, Env(params, args, self.env))
+
 
 class Value(object):
     """
     Class container for values inside the Traders Language
     """
+
     def __init__(self, value, val_type):
         self.value = value
         self.type = val_type

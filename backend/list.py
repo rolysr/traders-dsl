@@ -30,3 +30,7 @@ class List:
     
     def reverse(self):
         self.value.reverse()
+    
+    def copy(self, other):
+        self.type = other.type
+        self.value = other.value
