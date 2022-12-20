@@ -212,7 +212,7 @@ class TradersParser(Parser):
         
     @_('STOP SEP')
     def primFuncStmt(self, p):
-        return ('stop', p.expr)
+        return ('stop')
         
     @_('PICK expr SEP')
     def primFuncStmt(self, p):

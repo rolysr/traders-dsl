@@ -83,10 +83,19 @@ class Agent:
             pass
 
     def copy(self, other):
-        self.name = other.name
         self.balance = other.balance
         self.behavior = other.behavior
         self.on_keep = other.on_keep
         self.on_sale = other.on_sale
         self.location = other.location  
         self.attributes = other.attributes
+    
+    def __eq__(self, other):
+        ans = True
+        ans&=self.balance == other.balance
+        ans&=self.behavior == other.behavior
+        ans&=self.on_keep == other.on_keep
+        ans&=self.on_sale == other.on_sale
+        ans&=self.location == other.location  
+        ans&=self.attributes == other.attributes
+        return ans

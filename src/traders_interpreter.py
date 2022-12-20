@@ -96,14 +96,14 @@ class Process:
         if type(expr) == List:
             ans = "["
             for item in expr.value:
-                ans+=self.stringify(item)+","
-            ans+="]"
+                ans += self.stringify(item)+","
+            ans += "]"
             return ans
         if type(expr) == Book:
             ans = "{"
             for item in expr.value.keys():
-                ans+=item+":"+self.stringify(expr.value[item])+","
-            ans+="}"
+                ans += item+":"+self.stringify(expr.value[item])+","
+            ans += "}"
             return ans
         elif expr is None:
             return "nil"
@@ -151,9 +151,8 @@ class Process:
                 print(self.stringify(self.evaluate(parsed[1])))
                 return None
             elif action == 'stop':
-                result = self.evaluate(parsed[1])
                 self.should_return = True
-                return result
+                return None
 
             elif action == 'primary_bool':
                 return Bool(parsed[1])
@@ -204,7 +203,7 @@ class Process:
                     instance = String("")
                 else:
                     raise Exception(
-                        "List and Book variables must be declared by value")
+                        "List and Book variables must be declared with value")
                 self.env.update({name: instance})
                 return None
             elif action == 'varDecl_1':
@@ -261,6 +260,62 @@ class Process:
                     raise IndexError('List indices must be integers')
                     return None
                 return var[index]
+            elif action == 'or':
+                result = self.evaluate(parsed[1])
+                result2 = self.evaluate(parsed[2])
+                if result.type == 'bool' and result2.type == 'bool':
+                    return Bool(result.value or result2.value)
+                raise Exception("unsupported operand type(s) for \'and\': {0} and {1}".format(
+                    result.type, result2.type))
+            elif action == 'and':
+                result = self.evaluate(parsed[1])
+                result2 = self.evaluate(parsed[2])
+                if result.type == 'bool' and result2.type == 'bool':
+                    return Bool(result.value and result2.value)
+                raise Exception("unsupported operand type(s) for \'and\': {0} and {1}".format(
+                    result.type, result2.type))
+            elif action == '!=':
+                result = self.evaluate(parsed[1])
+                result2 = self.evaluate(parsed[2])
+                if result.type == result2.type:
+                    return Bool(not (result == result2))
+                raise Exception("unsupported operand type(s) for !=: {0} and {1}".format(
+                    result.type, result2.type))
+            elif action == '==':
+                result = self.evaluate(parsed[1])
+                result2 = self.evaluate(parsed[2])
+                if result.type == result2.type:
+                    return Bool(result == result2)
+                raise Exception("unsupported operand type(s) for ==: {0} and {1}".format(
+                    result.type, result2.type))
+            elif action == '<':
+                result = self.evaluate(parsed[1])
+                result2 = self.evaluate(parsed[2])
+                if result.type == 'number' and result2.type == 'number':
+                    return Bool(result.value < result2.value)
+                raise Exception("unsupported operand type(s) for <: {0} and {1}".format(
+                    result.type, result2.type))
+            elif action == '<=':
+                result = self.evaluate(parsed[1])
+                result2 = self.evaluate(parsed[2])
+                if result.type == 'number' and result2.type == 'number':
+                    return Bool(result.value <= result2.value)
+                raise Exception("unsupported operand type(s) for <=: {0} and {1}".format(
+                    result.type, result2.type))
+            elif action == '>=':
+                result = self.evaluate(parsed[1])
+                result2 = self.evaluate(parsed[2])
+                if result.type == 'number' and result2.type == 'number':
+                    return Bool(result.value >= result2.value)
+                raise Exception("unsupported operand type(s) for >=: {0} and {1}".format(
+                    result.type, result2.type))
+            elif action == '>':
+                result = self.evaluate(parsed[1])
+                result2 = self.evaluate(parsed[2])
+                if result.type == 'number' and result2.type == 'number':
+                    return Bool(result.value > result2.value)
+                raise Exception("unsupported operand type(s) for >: {0} and {1}".format(
+                    result.type, result2.type))
             elif action == '+':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -268,97 +323,41 @@ class Process:
                     return String(result.value+result2.value)
                 if result.type == 'number' and result2.type == 'number':
                     return Number(result.value+result2.value)
-                raise Exception("unsupported operand type(s) for +: {0} and {1}".format(result.type, result2.type))
+                raise Exception(
+                    "unsupported operand type(s) for +: {0} and {1}".format(result.type, result2.type))
             elif action == '-':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
                 if result.type == 'number' and result2.type == 'number':
                     return Number(result.value-result2.value)
-                raise Exception("unsupported operand type(s) for -: {0} and {1}".format(result.type, result2.type))
+                raise Exception(
+                    "unsupported operand type(s) for -: {0} and {1}".format(result.type, result2.type))
             elif action == '*':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
                 if result.type == 'number' and result2.type == 'number':
                     return Number(result.value*result2.value)
-                raise Exception("unsupported operand type(s) for *: {0} and {1}".format(result.type, result2.type))
+                raise Exception(
+                    "unsupported operand type(s) for *: {0} and {1}".format(result.type, result2.type))
             elif action == '/':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                return result / result2
-            elif action == '%':
+                if result.type == 'number' and result2.type == 'number':
+                    return Number(result.value/result2.value)
+                raise Exception(
+                    "unsupported operand type(s) for /: {0} and {1}".format(result.type, result2.type))
+            elif action == '!':
                 result = self.evaluate(parsed[1])
-                result2 = self.evaluate(parsed[2])
-                return result % result2
-            elif action == '==':
-                result = self.evaluate(parsed[1])
-                result2 = self.evaluate(parsed[2])
-                return result == result2
-            elif action == '!=':
-                result = self.evaluate(parsed[1])
-                result2 = self.evaluate(parsed[2])
-                return result != result2
-            elif action == '<':
-                result = self.evaluate(parsed[1])
-                result2 = self.evaluate(parsed[2])
-                return result < result2
-            elif action == '>':
-                result = self.evaluate(parsed[1])
-                result2 = self.evaluate(parsed[2])
-                return result > result2
-            elif action == '<=':
-                result = self.evaluate(parsed[1])
-                result2 = self.evaluate(parsed[2])
-                return result <= result2
-            elif action == '>=':
-                result = self.evaluate(parsed[1])
-                result2 = self.evaluate(parsed[2])
-                return result >= result2
-            elif action == '<<':
-                result = self.evaluate(parsed[1])
-                result2 = self.evaluate(parsed[2])
-                return result << result2
-            elif action == '>>':
-                result = self.evaluate(parsed[1])
-                result2 = self.evaluate(parsed[2])
-                return result >> result2
-            elif action == '&':
-                result = self.evaluate(parsed[1])
-                result2 = self.evaluate(parsed[2])
-                return result & result2
-            elif action == '^':
-                result = self.evaluate(parsed[1])
-                result2 = self.evaluate(parsed[2])
-                return result ^ result2
-            elif action == '|':
-                result = self.evaluate(parsed[1])
-                result2 = self.evaluate(parsed[2])
-                return result | result2
-            elif action == '~':
-                result = self.evaluate(parsed[1])
-                return ~result
-            elif action == 'and':
-                result = self.evaluate(parsed[1])
-                result2 = self.evaluate(parsed[2])
-                return result and result2
-            elif action == 'or':
-                result = self.evaluate(parsed[1])
-                result2 = self.evaluate(parsed[2])
-                return result or result2
+                if result.type == 'bool':
+                    return Bool(not result.value)
+                raise Exception(
+                    "unsupported operand type(s) for logical negation: {0}".format(result.type))
             elif action == 'neg':
                 result = self.evaluate(parsed[1])
                 if result.type == 'number':
                     return Number(-result.value)
-                raise Exception("unsupported operand type(s) for negation: {0}".format(result.type)) 
-            elif action == '!':
-                result = self.evaluate(parsed[1])
-                if result == True:
-                    return False
-                return True
-            elif action == '?:':
-                cond = self.evaluate(parsed[1])
-                if cond:
-                    return self.evaluate(parsed[2])
-                return self.evaluate(parsed[3])
+                raise Exception(
+                    "unsupported operand type(s) for negation: {0}".format(result.type))
             elif action == '.':
                 if type(parsed[1]) == tuple:
                     var = self.evaluate(parsed[1])

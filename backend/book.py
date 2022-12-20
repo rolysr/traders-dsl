@@ -50,3 +50,9 @@ class Book:
     def copy(self, other):
         self.type = other.type
         self.value = other.value
+
+    def __eq__(self, other):
+        ans = True
+        ans&=self.type == other.type
+        ans&=self.value == other.value
+        return ans
