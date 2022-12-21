@@ -232,7 +232,9 @@ class Process:
                 return None
             elif action == 'repeatStmt':
                 cond = self.evaluate(parsed[1])
-                while cond:
+                if cond.type != 'bool':
+                    raise Exception("Cannot cast from {} to Bool".format(cond.type))
+                while cond.value:
                     self.run(parsed[2])
                     cond = self.evaluate(parsed[1])
                 return None
@@ -241,23 +243,31 @@ class Process:
                 if iterator_name in self.env:
                     raise Exception("Iterator name must not match any previous variable name.")
                 iterable = self.evaluate(parsed[2])
-                if iterable.type == 'book':
+                if type(iterable) == Book:
                     iterable = convert_book_to_entry_list(iterable)
+                elif type(iterable) == List:
+                    iterable = iterable.value
+                else:
+                    raise Exception("Unsupported iterable type: {}.".format(iterable.type))
                 for value in iterable:
+                    actual_env = deepcopy(self.env)
                     self.env[iterator_name] = value
                     self.run(parsed[3])
-                    self.env.pop(iterator_name)
+                    self.env = actual_env
                 return None
             elif action == 'incaseStmt' or action == 'inothercaseStmt_0': #in case and in other case general form
                 cond = self.evaluate(parsed[1])
-                if cond.type != Bool:
+                if cond.type != 'bool':
                     raise Exception("condition must be boolean expr")
                 if cond.value:
-                    return self.run(parsed[2])
+                    self.run(parsed[2])
+                    return None
                 else:
-                    return self.evaluate(parsed[3])
+                    self.evaluate(parsed[3])
+                    return None
             elif action == 'inothercaseStmt_1': #otherwise
-                return self.run(parsed[1])
+                self.run(parsed[1])
+                return None
             elif action == 'inothercaseStmt_2': #empty inothercaseStmt
                 pass
             elif action == 'condition':

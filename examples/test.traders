@@ -1,26 +1,39 @@
-let a : number = 6;
+
+let bs: list = [-20, 0, 20, ];
+foreach b in bs{
+    let a: number =0;
+    in case b<0{
+        repeat when b<0{
+            a = a - b;
+            b = b + 1;
+        }
+    }
+    in other case b>0{
+        repeat when b>0{
+            a = a + 2*b;
+            b = b - 1;
+        }
+    }
+    otherwise{
+        a=-1000;
+    }
+    talk a;
+}
+let b: number =0;
+let a: number =0;
+in case b<0{
+    repeat when b<0{
+        a = a - b;
+        b = b + 1;
+    }
+}
+in other case b>0{
+    repeat when b>0{
+        a = a + 2*b;
+        b = b - 1;
+    }
+}
+otherwise{
+    a=-1000;
+}
 talk a;
-a = a + 5;
-talk a;
-let b: number = 2;
-talk b;
-a=b*a;
-talk a;
-b=b -                                                 a;    
-talk b;          
-let c: bool = a > 0 and b < 0;
-talk c;
-let d: bool = c or b>=0;
-talk d;
-d = !c or !d;
-talk d;
-a=(-b);
-talk a;
-b=5/a*6;
-talk b;
-b=5/(a*6);
-talk b;
-let l1: list = ["kk", "xxxx", ":)", ];
-talk l1;
-let book1: book = { "carne" : (2, 300, ), "aceite" : (2, 300, ), };
-talk book1;
