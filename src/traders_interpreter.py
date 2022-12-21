@@ -175,6 +175,7 @@ class Process:
                             "Every list element must be of the same type.")
 
                 return List(list_value[0].type, list_value)
+
             elif action == 'primary_book':
                 dict_value = {}
                 for expr in parsed[1]:
@@ -206,6 +207,7 @@ class Process:
                         "List and Book variables must be declared with value")
                 self.env.update({name: instance})
                 return None
+
             elif action == 'varDecl_1':
                 name = parsed[1]
                 # print(parsed)
@@ -218,18 +220,17 @@ class Process:
                         "Declaration type and expression assignment does not match")
                 self.env.update({name: value})
                 return None
-            elif action == 'varAssign':
-                # print(parsed)
 
+            elif action == 'varAssign':
                 var = self.evaluate(parsed[1])
                 result = self.evaluate(parsed[2])
                 if result.type != var.type:
                     raise ValueError("Type of variable '{}' should be '{}' but instead got '{}'".format(
                         parsed[1], self.rtypes[var.type], self.rtypes[type(result)]))
-                # print(result.value)
-                # self.env.update({parsed[1]: result})
+                
                 var.copy(result)
                 return None
+
             elif action == 'repeatStmt':
                 cond = self.evaluate(parsed[1])
                 if cond.type != 'bool':
@@ -238,10 +239,12 @@ class Process:
                     self.run(parsed[2])
                     cond = self.evaluate(parsed[1])
                 return None
+
             elif action == 'foreachStmt':
                 iterator_name = parsed[1]
                 if iterator_name in self.env:
                     raise Exception("Iterator name must not match any previous variable name.")
+                
                 iterable = self.evaluate(parsed[2])
                 if type(iterable) == Book:
                     iterable = convert_book_to_entry_list(iterable)
@@ -249,46 +252,40 @@ class Process:
                     iterable = iterable.value
                 else:
                     raise Exception("Unsupported iterable type: {}.".format(iterable.type))
+                
                 for value in iterable:
-                    actual_env = deepcopy(self.env)
+                    actual_env_vars = list(self.env.keys())
+                    
                     self.env[iterator_name] = value
                     self.run(parsed[3])
-                    self.env = actual_env
+
+                    to_erase=[]
+                    for var in self.env.keys():
+                        if var not in actual_env_vars:
+                            to_erase.append(var)
+                    for var in to_erase:
+                        self.env.pop(var)
                 return None
+            
             elif action == 'incaseStmt' or action == 'inothercaseStmt_0': #in case and in other case general form
                 cond = self.evaluate(parsed[1])
                 if cond.type != 'bool':
                     raise Exception("condition must be boolean expr")
+                
                 if cond.value:
                     self.run(parsed[2])
                     return None
                 else:
                     self.evaluate(parsed[3])
                     return None
+            
             elif action == 'inothercaseStmt_1': #otherwise
                 self.run(parsed[1])
                 return None
+            
             elif action == 'inothercaseStmt_2': #empty inothercaseStmt
                 pass
-            elif action == 'condition':
-                return self.evaluate(parsed[1])
-            elif action == 'block':
-                return self.run(parsed[1])
-            elif action == 'var':
-                var = self.env.find(parsed[1])
-                if not isinstance(var, Value):
-                    return var
-                return var.value
-            elif action == 'indexing':
-                var = self.evaluate(parsed[1])
-                index = self.evaluate(parsed[2])
-                if index > len(var):
-                    raise IndexError('Index out of bounds error')
-                    return None
-                elif type(index) != int:
-                    raise IndexError('List indices must be integers')
-                    return None
-                return var[index]
+            
             elif action == 'or':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -296,6 +293,7 @@ class Process:
                     return Bool(result.value or result2.value)
                 raise Exception("unsupported operand type(s) for \'and\': {0} and {1}".format(
                     result.type, result2.type))
+            
             elif action == 'and':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -303,6 +301,7 @@ class Process:
                     return Bool(result.value and result2.value)
                 raise Exception("unsupported operand type(s) for \'and\': {0} and {1}".format(
                     result.type, result2.type))
+            
             elif action == '!=':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -310,6 +309,7 @@ class Process:
                     return Bool(not (result == result2))
                 raise Exception("unsupported operand type(s) for !=: {0} and {1}".format(
                     result.type, result2.type))
+            
             elif action == '==':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -317,6 +317,7 @@ class Process:
                     return Bool(result == result2)
                 raise Exception("unsupported operand type(s) for ==: {0} and {1}".format(
                     result.type, result2.type))
+            
             elif action == '<':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -324,6 +325,7 @@ class Process:
                     return Bool(result.value < result2.value)
                 raise Exception("unsupported operand type(s) for <: {0} and {1}".format(
                     result.type, result2.type))
+            
             elif action == '<=':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -331,6 +333,7 @@ class Process:
                     return Bool(result.value <= result2.value)
                 raise Exception("unsupported operand type(s) for <=: {0} and {1}".format(
                     result.type, result2.type))
+            
             elif action == '>=':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -338,6 +341,7 @@ class Process:
                     return Bool(result.value >= result2.value)
                 raise Exception("unsupported operand type(s) for >=: {0} and {1}".format(
                     result.type, result2.type))
+            
             elif action == '>':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -345,6 +349,7 @@ class Process:
                     return Bool(result.value > result2.value)
                 raise Exception("unsupported operand type(s) for >: {0} and {1}".format(
                     result.type, result2.type))
+            
             elif action == '+':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -354,6 +359,7 @@ class Process:
                     return Number(result.value+result2.value)
                 raise Exception(
                     "unsupported operand type(s) for +: {0} and {1}".format(result.type, result2.type))
+            
             elif action == '-':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -361,6 +367,7 @@ class Process:
                     return Number(result.value-result2.value)
                 raise Exception(
                     "unsupported operand type(s) for -: {0} and {1}".format(result.type, result2.type))
+            
             elif action == '*':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -368,6 +375,7 @@ class Process:
                     return Number(result.value*result2.value)
                 raise Exception(
                     "unsupported operand type(s) for *: {0} and {1}".format(result.type, result2.type))
+            
             elif action == '/':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -375,18 +383,21 @@ class Process:
                     return Number(result.value/result2.value)
                 raise Exception(
                     "unsupported operand type(s) for /: {0} and {1}".format(result.type, result2.type))
+            
             elif action == '!':
                 result = self.evaluate(parsed[1])
                 if result.type == 'bool':
                     return Bool(not result.value)
                 raise Exception(
                     "unsupported operand type(s) for logical negation: {0}".format(result.type))
+            
             elif action == 'neg':
                 result = self.evaluate(parsed[1])
                 if result.type == 'number':
                     return Number(-result.value)
                 raise Exception(
                     "unsupported operand type(s) for negation: {0}".format(result.type))
+            
             elif action == '.':
                 if type(parsed[1]) == tuple:
                     var = self.evaluate(parsed[1])

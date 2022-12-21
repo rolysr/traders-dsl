@@ -16,7 +16,7 @@ class Agent:
         self.behavior = behavior
         self.on_keep = on_keep
         self.on_sale = on_sale
-        self.location = location  
+        self.location = location 
         self.attributes = attributes
 
     def buy_to_agent(self, agent):
