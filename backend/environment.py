@@ -76,3 +76,21 @@ class Environment:
             return
         
         self.matrix[(row, column)].append(item)
+    
+    def get(self, dotTail):
+        if len(dotTail) == 0:
+            return self
+        id = dotTail[1][1]
+        if id == "rows":
+            ans = self.rows
+        elif id == "columns":
+            ans = self.columns
+        elif id == "number_iterations":
+            ans = self.number_iterations
+        elif id == "agents":
+            ans = self.agents
+        elif id == "log":
+            ans = self.log
+        else:
+            raise Exception("{} must be an attribute of {}".format(id, self))
+        return ans.get(dotTail[1][2])

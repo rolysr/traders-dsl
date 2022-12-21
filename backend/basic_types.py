@@ -11,6 +11,11 @@ class Number:
         ans&=self.value == other.value
         return ans
 
+    def get(self, dotTail):
+        if len(dotTail) == 0:
+            return self
+        raise Exception("{} does not have any attribute.".format(self))
+
 class String:
     def __init__(self, value: str) -> None:
         self.type = "string"
@@ -23,6 +28,11 @@ class String:
         ans = True
         ans&=self.value == other.value
         return ans
+
+    def get(self, dotTail):
+        if len(dotTail) == 0:
+            return self
+        raise Exception("{} does not have any attribute.".format(self))
 
 class Bool:
     def __init__(self, value: bool) -> None:
@@ -37,7 +47,7 @@ class Bool:
     def copy(self, other):
         self.value = other.value
 
-    def __eq__(self, other):
-        ans = True
-        ans&=self.value == other.value
-        return ans
+    def get(self, dotTail):
+        if len(dotTail) == 0:
+            return self
+        raise Exception("{} does not have any attribute.".format(self))

@@ -19,3 +19,8 @@ class Behavior:
         ans = True
         ans&=self.statement_list == other.statement_list
         return ans
+
+    def get(self, dotTail):
+        if len(dotTail) == 0:
+            return self
+        raise Exception("{} does not have any attribute.".format(self))

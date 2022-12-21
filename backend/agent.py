@@ -99,3 +99,24 @@ class Agent:
         ans&=self.location == other.location  
         ans&=self.attributes == other.attributes
         return ans
+    
+    def get(self, dotTail):
+        if len(dotTail) == 0:
+            return self
+        id = dotTail[1][1]
+        if id == "balance":
+            ans = self.balance
+        elif id == "behavior":
+            ans = self.behavior
+        elif id == "on_keep":
+            ans = self.on_keep
+        elif id == "on_sale":
+            ans = self.on_sale
+        elif id == "location":
+            ans = self.location
+        else:
+            if id in self.attributes:
+                ans=self.attributes[id]
+            else:
+                raise Exception("{} must be an attribute of {}".format(id, self))
+        return ans.get(dotTail[1][2])

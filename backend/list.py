@@ -40,3 +40,15 @@ class List:
         ans&=self.type == other.type
         ans&=self.value == other.value
         return ans
+    
+    def get(self, dotTail):
+        if len(dotTail) == 0:
+            return self
+        id = dotTail[1][1]
+        #up to code list functions
+        ans = None
+        if True: 
+            pass
+        else:
+            raise Exception("{} must be an attribute of {}".format(id, self))
+        return ans.get(dotTail[1][2])

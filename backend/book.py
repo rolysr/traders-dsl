@@ -56,20 +56,35 @@ class Book:
         ans&=self.type == other.type
         ans&=self.value == other.value
         return ans
+
+    def get(self, dotTail):
+        if len(dotTail) == 0:
+            return self
+        raise Exception("{} does not have any attribute.".format(self))
     
 class Entry:
     def __init__(self, attributes) -> None:
         self.attributes = attributes
+    
+    def get(self, dotTail):
+        if len(dotTail) == 0:
+            return self
+        id = dotTail[1][1]
+        if id in self.attributes:
+            ans=self.attributes[id]
+        else:
+            raise Exception("{} must be an attribute of {}".format(id, self))
+        return ans.get(dotTail[1][2])
     
 def convert_book_to_entry_list(book: Book) -> list:
     ans = []
     for product in book.value.keys():
         attributes = dict()
         attributes["product"] = product
-        amount = book.value[product][0]
+        amount = book.value[product].value[0]
         attributes["amount"] = amount
-        if len(book.value[product]) > 1:
-            price = book.value[product][1]
+        if len(book.value[product].value) > 1:
+            price = book.value[product].value[1]
             attributes["price"] = price
         ans.append(Entry(attributes))
     return ans

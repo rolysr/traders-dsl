@@ -127,25 +127,15 @@ class Process:
                 return None
 
             elif action == 'call':
+                # print(parsed)
                 func = self.env.find(parsed[1])
-                if isinstance(func, Number) or isinstance(func, Bool) or isinstance(func, String) or isinstance(func, List) or isinstance(func, Book):
+                # print(func)
+                if isinstance(func, Number) or isinstance(func, Bool) or isinstance(func, String) or isinstance(func, List) or isinstance(func, Book)or isinstance(func, Entry):
+                    return func.get(parsed[2])
+
+                elif isinstance(func, Behavior):
                     return func
-
-                elif not isinstance(func, Function):
-                    if type(func) == type(lambda x: x):
-                        args = [self.evaluate(arg) for arg in parsed[2][1]]
-                        self.depth += 1
-                        res = func(*args)
-                        self.depth -= 1
-                        return res
-                    else:
-                        raise ValueError('\'%s\' not a function' % parsed[1])
-
-                args = [self.evaluate(arg) for arg in parsed[2][1]]
-                self.depth += 1
-                res = func(*args)
-                self.depth -= 1
-                return res
+                raise Exception("Error while resolving {}.".format(parsed))
 
             elif action == 'talk':
                 print(self.stringify(self.evaluate(parsed[1])))

@@ -104,20 +104,20 @@ Rule 100   empty -> <empty>
 
 Unused terminals:
 
-    STARASGN
-    DEC
+    MINUSASGN
     INC
-    XORASGN
-    SHR
-    PLUSASGN
+    SHL
     SLASHASGN
     MODULOASGN
-    SHLASGN
-    MINUSASGN
-    ANDASGN
-    SHL
-    SHRASGN
+    PLUSASGN
     ORASGN
+    SHR
+    STARASGN
+    SHLASGN
+    SHRASGN
+    DEC
+    XORASGN
+    ANDASGN
 
 Terminals, with rules where they appear:
 
