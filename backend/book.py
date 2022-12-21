@@ -56,3 +56,20 @@ class Book:
         ans&=self.type == other.type
         ans&=self.value == other.value
         return ans
+    
+class Entry:
+    def __init__(self, attributes) -> None:
+        self.attributes = attributes
+    
+def convert_book_to_entry_list(book: Book) -> list:
+    ans = []
+    for product in book.value.keys():
+        attributes = dict()
+        attributes["product"] = product
+        amount = book.value[product][0]
+        attributes["amount"] = amount
+        if len(book.value[product]) > 1:
+            price = book.value[product][1]
+            attributes["price"] = price
+        ans.append(Entry(attributes))
+    return ans

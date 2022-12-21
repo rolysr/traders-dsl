@@ -96,13 +96,13 @@ class Process:
         if type(expr) == List:
             ans = "["
             for item in expr.value:
-                ans += self.stringify(item)+","
+                ans += self.stringify(item)+", "
             ans += "]"
             return ans
         if type(expr) == Book:
             ans = "{"
             for item in expr.value.keys():
-                ans += item+":"+self.stringify(expr.value[item])+","
+                ans += item+" : "+self.stringify(expr.value[item])+", "
             ans += "}"
             return ans
         elif expr is None:
@@ -230,17 +230,36 @@ class Process:
                 # self.env.update({parsed[1]: result})
                 var.copy(result)
                 return None
-            elif action == 'in_case':
-                cond = self.evaluate(parsed[1])
-                if cond:
-                    return self.evaluate(parsed[2])
-                if parsed[3] is not None:
-                    return self.evaluate(parsed[3])
-            elif action == 'repeat_when':
+            elif action == 'repeatStmt':
                 cond = self.evaluate(parsed[1])
                 while cond:
-                    self.evaluate(parsed[2])
+                    self.run(parsed[2])
                     cond = self.evaluate(parsed[1])
+                return None
+            elif action == 'foreachStmt':
+                iterator_name = parsed[1]
+                if iterator_name in self.env:
+                    raise Exception("Iterator name must not match any previous variable name.")
+                iterable = self.evaluate(parsed[2])
+                if iterable.type == 'book':
+                    iterable = convert_book_to_entry_list(iterable)
+                for value in iterable:
+                    self.env[iterator_name] = value
+                    self.run(parsed[3])
+                    self.env.pop(iterator_name)
+                return None
+            elif action == 'incaseStmt' or action == 'inothercaseStmt_0': #in case and in other case general form
+                cond = self.evaluate(parsed[1])
+                if cond.type != Bool:
+                    raise Exception("condition must be boolean expr")
+                if cond.value:
+                    return self.run(parsed[2])
+                else:
+                    return self.evaluate(parsed[3])
+            elif action == 'inothercaseStmt_1': #otherwise
+                return self.run(parsed[1])
+            elif action == 'inothercaseStmt_2': #empty inothercaseStmt
+                pass
             elif action == 'condition':
                 return self.evaluate(parsed[1])
             elif action == 'block':

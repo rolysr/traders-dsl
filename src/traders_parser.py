@@ -186,7 +186,7 @@ class TradersParser(Parser):
 
     @_('empty')
     def inothercaseStmt(self, p):
-        return ( )
+        return ('inothercaseStmt_2')
     
     ##Primitive Functions Statements
 
