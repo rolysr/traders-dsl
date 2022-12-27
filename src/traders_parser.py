@@ -86,15 +86,15 @@ class TradersParser(Parser):
     def varAssign(self, p):
         return ('varAssign', p.getter , p.expr)
 
-    @_('RESET ID')
+    @_('RESET ID SEP')
     def envFunc(self, p):
         return ('resetEnv', p.ID)
 
-    @_('RUN ID WITH expr ITERATIONS')
+    @_('RUN ID WITH expr ITERATIONS SEP')
     def envFunc(self, p):
         return ('runEnv', p.ID, p.expr)
 
-    @_('PUT ID IN ID AT expr "," expr')
+    @_('PUT ID IN ID AT expr "," expr SEP')
     def envFunc(self, p):
         return ('putEnv', p.ID, p.expr0, p.expr1, p.expr2, p.expr3)
 
@@ -221,18 +221,22 @@ class TradersParser(Parser):
     @_('PUT expr "," expr SEP')
     def primFuncStmt(self, p):
         return ('put', p.expr0, p.expr1)
-        
-    @_('RANDOM FROM expr TO expr')
+
+    @_('getter "." listVoidFunc SEP')
     def primFuncStmt(self, p):
-        return ('random', p.expr0, p.expr1)
-        
-    @_('FIND OBJECTS')
-    def primFuncStmt(self, p):
-        return ('find', 'objects')
-        
-    @_('FIND PEERS')
-    def primFuncStmt(self, p):
-        return ('find', 'peers')
+        return ('listVoidFunc', p.getter, p.listVoidFunc)
+
+    @_('PUSH expr')
+    def listVoidFunc(self, p):
+        return ('push', p.expr)
+
+    @_('POP')
+    def listVoidFunc(self, p):
+        return ('pop', ())
+
+    @_('REVERSE')
+    def listVoidFunc(self, p):
+        return ('reverse', ())
 
     @_('MOVE SEP expr "," expr SEP')
     def moveStmt(self, p):
@@ -332,6 +336,10 @@ class TradersParser(Parser):
     def call(self, p):
         return p.primary
 
+    @_('primitiveValue')
+    def call(self, p):
+        return p.primitiveValue
+
     @_('ID dotTail')
     def call(self, p):
         return ('call', p.ID, p.dotTail)
@@ -340,41 +348,41 @@ class TradersParser(Parser):
     def getter(self, p):
         return ('call', p.ID, p.dotTail)
 
-    @_('"." idTail')
+    @_('"." idTail dotTail')
     def dotTail(self, p):
-        return ('dotTail', p.idTail)
+        return ('dotTail', p.idTail, p.dotTail)
 
     @_('empty')
     def dotTail(self, p):
         return ()
 
-    @_('ID dotTail')
+    @_('ID')
     def idTail(self, p):
-        return ('idTail', p.ID, p.dotTail)
+        return ('idTail_0', p.ID)
 
-    @_('listFunc dotTail')
+    @_('listValueFunc')
     def idTail(self, p):
-        return ('idTail', p.listFunc, p.dotTail)
+        return ('idTail_1', p.listValueFunc)
 
-    @_('GET "(" expr ")"')
-    def listFunc(self, p):
+    @_('GET expr')
+    def listValueFunc(self, p):
         return ('get', p.expr)
 
-    @_('PUSH "(" expr ")"')
-    def listFunc(self, p):
-        return ('push', p.expr)
-
-    @_('SIZE "(" ")"')
-    def listFunc(self, p):
+    @_('SIZE')
+    def listValueFunc(self, p):
         return ('size')
 
-    @_('POP "(" ")"')
-    def listFunc(self, p):
-        return ('pop')
-
-    @_('REVERSE "(" ")"')
-    def listFunc(self, p):
-        return ('reverse')
+    @_('RANDOM FROM expr TO expr')
+    def primitiveValue(self, p):
+        return ('random', p.expr0, p.expr1)
+        
+    @_('FIND OBJECTS')
+    def primitiveValue(self, p):
+        return ('find', 'objects')
+        
+    @_('FIND PEERS')
+    def primitiveValue(self, p):
+        return ('find', 'peers')
 
     @_('TRUE')
     def primary(self, p):

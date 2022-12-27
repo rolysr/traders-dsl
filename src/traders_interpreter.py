@@ -178,7 +178,7 @@ class Process:
                 for p_name in dict_value.keys():
                     if (len(dict_value[p_name].value), )+dict_value[p_name].type != element_type:
                         raise Exception(
-                            "Every dict element must be of the same type.")
+                            "Every book element must be of the same type.")
 
                 return Book(element_type, dict_value)
 
