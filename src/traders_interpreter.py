@@ -126,6 +126,80 @@ class Process:
                     self, params[1], body, self.env)})
                 return None
 
+            elif action == 'agent':
+                id = parsed[1]
+                if id in self.env:
+                    raise NameError('Cannot redefine variable \'%s\'' % id)
+                agent = TradersAgent(name=id) # create agent instance
+
+                body = parsed[2]
+
+                for varDecl in body[1]:
+                    var_name = varDecl[1]
+                    if varDecl[0] == 'varDecl_1':
+                        var_value = self.evaluate(varDecl[3])
+                        try:
+                            var_value = var_value.value
+                        except:
+                            pass
+                        agent.__dict__[var_name] = var_value 
+                    else:
+                        if var_name in ['name', 'balance', 'on_keep', 'on_sale', 'behavior', 'location']:
+                            raise AttributeError('Default agents attributes in explicit default are redundant')
+                        if var_name in agent.__dict__.keys():
+                            raise NameError('Cannot redefine on agent variable \'%s\'' % var_name)
+                        var_value = None
+                        if varDecl[2] == "number":
+                            instance = Number(0)
+                        elif varDecl[2] == "bool":
+                            instance = Bool(0)
+                        elif varDecl[2] == "string":
+                            instance = String("")
+                        else:
+                            raise AttributeError('Invalid extra attribute type')
+                        agent.__dict__[var_name] = var_value
+                
+                # print(agent.atrr)
+                self.env.update({id: agent})
+                return None
+
+            elif action == 'env':
+                id = parsed[1]
+                if id in self.env:
+                    raise NameError('Cannot redefine variable \'%s\'' % id)
+                environment = TradersEnvironment() # create environment instance
+                
+                body = parsed[2]
+
+                for varDecl in body[1]:
+                    var_name = varDecl[1]
+                    if varDecl[0] == 'varDecl_1':
+                        var_value = self.evaluate(varDecl[3])
+                        try:
+                            var_value = var_value.value
+                        except:
+                            pass
+                        environment.__dict__[var_name] = var_value 
+                    else:
+                        if var_name in ['name', 'balance', 'on_keep', 'on_sale', 'behavior', 'location']:
+                            raise AttributeError('Default environments attributes in explicit default are redundant')
+                        if var_name in environment.__dict__.keys():
+                            raise NameError('Cannot redefine on environment variable \'%s\'' % var_name)
+                        var_value = None
+                        if varDecl[2] == "number":
+                            instance = Number(0)
+                        elif varDecl[2] == "bool":
+                            instance = Bool(0)
+                        elif varDecl[2] == "string":
+                            instance = String("")
+                        else:
+                            raise AttributeError('Invalid extra attribute type')
+                        environment.__dict__[var_name] = var_value
+                
+                # print(environment)
+                self.env.update({id: environment})
+                return None
+
             elif action == 'call':
                 # print(parsed)
                 func = self.env.find(parsed[1])
@@ -436,7 +510,7 @@ class Env(dict):
 
 class Function(object):
     """
-    Function object for O Functions and annoymous functions (lambdas)
+    Function object for Traders Functions
     """
 
     def __init__(self, process, params, body, env):
@@ -451,7 +525,6 @@ class Function(object):
                     self.params[i][0], self.params[i][1], self.process.rtypes[type(args[i])]))
             params.append(self.params[i][0])
         return self.process.run(self.body, Env(params, args, self.env))
-
 
 class Value(object):
     """

@@ -1,0 +1,5 @@
+agent a1 {
+    let atrr : string = "Pedro";
+    let atrr2 : string = "Jose";
+    let abc : number;
+}

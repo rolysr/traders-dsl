@@ -3,14 +3,14 @@ from backend.environment_state import EnvironmentState
 from backend.logger import Logger
 
 
-class Environment:
+class TradersEnvironment:
     """
         A class for representing an
         environment where agents can move and
         trade among them 
     """
 
-    def __init__(self, rows, columns, number_iterations, log, agents) -> None:
+    def __init__(self, rows=0, columns=0, number_iterations=0, log=False, agents=[]) -> None:
         """
             Class constructor
         """

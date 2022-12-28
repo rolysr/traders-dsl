@@ -7,7 +7,7 @@ class TradersParser(Parser):
     Parser for the Traders DLS
     """
     tokens = TradersLexer.tokens
-    start = 'statementList'
+    start = 'program'
     debugfile = 'aiuda.pofavo'
 
     precedence = (

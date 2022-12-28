@@ -1,12 +1,14 @@
+from backend.behavior import Behavior
+from backend.book import Book
 from backend.item import Item
 from backend.offer import Offer
 
-class Agent:
+class TradersAgent:
     """
         A class that represents a trader agent
     """
 
-    def __init__(self, name, balance, behavior, on_keep, on_sale, location, attributes) -> None:
+    def __init__(self, name : str ="", balance : float = 0.0, behavior : Behavior=Behavior("unknown_behavior", []), on_keep : Book=Book((1, 'list', 'number'), {}), on_sale : Book=Book((2, 'list', 'number'), {}), location : tuple()=(-1, -1), attributes : dict={}) -> None:
         """
             Class constructor
         """
@@ -17,7 +19,11 @@ class Agent:
         self.on_keep = on_keep
         self.on_sale = on_sale
         self.location = location 
-        self.attributes = attributes
+
+        # add attributes to the agent's instace
+        # attr = (key, value)
+        for key in attributes.keys():
+            self.__dict__[key] = attributes[key]
 
     def buy_to_agent(self, agent):
         """
