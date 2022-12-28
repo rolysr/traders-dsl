@@ -11,7 +11,7 @@ class Number:
         ans&=self.value == other.value
         return ans
 
-    def get(self, dotTail):
+    def get(self, dotTail, process):
         if len(dotTail) == 0:
             return self
         raise Exception("{} does not have any attribute.".format(self))
@@ -29,7 +29,7 @@ class String:
         ans&=self.value == other.value
         return ans
 
-    def get(self, dotTail):
+    def get(self, dotTail, process):
         if len(dotTail) == 0:
             return self
         raise Exception("{} does not have any attribute.".format(self))
@@ -47,7 +47,7 @@ class Bool:
     def copy(self, other):
         self.value = other.value
 
-    def get(self, dotTail):
+    def get(self, dotTail, process):
         if len(dotTail) == 0:
             return self
         raise Exception("{} does not have any attribute.".format(self))

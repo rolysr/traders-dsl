@@ -1,3 +1,5 @@
+from backend.basic_types import *
+
 class List:
     def __init__(self, element_type, value) -> None:
         self.type = ("list", element_type)
@@ -41,14 +43,24 @@ class List:
         ans&=self.value == other.value
         return ans
     
-    def get(self, dotTail):
+    def get(self, dotTail, process):
         if len(dotTail) == 0:
             return self
-        id = dotTail[1][1]
-        #up to code list functions
         ans = None
-        if True: 
-            pass
+        if dotTail[1][0] == 'idTail_1': 
+            listFunc = dotTail[1][1][0]
+            if listFunc == 'size':
+                ans = Number(len(self.value))
+            if listFunc == 'get':
+                index = process.evaluate(dotTail[1][1][1])
+                if index.type != 'number':
+                    raise Exception("Index value must be a number.")
+                index = int(index.value)
+                if len(self.value) <= index:
+                    Exception("Invalid index: Out of range.")
+                if index < 0:
+                    Exception("Invalid index: Negative index.")
+                ans = self.value[index]
         else:
             raise Exception("{} must be an attribute of {}".format(id, self))
-        return ans.get(dotTail[2])
+        return ans.get(dotTail[2], process)

@@ -1,3 +1,7 @@
+let dim1: list = [1, 2, 3, 4, ];
+let dim2: list = [dim1, dim1, dim1, dim1, ];
+let x: number = 0; 
+
 behave xxx{
     talk "sex";
 }
@@ -10,7 +14,12 @@ agent pepito {
     behavior = xxx;
     on_keep = {"carne" : (5, ), "mondongo" : (99999999, ), };
     on_sale = {"carne2" : (5, 100, ), "mondongo2" : (99999999, 1000, ), };
+    let extra_attr: list = dim2;
 }
+
+dim2.get x+1.get x+2 = -1;
+x=x+1;
+dim2.get (dim2.get 1.get 2) + 1.get x+2 = (dim2.get 0.get 3) + 1;
 
 agent juan {
     location = [2,0,];
@@ -20,6 +29,7 @@ agent juan {
     let abc : number;
     on_keep = {"carne" : (5, ), "mondongo" : (99999999, ), };
     on_sale = {"carne2" : (5, 100, ), "mondongo2" : (99999999, 1000, ), };
+    let extra_attr: list = dim2;
 }
 
 let a: number = 50;
@@ -33,3 +43,11 @@ env la_tinta{
 
 la_tinta.number_iterations = 5;
 la_tinta.number_iterations = 2;
+juan.abc = 5;
+juan.atrr = "Roberto";
+juan.atrr2 = "El profe";
+
+pepito.extra_attr.get 1.get 2 = pepito.extra_attr.get 1.get 2;
+pepito.extra_attr.get 0.get 3 = pepito.extra_attr.get 0.get 3;
+juan.extra_attr.get 1.get 2 = juan.extra_attr.get 1.get 2;
+juan.extra_attr.get 0.get 3 = juan.extra_attr.get 0.get 3; 

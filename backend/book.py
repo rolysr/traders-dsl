@@ -57,7 +57,7 @@ class Book:
         ans&=self.value == other.value
         return ans
 
-    def get(self, dotTail):
+    def get(self, dotTail, process):
         if len(dotTail) == 0:
             return self
         raise Exception("{} does not have any attribute.".format(self))
@@ -66,7 +66,7 @@ class Entry:
     def __init__(self, attributes) -> None:
         self.attributes = attributes
     
-    def get(self, dotTail):
+    def get(self, dotTail, process):
         if len(dotTail) == 0:
             return self
         id = dotTail[1][1]
@@ -74,7 +74,7 @@ class Entry:
             ans=self.attributes[id]
         else:
             raise Exception("{} must be an attribute of {}".format(id, self))
-        return ans.get(dotTail[2])
+        return ans.get(dotTail[2], process)
     
 def convert_book_to_entry_list(book: Book) -> list:
     ans = []

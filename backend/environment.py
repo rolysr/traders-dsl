@@ -87,7 +87,7 @@ class TradersEnvironment:
 
         self.matrix[(row, column)].append(item)
 
-    def get(self, dotTail):
+    def get(self, dotTail, process):
         if len(dotTail) == 0:
             return self
         id = dotTail[1][1]
@@ -103,4 +103,4 @@ class TradersEnvironment:
             ans = self.log
         else:
             raise Exception("{} must be an attribute of {}".format(id, self))
-        return ans.get(dotTail[2])
+        return ans.get(dotTail[2], process)

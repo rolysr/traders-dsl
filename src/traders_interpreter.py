@@ -205,7 +205,7 @@ class Process:
                 func = self.env.find(parsed[1])
                 # print(func)
                 if isinstance(func, Number) or isinstance(func, Bool) or isinstance(func, String) or isinstance(func, List) or isinstance(func, Book) or isinstance(func, Entry) or isinstance(func, TradersAgent) or isinstance(func, TradersEnvironment):
-                    return func.get(parsed[2])
+                    return func.get(parsed[2], self)
 
                 elif isinstance(func, Behavior):
                     return func
@@ -291,7 +291,7 @@ class Process:
                 if result.type != var.type:
                     raise ValueError("Type of variable '{}' should be '{}' but instead got '{}'".format(
                         parsed[1], self.rtypes[var.type], self.rtypes[type(result)]))
-
+                print(self.stringify(var))
                 var.copy(result)
                 return None
 
