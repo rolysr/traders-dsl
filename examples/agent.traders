@@ -1,5 +1,35 @@
-agent a1 {
+behave xxx{
+    talk "sex";
+}
+
+agent pepito {
+    location = [1,2,];
     let atrr : string = "Pedro";
     let atrr2 : string = "Jose";
     let abc : number;
+    behavior = xxx;
+    on_keep = {"carne" : (5, ), "mondongo" : (99999999, ), };
+    on_sale = {"carne2" : (5, 100, ), "mondongo2" : (99999999, 1000, ), };
 }
+
+agent juan {
+    location = [2,0,];
+    balance = 5000;
+    let atrr : string = "Pedro";
+    let atrr2 : string = "Jose";
+    let abc : number;
+    on_keep = {"carne" : (5, ), "mondongo" : (99999999, ), };
+    on_sale = {"carne2" : (5, 100, ), "mondongo2" : (99999999, 1000, ), };
+}
+
+let a: number = 50;
+env la_tinta{
+    agents = [pepito, juan, pepito, ];
+    log = true;
+    rows = a;
+    columns = a;
+    number_iterations = 10;
+}
+
+la_tinta.number_iterations = 5;
+la_tinta.number_iterations = 2;

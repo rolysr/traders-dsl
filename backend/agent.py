@@ -1,29 +1,34 @@
+from copy import deepcopy
 from backend.behavior import Behavior
 from backend.book import Book
 from backend.item import Item
 from backend.offer import Offer
+from backend.list import List
+from backend.basic_types import *
+
 
 class TradersAgent:
     """
         A class that represents a trader agent
     """
 
-    def __init__(self, name : str ="", balance : float = 0.0, behavior : Behavior=Behavior("unknown_behavior", []), on_keep : Book=Book((1, 'list', 'number'), {}), on_sale : Book=Book((2, 'list', 'number'), {}), location : tuple()=(-1, -1), attributes : dict={}) -> None:
+    def __init__(self, balance: Number = Number(0),
+                 behavior: Behavior = Behavior("unknown_behavior", ()),
+                 on_keep: Book = Book((1, 'list', 'number'), {}),
+                 on_sale: Book = Book((2, 'list', 'number'), {}),
+                 location: List = List(element_type='number', value=[Number(0),Number(0)]), 
+                 attributes: dict = {}) -> None:
         """
             Class constructor
         """
         self.type = "agent"
-        self.name = name
-        self.balance = balance
-        self.behavior = behavior
-        self.on_keep = on_keep
-        self.on_sale = on_sale
-        self.location = location 
-
-        # add attributes to the agent's instace
-        # attr = (key, value)
-        for key in attributes.keys():
-            self.__dict__[key] = attributes[key]
+        self.balance = deepcopy(balance)
+        self.behavior = deepcopy(behavior)
+        self.on_keep = deepcopy(on_keep)
+        self.on_sale = deepcopy(on_sale)
+        #location[0] is x coordinate and location[1] is y coordinate
+        self.location = deepcopy(location)
+        self.attributes = deepcopy(attributes)
 
     def buy_to_agent(self, agent):
         """
@@ -93,19 +98,19 @@ class TradersAgent:
         self.behavior = other.behavior
         self.on_keep = other.on_keep
         self.on_sale = other.on_sale
-        self.location = other.location  
+        self.location = other.location
         self.attributes = other.attributes
-    
+
     def __eq__(self, other):
         ans = True
-        ans&=self.balance == other.balance
-        ans&=self.behavior == other.behavior
-        ans&=self.on_keep == other.on_keep
-        ans&=self.on_sale == other.on_sale
-        ans&=self.location == other.location  
-        ans&=self.attributes == other.attributes
+        ans &= self.balance == other.balance
+        ans &= self.behavior == other.behavior
+        ans &= self.on_keep == other.on_keep
+        ans &= self.on_sale == other.on_sale
+        ans &= self.location == other.location
+        ans &= self.attributes == other.attributes
         return ans
-    
+
     def get(self, dotTail):
         if len(dotTail) == 0:
             return self
@@ -122,7 +127,8 @@ class TradersAgent:
             ans = self.location
         else:
             if id in self.attributes:
-                ans=self.attributes[id]
+                ans = self.attributes[id]
             else:
-                raise Exception("{} must be an attribute of {}".format(id, self))
-        return ans.get(dotTail[1][2])
+                raise Exception(
+                    "{} must be an attribute of {}".format(id, self))
+        return ans.get(dotTail[2])

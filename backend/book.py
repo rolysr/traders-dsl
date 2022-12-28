@@ -74,7 +74,7 @@ class Entry:
             ans=self.attributes[id]
         else:
             raise Exception("{} must be an attribute of {}".format(id, self))
-        return ans.get(dotTail[1][2])
+        return ans.get(dotTail[2])
     
 def convert_book_to_entry_list(book: Book) -> list:
     ans = []

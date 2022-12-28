@@ -51,4 +51,4 @@ class List:
             pass
         else:
             raise Exception("{} must be an attribute of {}".format(id, self))
-        return ans.get(dotTail[1][2])
+        return ans.get(dotTail[2])

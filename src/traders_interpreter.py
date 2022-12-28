@@ -119,47 +119,50 @@ class Process:
             action = parsed[0]
             # print(action)
 
-            if action == 'behavior':
-                params = parsed[2]
-                body = parsed[3]
-                self.env.update({parsed[1]: Function(
-                    self, params[1], body, self.env)})
+            if action == 'behave':
+                self.env.update({parsed[1]: Behavior(
+                    name=parsed[1], statement_list=parsed[2])})
                 return None
 
             elif action == 'agent':
                 id = parsed[1]
                 if id in self.env:
                     raise NameError('Cannot redefine variable \'%s\'' % id)
-                agent = TradersAgent(name=id) # create agent instance
+                # agent = TradersAgent(name=id) # create agent instance
 
                 body = parsed[2]
 
-                for varDecl in body[1]:
-                    var_name = varDecl[1]
-                    if varDecl[0] == 'varDecl_1':
-                        var_value = self.evaluate(varDecl[3])
-                        try:
-                            var_value = var_value.value
-                        except:
-                            pass
-                        agent.__dict__[var_name] = var_value 
+                current_env = deepcopy(self.env)
+
+                self.env.update({'balance': Number(0)})
+                self.env.update({'behavior': Behavior("unknown_behavior", ())})
+                self.env.update({'on_keep': Book((1, 'list', 'number'), {})})
+                self.env.update({'on_sale': Book((2, 'list', 'number'), {})})
+                self.env.update(
+                    {'location': List(element_type='number', value=[Number(0), Number(0)])})
+
+                for varOp in body[1]:
+                    if varOp[0] == 'varAssign':
+                        self.evaluate(varOp)
                     else:
-                        if var_name in ['name', 'balance', 'on_keep', 'on_sale', 'behavior', 'location']:
-                            raise AttributeError('Default agents attributes in explicit default are redundant')
-                        if var_name in agent.__dict__.keys():
-                            raise NameError('Cannot redefine on agent variable \'%s\'' % var_name)
-                        var_value = None
-                        if varDecl[2] == "number":
-                            instance = Number(0)
-                        elif varDecl[2] == "bool":
-                            instance = Bool(0)
-                        elif varDecl[2] == "string":
-                            instance = String("")
-                        else:
-                            raise AttributeError('Invalid extra attribute type')
-                        agent.__dict__[var_name] = var_value
-                
+                        var_name = varOp[1]
+                        if var_name in ['balance', 'on_keep', 'on_sale', 'behavior', 'location']:
+                            raise AttributeError(
+                                'Redeclaring default agent attributes.')
+                        self.evaluate(varOp)
+
+                attributes = {}
+                for attr in self.env.keys():
+                    if attr not in current_env.keys() and attr not in ['balance', 'on_keep', 'on_sale', 'behavior', 'location']:
+                        attributes[attr] = self.env[attr]
                 # print(agent.atrr)
+                agent = TradersAgent(balance=self.env['balance'],
+                                     behavior=self.env['behavior'],
+                                     on_keep=self.env['on_keep'],
+                                     on_sale=self.env['on_sale'],
+                                     location=self.env['location'],
+                                     attributes=attributes)
+                self.env = deepcopy(current_env)
                 self.env.update({id: agent})
                 return None
 
@@ -167,36 +170,33 @@ class Process:
                 id = parsed[1]
                 if id in self.env:
                     raise NameError('Cannot redefine variable \'%s\'' % id)
-                environment = TradersEnvironment() # create environment instance
-                
+                # environment = TradersEnvironment()  # create environment instance
+
                 body = parsed[2]
 
-                for varDecl in body[1]:
-                    var_name = varDecl[1]
-                    if varDecl[0] == 'varDecl_1':
-                        var_value = self.evaluate(varDecl[3])
-                        try:
-                            var_value = var_value.value
-                        except:
-                            pass
-                        environment.__dict__[var_name] = var_value 
+                current_env = self.env
+
+                self.env.update({'rows': Number(1)})
+                self.env.update({'columns': Number(1)})
+                self.env.update({'number_iterations': Number(0)})
+                self.env.update({'log': Bool(False)})
+                self.env.update(
+                    {'agents': List(element_type='agent', value=[])})
+
+                for varOp in body[1]:
+                    if varOp[0] == 'varAssign':
+                        self.evaluate(varOp)
                     else:
-                        if var_name in ['name', 'balance', 'on_keep', 'on_sale', 'behavior', 'location']:
-                            raise AttributeError('Default environments attributes in explicit default are redundant')
-                        if var_name in environment.__dict__.keys():
-                            raise NameError('Cannot redefine on environment variable \'%s\'' % var_name)
-                        var_value = None
-                        if varDecl[2] == "number":
-                            instance = Number(0)
-                        elif varDecl[2] == "bool":
-                            instance = Bool(0)
-                        elif varDecl[2] == "string":
-                            instance = String("")
-                        else:
-                            raise AttributeError('Invalid extra attribute type')
-                        environment.__dict__[var_name] = var_value
-                
+                        raise AttributeError(
+                            'Env data type does not allow attribute declaration.')  # for now
+
                 # print(environment)
+                environment = TradersEnvironment(rows=self.env['rows'],
+                                                 columns=self.env['columns'],
+                                                 number_iterations=self.env['number_iterations'],
+                                                 log=self.env['log'],
+                                                 agents=self.env['agents'])
+                self.env = deepcopy(current_env)
                 self.env.update({id: environment})
                 return None
 
@@ -204,7 +204,7 @@ class Process:
                 # print(parsed)
                 func = self.env.find(parsed[1])
                 # print(func)
-                if isinstance(func, Number) or isinstance(func, Bool) or isinstance(func, String) or isinstance(func, List) or isinstance(func, Book)or isinstance(func, Entry):
+                if isinstance(func, Number) or isinstance(func, Bool) or isinstance(func, String) or isinstance(func, List) or isinstance(func, Book) or isinstance(func, Entry) or isinstance(func, TradersAgent) or isinstance(func, TradersEnvironment):
                     return func.get(parsed[2])
 
                 elif isinstance(func, Behavior):
@@ -291,14 +291,15 @@ class Process:
                 if result.type != var.type:
                     raise ValueError("Type of variable '{}' should be '{}' but instead got '{}'".format(
                         parsed[1], self.rtypes[var.type], self.rtypes[type(result)]))
-                
+
                 var.copy(result)
                 return None
 
             elif action == 'repeatStmt':
                 cond = self.evaluate(parsed[1])
                 if cond.type != 'bool':
-                    raise Exception("Cannot cast from {} to Bool".format(cond.type))
+                    raise Exception(
+                        "Cannot cast from {} to Bool".format(cond.type))
                 while cond.value:
                     self.run(parsed[2])
                     cond = self.evaluate(parsed[1])
@@ -307,49 +308,51 @@ class Process:
             elif action == 'foreachStmt':
                 iterator_name = parsed[1]
                 if iterator_name in self.env:
-                    raise Exception("Iterator name must not match any previous variable name.")
-                
+                    raise Exception(
+                        "Iterator name must not match any previous variable name.")
+
                 iterable = self.evaluate(parsed[2])
                 if type(iterable) == Book:
                     iterable = convert_book_to_entry_list(iterable)
                 elif type(iterable) == List:
                     iterable = iterable.value
                 else:
-                    raise Exception("Unsupported iterable type: {}.".format(iterable.type))
-                
+                    raise Exception(
+                        "Unsupported iterable type: {}.".format(iterable.type))
+
                 for value in iterable:
                     actual_env_vars = list(self.env.keys())
-                    
+
                     self.env[iterator_name] = value
                     self.run(parsed[3])
 
-                    to_erase=[]
+                    to_erase = []
                     for var in self.env.keys():
                         if var not in actual_env_vars:
                             to_erase.append(var)
                     for var in to_erase:
                         self.env.pop(var)
                 return None
-            
-            elif action == 'incaseStmt' or action == 'inothercaseStmt_0': #in case and in other case general form
+
+            elif action == 'incaseStmt' or action == 'inothercaseStmt_0':  # in case and in other case general form
                 cond = self.evaluate(parsed[1])
                 if cond.type != 'bool':
                     raise Exception("condition must be boolean expr")
-                
+
                 if cond.value:
                     self.run(parsed[2])
                     return None
                 else:
                     self.evaluate(parsed[3])
                     return None
-            
-            elif action == 'inothercaseStmt_1': #otherwise
+
+            elif action == 'inothercaseStmt_1':  # otherwise
                 self.run(parsed[1])
                 return None
-            
-            elif action == 'inothercaseStmt_2': #empty inothercaseStmt
+
+            elif action == 'inothercaseStmt_2':  # empty inothercaseStmt
                 pass
-            
+
             elif action == 'or':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -357,7 +360,7 @@ class Process:
                     return Bool(result.value or result2.value)
                 raise Exception("unsupported operand type(s) for \'and\': {0} and {1}".format(
                     result.type, result2.type))
-            
+
             elif action == 'and':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -365,7 +368,7 @@ class Process:
                     return Bool(result.value and result2.value)
                 raise Exception("unsupported operand type(s) for \'and\': {0} and {1}".format(
                     result.type, result2.type))
-            
+
             elif action == '!=':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -373,7 +376,7 @@ class Process:
                     return Bool(not (result == result2))
                 raise Exception("unsupported operand type(s) for !=: {0} and {1}".format(
                     result.type, result2.type))
-            
+
             elif action == '==':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -381,7 +384,7 @@ class Process:
                     return Bool(result == result2)
                 raise Exception("unsupported operand type(s) for ==: {0} and {1}".format(
                     result.type, result2.type))
-            
+
             elif action == '<':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -389,7 +392,7 @@ class Process:
                     return Bool(result.value < result2.value)
                 raise Exception("unsupported operand type(s) for <: {0} and {1}".format(
                     result.type, result2.type))
-            
+
             elif action == '<=':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -397,7 +400,7 @@ class Process:
                     return Bool(result.value <= result2.value)
                 raise Exception("unsupported operand type(s) for <=: {0} and {1}".format(
                     result.type, result2.type))
-            
+
             elif action == '>=':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -405,7 +408,7 @@ class Process:
                     return Bool(result.value >= result2.value)
                 raise Exception("unsupported operand type(s) for >=: {0} and {1}".format(
                     result.type, result2.type))
-            
+
             elif action == '>':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -413,7 +416,7 @@ class Process:
                     return Bool(result.value > result2.value)
                 raise Exception("unsupported operand type(s) for >: {0} and {1}".format(
                     result.type, result2.type))
-            
+
             elif action == '+':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -423,7 +426,7 @@ class Process:
                     return Number(result.value+result2.value)
                 raise Exception(
                     "unsupported operand type(s) for +: {0} and {1}".format(result.type, result2.type))
-            
+
             elif action == '-':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -431,7 +434,7 @@ class Process:
                     return Number(result.value-result2.value)
                 raise Exception(
                     "unsupported operand type(s) for -: {0} and {1}".format(result.type, result2.type))
-            
+
             elif action == '*':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -439,7 +442,7 @@ class Process:
                     return Number(result.value*result2.value)
                 raise Exception(
                     "unsupported operand type(s) for *: {0} and {1}".format(result.type, result2.type))
-            
+
             elif action == '/':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
@@ -447,21 +450,21 @@ class Process:
                     return Number(result.value/result2.value)
                 raise Exception(
                     "unsupported operand type(s) for /: {0} and {1}".format(result.type, result2.type))
-            
+
             elif action == '!':
                 result = self.evaluate(parsed[1])
                 if result.type == 'bool':
                     return Bool(not result.value)
                 raise Exception(
                     "unsupported operand type(s) for logical negation: {0}".format(result.type))
-            
+
             elif action == 'neg':
                 result = self.evaluate(parsed[1])
                 if result.type == 'number':
                     return Number(-result.value)
                 raise Exception(
                     "unsupported operand type(s) for negation: {0}".format(result.type))
-            
+
             elif action == '.':
                 if type(parsed[1]) == tuple:
                     var = self.evaluate(parsed[1])
@@ -525,6 +528,7 @@ class Function(object):
                     self.params[i][0], self.params[i][1], self.process.rtypes[type(args[i])]))
             params.append(self.params[i][0])
         return self.process.run(self.body, Env(params, args, self.env))
+
 
 class Value(object):
     """
