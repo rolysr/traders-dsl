@@ -51,3 +51,5 @@ pepito.extra_attr.get 1.get 2 = pepito.extra_attr.get 1.get 2;
 pepito.extra_attr.get 0.get 3 = pepito.extra_attr.get 0.get 3;
 juan.extra_attr.get 1.get 2 = juan.extra_attr.get 1.get 2;
 juan.extra_attr.get 0.get 3 = juan.extra_attr.get 0.get 3; 
+
+run la_tinta with 3 iterations;

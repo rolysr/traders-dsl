@@ -200,6 +200,35 @@ class Process:
                 self.env.update({id: environment})
                 return None
 
+            elif action == 'runEnv':
+                env_instance = self.env[parsed[1]]
+                if env_instance.type != 'env':
+                    raise Exception("Run statement must be called on an Environment instance.")
+                
+                iterations = self.evaluate(parsed[2])
+                if iterations.type != 'number':
+                    raise Exception("Iterations param must be a number.")
+
+                agents = env_instance.agents.value
+
+                for iter in range(int(iterations.value)):
+                    for agent in agents:
+                        inner_context=Env()
+                        actual_context = self.env
+
+                        #building inner context
+                        inner_context.update({'balance':agent.balance})
+                        inner_context.update({'on_keep':agent.on_keep})
+                        inner_context.update({'on_sale':agent.on_sale})
+                        inner_context.update({'location':agent.location})
+                        #up to add extra predefined variables
+                        self.env = deepcopy(inner_context)
+
+                        self.run(agent.behavior.statement_list)
+                        
+                        #up to code getting back to actual context
+                        self.env=actual_context
+
             elif action == 'call':
                 # print(parsed)
                 func = self.env.find(parsed[1])

@@ -32,26 +32,6 @@ class TradersEnvironment:
         # create the world's internal representation
         self.matrix = {(i, j): [] for i in range(int(self.rows.value))
                        for j in range(int(self.columns.value))}
-
-    def run(self, number_iterations):
-        """
-            Execute <number_iterations> iterations
-            on the environment if possible
-        """
-
-        if number_iterations < 0 or number_iterations + self.number_executed_iterations > self.number_iterations:
-            self.logger.log(
-                "Invalid run execution. The number of iterations is not valid", self.log)
-
-        self.reset_state = EnvironmentState(self.rows, self.columns, self.number_iterations,
-                                            self.number_executed_iterations, self.agents, self.log, self.logger, self.matrix)
-
-        # for each agent, execute its behavior, and return the updated world state
-        for agent in self.agents:
-            self.matrix = agent.behave(self.matrix)
-
-        self.number_executed_iterations += number_iterations
-
     def reset(self):
         """
             Resets the environment to its initial state
