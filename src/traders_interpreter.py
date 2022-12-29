@@ -132,7 +132,7 @@ class Process:
 
                 body = parsed[2]
 
-                current_env = deepcopy(self.env)
+                self.env = Env(outer=self.env)
 
                 self.env.update({'balance': Number(0)})
                 self.env.update({'behavior': Behavior("unknown_behavior", ())})
@@ -153,7 +153,7 @@ class Process:
 
                 attributes = {}
                 for attr in self.env.keys():
-                    if attr not in current_env.keys() and attr not in ['balance', 'on_keep', 'on_sale', 'behavior', 'location']:
+                    if attr not in ['balance', 'on_keep', 'on_sale', 'behavior', 'location']:
                         attributes[attr] = self.env[attr]
                 # print(agent.atrr)
                 agent = TradersAgent(balance=self.env['balance'],
@@ -162,7 +162,7 @@ class Process:
                                      on_sale=self.env['on_sale'],
                                      location=self.env['location'],
                                      attributes=attributes)
-                self.env = deepcopy(current_env)
+                self.env = self.env.outer
                 self.env.update({id: agent})
                 return None
 
@@ -174,7 +174,7 @@ class Process:
 
                 body = parsed[2]
 
-                current_env = self.env
+                self.env = Env(outer=self.env)
 
                 self.env.update({'rows': Number(1)})
                 self.env.update({'columns': Number(1)})
@@ -196,15 +196,16 @@ class Process:
                                                  number_iterations=self.env['number_iterations'],
                                                  log=self.env['log'],
                                                  agents=self.env['agents'])
-                self.env = deepcopy(current_env)
+                self.env = self.env.outer
                 self.env.update({id: environment})
                 return None
 
             elif action == 'runEnv':
                 env_instance = self.env[parsed[1]]
                 if env_instance.type != 'env':
-                    raise Exception("Run statement must be called on an Environment instance.")
-                
+                    raise Exception(
+                        "Run statement must be called on an Environment instance.")
+
                 iterations = self.evaluate(parsed[2])
                 if iterations.type != 'number':
                     raise Exception("Iterations param must be a number.")
@@ -213,21 +214,24 @@ class Process:
 
                 for iter in range(int(iterations.value)):
                     for agent in agents:
-                        inner_context=Env()
+                        inner_context = Env()
                         actual_context = self.env
 
-                        #building inner context
-                        inner_context.update({'balance':agent.balance})
-                        inner_context.update({'on_keep':agent.on_keep})
-                        inner_context.update({'on_sale':agent.on_sale})
-                        inner_context.update({'location':agent.location})
-                        #up to add extra predefined variables
+                        # building inner context
+                        inner_context.update({'balance': agent.balance})
+                        inner_context.update({'on_keep': agent.on_keep})
+                        inner_context.update({'on_sale': agent.on_sale})
+                        inner_context.update({'location': agent.location})
+                        for attr in agent.attributes.keys():
+                            inner_context.update(
+                                {attr: agent.attributes[attr]})
+                        # up to add extra predefined variables
                         self.env = deepcopy(inner_context)
 
                         self.run(agent.behavior.statement_list)
-                        
-                        #up to code getting back to actual context
-                        self.env=actual_context
+
+                        # up to code getting back to actual context
+                        self.env = actual_context
 
             elif action == 'call':
                 # print(parsed)
@@ -320,7 +324,7 @@ class Process:
                 if result.type != var.type:
                     raise ValueError("Type of variable '{}' should be '{}' but instead got '{}'".format(
                         parsed[1], self.rtypes[var.type], self.rtypes[type(result)]))
-                print(self.stringify(var))
+
                 var.copy(result)
                 return None
 
