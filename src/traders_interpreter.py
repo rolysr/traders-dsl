@@ -11,6 +11,9 @@ from backend.behavior import *
 from backend.book import *
 from backend.environment import *
 from backend.offer import *
+from backend.function import *
+from backend.env import *
+from backend.value import *
 
 
 class Process:
@@ -232,6 +235,12 @@ class Process:
 
                         # up to code getting back to actual context
                         self.env = actual_context
+
+            elif action == 'resetEnv':
+                pass
+
+            elif action == 'putEnv':
+                pass
 
             elif action == 'call':
                 # print(parsed)
@@ -524,59 +533,3 @@ class Process:
         program = Process(tree)
         program.run()
         self.env.update(program.env)
-
-
-class Env(dict):
-    """
-    Environment Class
-    """
-
-    def __init__(self, params=(), args=(), outer=None):
-        self.update(zip(params, args))
-        self.outer = outer
-
-    def find(self, name):
-        if name in self:
-            return self[name]
-        elif self.outer is not None:
-            return self.outer.find(name)
-
-        raise UnboundLocalError("{} is undefined".format(name))
-
-
-class Function(object):
-    """
-    Function object for Traders Functions
-    """
-
-    def __init__(self, process, params, body, env):
-        self.process, self.params, self.body, self.env = process, params, body, env
-        self.type = 'function'
-
-    def __call__(self, *args):
-        params = []
-        for i in range(len(self.params)):
-            if type(args[i]) != self.process.types[self.params[i][1]]:
-                raise TypeError("Type of parameter {} should be {} but got {}.".format(
-                    self.params[i][0], self.params[i][1], self.process.rtypes[type(args[i])]))
-            params.append(self.params[i][0])
-        return self.process.run(self.body, Env(params, args, self.env))
-
-
-class Value(object):
-    """
-    Class container for values inside the Traders Language
-    """
-
-    def __init__(self, value, val_type):
-        self.value = value
-        self.type = val_type
-
-    def __len__(self):
-        return len(self.value)
-
-    def __str__(self):
-        return "{}: {}".format(self.value, self.type)
-
-    def get(self):
-        return self.value
