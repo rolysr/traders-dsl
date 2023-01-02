@@ -11,9 +11,7 @@ from backend.behavior import *
 from backend.book import *
 from backend.environment import *
 from backend.offer import *
-from backend.function import *
 from backend.env import *
-from backend.value import *
 
 
 class Process:
@@ -534,17 +532,6 @@ class Process:
                     return Number(-result.value)
                 raise Exception(
                     "unsupported operand type(s) for negation: {0}".format(result.type))
-
-            elif action == '.':
-                if type(parsed[1]) == tuple:
-                    var = self.evaluate(parsed[1])
-                else:
-                    var = self.env.find(parsed[1])
-                if isinstance(var, Value):
-                    res = self.evaluate(var.value[parsed[2]])
-                else:
-                    res = self.evaluate(var[parsed[2]])
-                return res
 
             else:
                 if len(parsed) > 0 and type(parsed[0]) == tuple:
