@@ -3,13 +3,14 @@ let dim2: list = [dim1, dim1, dim1, dim1, ];
 let x: number = 0; 
 
 behave xxx{
-    let a: number = 0;
-    repeat when a < 5{
-        a = a + 1;
+    in case (location.get 0) > 0{
         talk "sex";
-        in case a == 1{
-            stop;
-        }
+        location.get 0 = (location.get 0) - 1;
+        restart behave;
+    }
+    otherwise
+    {
+        stop;
     }
 }
 
@@ -34,6 +35,7 @@ agent juan {
     let atrr : string = "Pedro";
     let atrr2 : string = "Jose";
     let abc : number;
+    behavior = xxx;
     on_keep = {"carne" : (5, ), "mondongo" : (99999999, ), };
     on_sale = {"carne2" : (5, 100, ), "mondongo2" : (99999999, 1000, ), };
     let extra_attr: list = dim2;

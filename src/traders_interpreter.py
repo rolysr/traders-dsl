@@ -33,6 +33,7 @@ class Process:
                       'bool': bool, 'list': list, 'dict': dict}
         self.rtypes = {int: 'int', float: 'float', str: 'string',
                        bool: 'bool', list: 'list', dict: 'dict'}
+        self.actual_agent = None
 
     def run(self, tree=None, env={}):
         current_env = self.env
@@ -123,7 +124,6 @@ class Process:
                 id = parsed[1]
                 if id in self.env:
                     raise NameError('Cannot redefine variable \'%s\'' % id)
-                # agent = TradersAgent(name=id) # create agent instance
 
                 body = parsed[2]
 
@@ -150,7 +150,7 @@ class Process:
                 for attr in self.env.keys():
                     if attr not in ['balance', 'on_keep', 'on_sale', 'behavior', 'location']:
                         attributes[attr] = self.env[attr]
-                # print(agent.atrr)
+
                 agent = TradersAgent(balance=self.env['balance'],
                                      behavior=self.env['behavior'],
                                      on_keep=self.env['on_keep'],
@@ -165,7 +165,6 @@ class Process:
                 id = parsed[1]
                 if id in self.env:
                     raise NameError('Cannot redefine variable \'%s\'' % id)
-                # environment = TradersEnvironment()  # create environment instance
 
                 body = parsed[2]
 
@@ -185,7 +184,6 @@ class Process:
                         raise AttributeError(
                             'Env data type does not allow attribute declaration.')  # for now
 
-                # print(environment)
                 environment = TradersEnvironment(rows=self.env['rows'],
                                                  columns=self.env['columns'],
                                                  number_iterations=self.env['number_iterations'],
@@ -222,12 +220,16 @@ class Process:
                                 {attr: agent.attributes[attr]})
                         # up to add extra predefined variables
                         self.env = deepcopy(inner_context)
+                        self.actual_agent = agent
 
+                        # print("xxx: {}".format(self.stringify(self.env['location'])))
+                        # print(self.should_return)
                         self.run(agent.behavior.statement_list)
 
                         # up to code getting back to actual context
                         self.should_return = False
                         self.env = actual_context
+                        self.actual_agent = None
 
             elif action == 'resetEnv':
                 env_instance = self.env[parsed[1]]
@@ -264,16 +266,42 @@ class Process:
                     env_instance.add_item(obj, row, column)
 
             elif action == 'restart':
-                pass
+                # Copying changed variables
+                for attr in ['balance','on_keep', 'on_sale', 'location']:
+                    self.actual_agent.__dict__[attr] = deepcopy(self.env[attr])
+                for attr in self.actual_agent.attributes.keys():
+                    self.actual_agent.attributes[attr] = deepcopy(self.env[attr])
+
+                inner_context = Env()
+                actual_context = self.env
+
+                # building inner context
+                inner_context.update({'balance': self.actual_agent.balance})
+                inner_context.update({'on_keep': self.actual_agent.on_keep})
+                inner_context.update({'on_sale': self.actual_agent.on_sale})
+                inner_context.update({'location': self.actual_agent.location})
+                for attr in self.actual_agent.attributes.keys():
+                    inner_context.update(
+                        {attr: self.actual_agent.attributes[attr]})
+
+                # up to add extra predefined variables
+                self.env = deepcopy(inner_context)
+                # print(self.stringify(self.actual_agent.location))
+                # print(" ")
+
+                self.run(self.actual_agent.behavior.statement_list)
+
+                # up to code getting back to actual context
+                self.should_return = True
+                self.env = actual_context
+                return None
 
             elif action == 'stop':
                 self.should_return = True
                 return None
 
             elif action == 'call':
-                # print(parsed)
                 func = self.env.find(parsed[1])
-                # print(func)
                 if isinstance(func, Number) or isinstance(func, Bool) or isinstance(func, String) or isinstance(func, List) or isinstance(func, Book) or isinstance(func, Entry) or isinstance(func, TradersAgent) or isinstance(func, TradersEnvironment):
                     return func.get(parsed[2], self)
 
@@ -293,9 +321,8 @@ class Process:
                 return String(parsed[1])
             elif action == 'primary_list':
                 list_value = []
-                # print(parsed[1])
                 for expr in parsed[1]:
-                    list_value.append(self.evaluate(expr))
+                    list_value.append(deepcopy(self.evaluate(expr)))
 
                 if len(list_value) == 0:
                     raise Exception("List must not be empty.")
@@ -341,11 +368,9 @@ class Process:
 
             elif action == 'varDecl_1':
                 name = parsed[1]
-                # print(parsed)
                 if name in self.env:
                     raise NameError('Cannot redefine variable \'%s\'' % name)
                 value = self.evaluate(parsed[3])
-                # print(value.type)
                 if not ((value.type in ["number", "bool", "string"] and value.type == parsed[2]) or value.type[0] == parsed[2]):
                     raise Exception(
                         "Declaration type and expression assignment does not match")
