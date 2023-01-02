@@ -237,10 +237,38 @@ class Process:
                         self.env = actual_context
 
             elif action == 'resetEnv':
-                pass
+                env_instance = self.env[parsed[1]]
+                if env_instance.type != 'env':
+                    raise Exception(
+                        "Reset statement must be called on an Environment instance.")
+
+                env_instance.reset()
 
             elif action == 'putEnv':
-                pass
+                # get object to add
+                obj = None
+                try:
+                    obj = self.env[parsed[1]]
+                except:
+                    raise Exception("There is no instance for {} object.".format(parsed[1]))
+
+                # get environment instance
+                env_instance = self.env[parsed[3]]
+                if env_instance.type != 'env':
+                    raise Exception(
+                        "Put statement must be called on an Environment instance.")
+
+                # get location 
+                row = self.evaluate(parsed[5])
+                column = self.evaluate(parsed[7])
+
+                # check if type is agent
+                if obj.type == 'agent':
+                    env_instance.add_agent(obj, row, column)
+
+                # check if type is item
+                if obj.type == 'item':
+                    env_instance.add_item(obj, row, column)
 
             elif action == 'call':
                 # print(parsed)
