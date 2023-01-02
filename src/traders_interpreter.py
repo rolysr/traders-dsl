@@ -58,10 +58,6 @@ class Process:
                 except TypeError as e:
                     print(e)
                     break
-                if self.depth == 0:
-                    self.should_return = False
-                if self.should_return:
-                    return result
         else:
             for line in tree:
                 try:
@@ -81,10 +77,6 @@ class Process:
                 except TypeError as e:
                     print(e)
                     break
-                if self.depth == 0:
-                    self.should_return = False
-                if self.should_return:
-                    return result
         self.env = current_env
         return result
 
@@ -114,11 +106,13 @@ class Process:
         """
         Evaluating a parsed tree/tuple/expression
         """
+        if self.should_return:
+            return None
+
         if type(parsed) != tuple:
             return parsed
         else:
             action = parsed[0]
-            # print(action)
 
             if action == 'behave':
                 self.env.update({parsed[1]: Behavior(
@@ -232,6 +226,7 @@ class Process:
                         self.run(agent.behavior.statement_list)
 
                         # up to code getting back to actual context
+                        self.should_return = False
                         self.env = actual_context
 
             elif action == 'resetEnv':
@@ -257,8 +252,8 @@ class Process:
                         "Put statement must be called on an Environment instance.")
 
                 # get location 
-                row = self.evaluate(parsed[5])
-                column = self.evaluate(parsed[7])
+                row = self.evaluate(parsed[3])
+                column = self.evaluate(parsed[4])
 
                 # check if type is agent
                 if obj.type == 'agent':
@@ -267,6 +262,13 @@ class Process:
                 # check if type is item
                 if obj.type == 'item':
                     env_instance.add_item(obj, row, column)
+
+            elif action == 'restart':
+                pass
+
+            elif action == 'stop':
+                self.should_return = True
+                return None
 
             elif action == 'call':
                 # print(parsed)
@@ -281,9 +283,6 @@ class Process:
 
             elif action == 'talk':
                 print(self.stringify(self.evaluate(parsed[1])))
-                return None
-            elif action == 'stop':
-                self.should_return = True
                 return None
 
             elif action == 'primary_bool':
@@ -365,10 +364,7 @@ class Process:
 
             elif action == 'repeatStmt':
                 cond = self.evaluate(parsed[1])
-                if cond.type != 'bool':
-                    raise Exception(
-                        "Cannot cast from {} to Bool".format(cond.type))
-                while cond.value:
+                while isinstance(cond, Bool) and cond.value:
                     self.run(parsed[2])
                     cond = self.evaluate(parsed[1])
                 return None
@@ -441,7 +437,7 @@ class Process:
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
                 if result.type == result2.type:
-                    return Bool(not (result == result2))
+                    return Bool(not (result.value == result2.value))
                 raise Exception("unsupported operand type(s) for !=: {0} and {1}".format(
                     result.type, result2.type))
 
@@ -449,7 +445,7 @@ class Process:
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
                 if result.type == result2.type:
-                    return Bool(result == result2)
+                    return Bool(result.value == result2.value)
                 raise Exception("unsupported operand type(s) for ==: {0} and {1}".format(
                     result.type, result2.type))
 

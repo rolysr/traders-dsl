@@ -3,7 +3,14 @@ let dim2: list = [dim1, dim1, dim1, dim1, ];
 let x: number = 0; 
 
 behave xxx{
-    talk "sex";
+    let a: number = 0;
+    repeat when a < 5{
+        a = a + 1;
+        talk "sex";
+        in case a == 1{
+            stop;
+        }
+    }
 }
 
 agent pepito {
