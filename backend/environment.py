@@ -3,6 +3,7 @@ from backend.environment_state import EnvironmentState
 from backend.logger import Logger
 from backend.basic_types import *
 from backend.list import *
+from backend.book import *
 
 
 class TradersEnvironment:
@@ -29,8 +30,8 @@ class TradersEnvironment:
         self.log = log
         self.logger = Logger()
 
-        # create the world's internal representation
-        self.matrix = {(i, j): [] for i in range(int(self.rows.value))
+        # create the world's internal representation for items on the ground
+        self.matrix = {(i, j): Book((1, 'list', 'number'), {}) for i in range(int(self.rows.value))
                        for j in range(int(self.columns.value))}
     def reset(self):
         """
@@ -54,10 +55,9 @@ class TradersEnvironment:
         if 0 <= row < self.rows and 0 <= column < self.columns:
             return
 
-        self.agents.append(agent)
-        self.matrix[(row, column)].append(agent)
+        self.agents.value.append(agent)
 
-    def add_item(self, item, row, column):
+    def add_items(self, book: Book, row, column):
         """
             A method that sets an item on an
             environment in a given location
@@ -65,7 +65,28 @@ class TradersEnvironment:
         if 0 <= row < self.rows and 0 <= column < self.columns:
             return
 
-        self.matrix[(row, column)].append(item)
+        # update items' amount on that position
+        for item in book.keys():
+            self.matrix[(row, column)].set_amount(item, book.get_amount(item))
+
+    def find_peers(self, row, column):
+        """
+            Method for finding peers in a given location
+        """
+        if 0 <= row < self.rows and 0 <= column < self.columns:
+            return
+
+        peers = [agent for agent in self.agents.value if agent.location.value[0] == row and agent.location.value[1] == column]
+        return List(element_type='agent', value=peers)
+
+    def find_objects(self, row, column):
+        """
+            Method for finding objects in a given location
+        """
+        if 0 <= row < self.rows and 0 <= column < self.columns:
+            return
+
+        return self.matrix[(row, column)]
 
     def get(self, dotTail, process):
         if len(dotTail) == 0:
