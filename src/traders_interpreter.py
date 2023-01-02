@@ -279,6 +279,27 @@ class Process:
                     return func
                 raise Exception("Error while resolving {}.".format(parsed)) 
 
+            elif action == 'sell':
+                produt_name = parsed[1]
+                amount = parsed[2]
+                price = parsed[3]
+
+                on_keep = self.env['on_keep']
+                on_sale = self.env['on_sale']
+
+                if produt_name not in on_keep.keys() or amount < 1 or amount > on_keep.get_amount(produt_name) or price < 0:
+                    raise ValueError('Invalid values for sell operation')
+                
+                # update on_keep
+                on_keep.set_amount(produt_name, on_keep.get_amount(produt_name) - amount)
+
+                if produt_name in on_sale.keys():
+                    amount = on_sale.get_amount(produt_name) + amount
+                    price = min(price, on_sale.get_price(produt_name))
+
+                on_sale.set_amount(produt_name, amount)
+                on_sale.set_price(produt_name, price)
+
             elif action == 'moveStmt_0':
                 try:
                     row = self.evaluate(parsed[1])
@@ -289,6 +310,8 @@ class Process:
                     if env_instance.is_valid_position(row, column):
                         location = List(element_type='number', value=[row, column])
                         self.env['location'] = location
+                    else:
+                        raise IndexError('Location out of range')
                 except:
                     pass
 
@@ -309,7 +332,12 @@ class Process:
                 else:
                     raise ValueError("Invalid move direction")
 
-                self.env['location'] = location
+                env_instance = self.env['environment']
+                
+                if env_instance.is_valid_position(location.value[0], location.value[1]):
+                    self.env['location'] = location
+                else:
+                    raise IndexError('Location out of range')
 
             elif action == 'talk':
                 print(self.stringify(self.evaluate(parsed[1])))
