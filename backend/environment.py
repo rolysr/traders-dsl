@@ -52,9 +52,10 @@ class TradersEnvironment:
             A method that sets an agent on an
             environment in a given location
         """
-        if 0 <= row < self.rows and 0 <= column < self.columns:
+        if self.is_valid_position(row, column):
             return
 
+        agent.location = List(element_type='number', value=[row, column])
         self.agents.value.append(agent)
 
     def add_items(self, book: Book, row, column):
@@ -62,7 +63,7 @@ class TradersEnvironment:
             A method that sets an item on an
             environment in a given location
         """
-        if 0 <= row < self.rows and 0 <= column < self.columns:
+        if self.is_valid_position(row, column):
             return
 
         # update items' amount on that position
@@ -73,7 +74,7 @@ class TradersEnvironment:
         """
             Method for finding peers in a given location
         """
-        if 0 <= row < self.rows and 0 <= column < self.columns:
+        if self.is_valid_position(row, column):
             return
 
         peers = [agent for agent in self.agents.value if agent.location.value[0] == row and agent.location.value[1] == column]
@@ -83,10 +84,17 @@ class TradersEnvironment:
         """
             Method for finding objects in a given location
         """
-        if 0 <= row < self.rows and 0 <= column < self.columns:
+        if self.is_valid_position(row, column):
             return
 
         return self.matrix[(row, column)]
+
+    def is_valid_position(self, row, column):
+        """
+            Check if the given location is 
+            valid on the current environment.
+        """
+        return 0 <= row.value < self.rows.value and 0 <= column.value < self.columns.value
 
     def get(self, dotTail, process):
         if len(dotTail) == 0:

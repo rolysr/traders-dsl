@@ -1,8 +1,6 @@
 from copy import deepcopy
 from backend.behavior import Behavior
 from backend.book import Book
-from backend.item import Item
-from backend.offer import Offer
 from backend.list import List
 from backend.basic_types import *
 
