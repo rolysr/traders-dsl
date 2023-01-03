@@ -3,9 +3,15 @@ let dim2: list = [dim1, dim1, dim1, dim1, ];
 let x: number = 0; 
 
 behave xxx{
-    move down;
-    talk "sex";
     talk location.get 0;
+    in case (location.get 0) == 5{
+        move up;
+        talk "sex";
+    }
+    in other case (location.get 0) > 0{
+        move down;
+        restart behave;
+    }
 }
 
 agent pepito {
@@ -44,4 +50,4 @@ env la_tinta{
     number_iterations = 2;
 }
 
-run la_tinta with 20 iterations;
+run la_tinta with 5 iterations;

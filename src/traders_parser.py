@@ -186,7 +186,7 @@ class TradersParser(Parser):
 
     @_('empty')
     def inothercaseStmt(self, p):
-        return ('inothercaseStmt_2')
+        return ('inothercaseStmt_2', )
     
     ##Primitive Functions Statements
 
@@ -208,11 +208,11 @@ class TradersParser(Parser):
         
     @_('RESTART BEHAVE SEP')
     def primFuncStmt(self, p):
-        return ('restart')
+        return ('restart', )
         
     @_('STOP SEP')
     def primFuncStmt(self, p):
-        return ('stop')
+        return ('stop', )
         
     @_('PICK expr SEP')
     def primFuncStmt(self, p):
@@ -370,7 +370,7 @@ class TradersParser(Parser):
 
     @_('SIZE')
     def listValueFunc(self, p):
-        return ('size')
+        return ('size', )
 
     @_('RANDOM FROM expr TO expr')
     def primitiveValue(self, p):
