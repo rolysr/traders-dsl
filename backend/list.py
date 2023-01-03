@@ -6,7 +6,7 @@ class List:
         self.value = value
     
     def get(self, index):
-        if len(self.value)>index:
+        if len(self.value) > index:
             return self.value[index]
         raise Exception("List::get(): indexing out of range")
 

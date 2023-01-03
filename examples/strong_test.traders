@@ -1,0 +1,53 @@
+let dim1: list = [1, 2, 3, 4, ];
+let dim2: list = [dim1, dim1, dim1, dim1, ];
+let x: number = 0; 
+
+behave xxx{
+    in case (location.get 0) > 0{
+        talk "sex";
+        location.get 0 = (location.get 0) - 1;
+        restart behave;
+    }
+    otherwise
+    {
+        stop;
+    }
+}
+
+agent pepito {
+    location = [1,2,];
+    let atrr : string = "Pedro";
+    let atrr2 : string = "Jose";
+    let abc : number;
+    behavior = xxx;
+    on_keep = {"carne" : (5, ), "mondongo" : (99999999, ), };
+    on_sale = {"carne" : (5, 100, ), "mondongo" : (99999999, 1000, ), };
+    let extra_attr: list = dim2;
+}
+
+dim2.get x+1.get x+2 = -1;
+x=x+1;
+dim2.get (dim2.get 1.get 2) + 1.get x+2 = (dim2.get 0.get 3) + 1;
+
+agent juan {
+    location = [2,0,];
+    balance = 5000;
+    let atrr : string = "Pedro";
+    let atrr2 : string = "Jose";
+    let abc : number;
+    behavior = xxx;
+    on_keep = {"carne" : (5, ), "mondongo" : (99999999, ), };
+    on_sale = {"carne" : (5, 100, ), "mondongo" : (99999999, 1000, ), };
+    let extra_attr: list = dim2;
+}
+
+let a: number = 50;
+env la_tinta{
+    agents = [pepito, juan, pepito, ];
+    log = true;
+    rows = a;
+    columns = a;
+    number_iterations = 2;
+}
+
+run la_tinta with 3 iterations;

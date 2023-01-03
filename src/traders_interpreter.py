@@ -115,7 +115,16 @@ class Process:
         else:
             action = parsed[0]
 
-            if action == 'behave':
+            if action == 'call':
+                func = self.env.find(parsed[1])
+                if isinstance(func, Number) or isinstance(func, Bool) or isinstance(func, String) or isinstance(func, List) or isinstance(func, Book) or isinstance(func, Entry) or isinstance(func, TradersAgent) or isinstance(func, TradersEnvironment):
+                    return func.get(parsed[2], self)
+
+                elif isinstance(func, Behavior):
+                    return func
+                raise Exception("Error while resolving {}.".format(parsed)) 
+
+            elif action == 'behave':
                 self.env.update({parsed[1]: Behavior(
                     name=parsed[1], statement_list=parsed[2])})
                 return None
@@ -303,35 +312,41 @@ class Process:
                 self.should_return = True
                 return None
 
-            elif action == 'call':
-                func = self.env.find(parsed[1])
-                if isinstance(func, Number) or isinstance(func, Bool) or isinstance(func, String) or isinstance(func, List) or isinstance(func, Book) or isinstance(func, Entry) or isinstance(func, TradersAgent) or isinstance(func, TradersEnvironment):
-                    return func.get(parsed[2], self)
-
-                elif isinstance(func, Behavior):
-                    return func
-                raise Exception("Error while resolving {}.".format(parsed)) 
-
             elif action == 'sell':
-                produt_name = parsed[1]
-                amount = parsed[2]
-                price = parsed[3]
+                produt_name = self.evaluate(parsed[1])
+                amount = self.evaluate(parsed[2])
+                price = self.evaluate(parsed[3])
+
+                if not (isinstance(produt_name, String) and isinstance(amount, Number) and isinstance(price, Number)):
+                    return ValueError('Invalid values for sell operation')
 
                 on_keep = self.env['on_keep']
                 on_sale = self.env['on_sale']
 
-                if produt_name not in on_keep.keys() or amount < 1 or amount > on_keep.get_amount(produt_name) or price < 0:
+                if produt_name.value not in on_keep.value.keys() or amount.value < 1 or amount.value > on_keep.value.get_amount(produt_name) or price.value < 0:
                     raise ValueError('Invalid values for sell operation')
                 
                 # update on_keep
-                on_keep.set_amount(produt_name, on_keep.get_amount(produt_name) - amount)
+                on_keep.set_amount(produt_name, on_keep.get_amount(produt_name).value - amount.value)
 
-                if produt_name in on_sale.keys():
+                if produt_name.value in on_sale.value.keys():
                     amount = on_sale.get_amount(produt_name) + amount
                     price = min(price, on_sale.get_price(produt_name))
 
                 on_sale.set_amount(produt_name, amount)
                 on_sale.set_price(produt_name, price)
+
+            elif action == 'pick':
+                raise Exception("Not implemented")
+
+            elif action == 'put':
+                raise Exception("Not implemented")
+
+            elif action == 'listVoidFunc':
+                raise Exception("Not implemented")
+
+            elif action == 'moveStmt':
+                return self.evaluate(parsed[1])
 
             elif action == 'moveStmt_0':
                 try:
@@ -369,9 +384,24 @@ class Process:
                 else:
                     raise IndexError('Location out of range')
 
+            elif action == 'buyStmt':
+                return self.evaluate(parsed[1])
+
+            elif action == 'buyStmt_0':
+                raise Exception("Not implemented")
+
+            elif action == 'buyStmt_1':
+                raise Exception("Not implemented")
+
             elif action == 'talk':
                 print(self.stringify(self.evaluate(parsed[1])))
                 return None
+
+            elif action == 'random':
+                raise Exception("Not implemented")
+
+            elif action == 'find':
+                raise Exception("Not implemented")
 
             elif action == 'primary_bool':
                 return Bool(parsed[1])
