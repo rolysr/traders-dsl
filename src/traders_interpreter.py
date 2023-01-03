@@ -33,6 +33,7 @@ class Process:
         self.rtypes = {int: 'int', float: 'float', str: 'string',
                        bool: 'bool', list: 'list', dict: 'dict'}
         self.actual_agent = None
+        self.env_instance = None
 
     def run(self, tree=None, env={}):
         current_env = self.env
@@ -203,6 +204,7 @@ class Process:
                     raise Exception("Iterations param must be a number.")
 
                 agents = env_instance.agents.value
+                self.env_instance = env_instance
 
                 for iter in range(int(iterations.value)):
                     for agent in agents:
@@ -214,7 +216,6 @@ class Process:
                         inner_context.update({'on_keep': agent.on_keep})
                         inner_context.update({'on_sale': agent.on_sale})
                         inner_context.update({'location': agent.location})
-                        inner_context.update({'environment': env_instance}) # add current env instance
                         for attr in agent.attributes.keys():
                             inner_context.update(
                                 {attr: agent.attributes[attr]})
@@ -230,6 +231,8 @@ class Process:
                         self.should_return = False
                         self.env = actual_context
                         self.actual_agent = None
+                
+                self.env_instance = None
 
             elif action == 'resetEnv':
                 env_instance = self.env[parsed[1]]
@@ -334,10 +337,9 @@ class Process:
                 try:
                     row = self.evaluate(parsed[1])
                     column = self.evaluate(parsed[2])
-                    env_instance = self.env['environment']
 
                     # check if valid move
-                    if env_instance.is_valid_position(row, column):
+                    if self.env_instance.is_valid_position(row, column):
                         location = List(element_type='number', value=[row, column])
                         self.env['location'] = location
                     else:
@@ -361,10 +363,8 @@ class Process:
                     location.value[0] = Number(row.value + 1)
                 else:
                     raise ValueError("Invalid move direction")
-
-                env_instance = self.env['environment']
                 
-                if env_instance.is_valid_position(location.value[0], location.value[1]):
+                if self.env_instance.is_valid_position(location.value[0], location.value[1]):
                     self.env['location'] = location
                 else:
                     raise IndexError('Location out of range')
