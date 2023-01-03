@@ -96,6 +96,19 @@ class TradersEnvironment:
         """
         return 0 <= row.value < self.rows.value and 0 <= column.value < self.columns.value
 
+    def make_valid_position(self, location):
+        """
+            Make the given location a valid one.
+        """
+        if location.value[0].value < 0:
+            location.value[0].value = 0
+        if location.value[1].value < 0:
+            location.value[1].value = 0
+        if location.value[0].value >= self.rows.value:
+            location.value[0].value = self.rows.value - 1
+        if location.value[1].value >= self.columns.value:
+            location.value[1].value = self.columns.value - 1
+
     def get(self, dotTail, process):
         if len(dotTail) == 0:
             return self

@@ -347,14 +347,13 @@ class Process:
                     row = self.evaluate(parsed[1])
                     column = self.evaluate(parsed[2])
 
-                    # check if valid move
-                    if self.env_instance.is_valid_position(row, column):
-                        location = List(element_type='number', value=[row, column])
-                        self.env['location'] = location
-                    else:
-                        raise IndexError('Location out of range')
+                    new_location = List("number", [row, column])
+                    
+                    self.env_instance.make_valid_position(new_location)
+
+                    self.env['location'].copy(new_location)
                 except:
-                    pass
+                    raise Exception("Some error accoured when moving")
 
             elif action == 'moveStmt_1':
                 direction = parsed[1]
@@ -373,14 +372,7 @@ class Process:
                 else:
                     raise ValueError("Invalid move direction")
                 
-                if location.value[0].value < 0:
-                    location.value[0].value = 0
-                if location.value[1].value < 0:
-                    location.value[1].value = 0
-                if location.value[0].value >= self.env_instance.rows.value:
-                    location.value[0].value = self.env_instance.rows.value - 1
-                if location.value[1].value >= self.env_instance.columns.value:
-                    location.value[1].value = self.env_instance.columns.value - 1
+                self.env_instance.make_valid_position(location)
 
             elif action == 'buyStmt':
                 return self.evaluate(parsed[1])

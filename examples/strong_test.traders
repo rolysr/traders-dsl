@@ -35,7 +35,7 @@ agent juan {
     let extra_attr: list = dim2;
 }
 
-let a: number = 50;
+let a: number = 10;
 env la_tinta{
     agents = [pepito, juan, pepito, ];
     log = true;
@@ -44,4 +44,4 @@ env la_tinta{
     number_iterations = 2;
 }
 
-run la_tinta with 3 iterations;
+run la_tinta with 20 iterations;
