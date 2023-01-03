@@ -10,7 +10,6 @@ from backend.basic_types import *
 from backend.behavior import *
 from backend.book import *
 from backend.environment import *
-from backend.offer import *
 from backend.env import *
 
 
@@ -215,6 +214,7 @@ class Process:
                         inner_context.update({'on_keep': agent.on_keep})
                         inner_context.update({'on_sale': agent.on_sale})
                         inner_context.update({'location': agent.location})
+                        inner_context.update({'environment': env_instance}) # add current env instance
                         for attr in agent.attributes.keys():
                             inner_context.update(
                                 {attr: agent.attributes[attr]})
@@ -248,7 +248,7 @@ class Process:
                     raise Exception("There is no instance for {} object.".format(parsed[1]))
 
                 # get environment instance
-                env_instance = self.env[parsed[3]]
+                env_instance = self.env[parsed[2]]
                 if env_instance.type != 'env':
                     raise Exception(
                         "Put statement must be called on an Environment instance.")
@@ -307,7 +307,67 @@ class Process:
 
                 elif isinstance(func, Behavior):
                     return func
-                raise Exception("Error while resolving {}.".format(parsed))
+                raise Exception("Error while resolving {}.".format(parsed)) 
+
+            elif action == 'sell':
+                produt_name = parsed[1]
+                amount = parsed[2]
+                price = parsed[3]
+
+                on_keep = self.env['on_keep']
+                on_sale = self.env['on_sale']
+
+                if produt_name not in on_keep.keys() or amount < 1 or amount > on_keep.get_amount(produt_name) or price < 0:
+                    raise ValueError('Invalid values for sell operation')
+                
+                # update on_keep
+                on_keep.set_amount(produt_name, on_keep.get_amount(produt_name) - amount)
+
+                if produt_name in on_sale.keys():
+                    amount = on_sale.get_amount(produt_name) + amount
+                    price = min(price, on_sale.get_price(produt_name))
+
+                on_sale.set_amount(produt_name, amount)
+                on_sale.set_price(produt_name, price)
+
+            elif action == 'moveStmt_0':
+                try:
+                    row = self.evaluate(parsed[1])
+                    column = self.evaluate(parsed[2])
+                    env_instance = self.env['environment']
+
+                    # check if valid move
+                    if env_instance.is_valid_position(row, column):
+                        location = List(element_type='number', value=[row, column])
+                        self.env['location'] = location
+                    else:
+                        raise IndexError('Location out of range')
+                except:
+                    pass
+
+            elif action == 'moveStmt_1':
+                direction = parsed[1]
+                location = deepcopy(self.env['location'])
+                row = location[0].value
+                column = location[1].value
+
+                if direction == 'up':
+                    location.value[0] = Number(row.value - 1)
+                elif direction == 'left':
+                    location.value[1] = Number(column.value - 1)
+                elif direction == 'right':
+                    location.value[1] = Number(column.value + 1)
+                elif direction == 'down':
+                    location.value[0] = Number(row.value + 1)
+                else:
+                    raise ValueError("Invalid move direction")
+
+                env_instance = self.env['environment']
+                
+                if env_instance.is_valid_position(location.value[0], location.value[1]):
+                    self.env['location'] = location
+                else:
+                    raise IndexError('Location out of range')
 
             elif action == 'talk':
                 print(self.stringify(self.evaluate(parsed[1])))
