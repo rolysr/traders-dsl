@@ -358,25 +358,29 @@ class Process:
 
             elif action == 'moveStmt_1':
                 direction = parsed[1]
-                location = deepcopy(self.env['location'])
-                row = location[0].value
-                column = location[1].value
+                location = self.env['location']
+                row = location.value[0]
+                column = location.value[1]
 
                 if direction == 'up':
                     location.value[0] = Number(row.value - 1)
+                elif direction == 'down':
+                    location.value[0] = Number(row.value + 1)
                 elif direction == 'left':
                     location.value[1] = Number(column.value - 1)
                 elif direction == 'right':
                     location.value[1] = Number(column.value + 1)
-                elif direction == 'down':
-                    location.value[0] = Number(row.value + 1)
                 else:
                     raise ValueError("Invalid move direction")
                 
-                if self.env_instance.is_valid_position(location.value[0], location.value[1]):
-                    self.env['location'] = location
-                else:
-                    raise IndexError('Location out of range')
+                if location.value[0].value < 0:
+                    location.value[0].value = 0
+                if location.value[1].value < 0:
+                    location.value[1].value = 0
+                if location.value[0].value >= self.env_instance.rows.value:
+                    location.value[0].value = self.env_instance.rows.value - 1
+                if location.value[1].value >= self.env_instance.columns.value:
+                    location.value[1].value = self.env_instance.columns.value - 1
 
             elif action == 'buyStmt':
                 return self.evaluate(parsed[1])

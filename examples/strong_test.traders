@@ -3,19 +3,13 @@ let dim2: list = [dim1, dim1, dim1, dim1, ];
 let x: number = 0; 
 
 behave xxx{
-    in case (location.get 0) > 0{
-        talk "sex";
-        location.get 0 = (location.get 0) - 1;
-        restart behave;
-    }
-    otherwise
-    {
-        stop;
-    }
+    move down;
+    talk "sex";
+    talk location.get 0;
 }
 
 agent pepito {
-    location = [1,2,];
+    location = [2,0,];
     let atrr : string = "Pedro";
     let atrr2 : string = "Jose";
     let abc : number;

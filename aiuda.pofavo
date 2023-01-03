@@ -51,13 +51,13 @@ Rule 47    primFuncStmt -> TALK expr SEP
 Rule 48    listVoidFunc -> REVERSE
 Rule 49    listVoidFunc -> POP
 Rule 50    listVoidFunc -> PUSH expr
-Rule 51    moveStmt -> MOVE RIGHT SEP
-Rule 52    moveStmt -> MOVE LEFT SEP
-Rule 53    moveStmt -> MOVE DOWN SEP
-Rule 54    moveStmt -> MOVE UP SEP
-Rule 55    moveStmt -> MOVE expr , expr SEP
-Rule 56    buyStmt -> BUY expr SEP
-Rule 57    buyStmt -> BUY expr , expr , expr SEP
+Rule 51    moveStmt -> MOVE RIGHT
+Rule 52    moveStmt -> MOVE LEFT
+Rule 53    moveStmt -> MOVE DOWN
+Rule 54    moveStmt -> MOVE UP
+Rule 55    moveStmt -> MOVE expr , expr
+Rule 56    buyStmt -> BUY expr
+Rule 57    buyStmt -> BUY expr , expr , expr
 Rule 58    expr -> call
 Rule 59    expr -> - expr  [precedence=right, level=9]
 Rule 60    expr -> ! expr  [precedence=right, level=10]
@@ -107,19 +107,19 @@ Rule 102   empty -> <empty>
 Unused terminals:
 
     DEC
-    SHL
+    SHRASGN
     SLASHASGN
     ANDASGN
-    ORASGN
     SHR
-    INC
+    MINUSASGN
     SHLASGN
     PLUSASGN
-    STARASGN
     MODULOASGN
-    SHRASGN
-    MINUSASGN
+    ORASGN
     XORASGN
+    INC
+    SHL
+    STARASGN
 
 Terminals, with rules where they appear:
 
@@ -188,7 +188,7 @@ REVERSE              : 48
 RIGHT                : 51
 RUN                  : 17
 SELL                 : 44
-SEP                  : 13 14 15 16 17 18 39 40 41 42 43 44 45 46 47 51 52 53 54 55 56 57
+SEP                  : 13 14 15 16 17 18 39 40 41 42 43 44 45 46 47
 SHL                  : 
 SHLASGN              : 
 SHR                  : 
@@ -1380,13 +1380,13 @@ state 57
     (13) varDecl -> . LET ID : type ASSIGN expr SEP
     (14) varDecl -> . LET ID : type SEP
     (76) getter -> . ID dotTail
-    (56) buyStmt -> . BUY expr SEP
-    (57) buyStmt -> . BUY expr , expr , expr SEP
-    (51) moveStmt -> . MOVE RIGHT SEP
-    (52) moveStmt -> . MOVE LEFT SEP
-    (53) moveStmt -> . MOVE DOWN SEP
-    (54) moveStmt -> . MOVE UP SEP
-    (55) moveStmt -> . MOVE expr , expr SEP
+    (56) buyStmt -> . BUY expr
+    (57) buyStmt -> . BUY expr , expr , expr
+    (51) moveStmt -> . MOVE RIGHT
+    (52) moveStmt -> . MOVE LEFT
+    (53) moveStmt -> . MOVE DOWN
+    (54) moveStmt -> . MOVE UP
+    (55) moveStmt -> . MOVE expr , expr
     }               reduce using rule 102 (empty -> .)
     PUT             shift and go to state 107
     PICK            shift and go to state 108
@@ -2563,13 +2563,13 @@ state 99
     (13) varDecl -> . LET ID : type ASSIGN expr SEP
     (14) varDecl -> . LET ID : type SEP
     (76) getter -> . ID dotTail
-    (56) buyStmt -> . BUY expr SEP
-    (57) buyStmt -> . BUY expr , expr , expr SEP
-    (51) moveStmt -> . MOVE RIGHT SEP
-    (52) moveStmt -> . MOVE LEFT SEP
-    (53) moveStmt -> . MOVE DOWN SEP
-    (54) moveStmt -> . MOVE UP SEP
-    (55) moveStmt -> . MOVE expr , expr SEP
+    (56) buyStmt -> . BUY expr
+    (57) buyStmt -> . BUY expr , expr , expr
+    (51) moveStmt -> . MOVE RIGHT
+    (52) moveStmt -> . MOVE LEFT
+    (53) moveStmt -> . MOVE DOWN
+    (54) moveStmt -> . MOVE UP
+    (55) moveStmt -> . MOVE expr , expr
     }               reduce using rule 102 (empty -> .)
     PUT             shift and go to state 107
     PICK            shift and go to state 108
@@ -2960,8 +2960,8 @@ state 117
 
 state 118
 
-    (56) buyStmt -> BUY . expr SEP
-    (57) buyStmt -> BUY . expr , expr , expr SEP
+    (56) buyStmt -> BUY . expr
+    (57) buyStmt -> BUY . expr , expr , expr
     (58) expr -> . call
     (59) expr -> . - expr
     (60) expr -> . ! expr
@@ -3010,11 +3010,11 @@ state 118
 
 state 119
 
-    (51) moveStmt -> MOVE . RIGHT SEP
-    (52) moveStmt -> MOVE . LEFT SEP
-    (53) moveStmt -> MOVE . DOWN SEP
-    (54) moveStmt -> MOVE . UP SEP
-    (55) moveStmt -> MOVE . expr , expr SEP
+    (51) moveStmt -> MOVE . RIGHT
+    (52) moveStmt -> MOVE . LEFT
+    (53) moveStmt -> MOVE . DOWN
+    (54) moveStmt -> MOVE . UP
+    (55) moveStmt -> MOVE . expr , expr
     (58) expr -> . call
     (59) expr -> . - expr
     (60) expr -> . ! expr
@@ -4198,8 +4198,8 @@ state 162
 
 state 163
 
-    (56) buyStmt -> BUY expr . SEP
-    (57) buyStmt -> BUY expr . , expr , expr SEP
+    (56) buyStmt -> BUY expr .
+    (57) buyStmt -> BUY expr . , expr , expr
     (61) expr -> expr . / expr
     (62) expr -> expr . * expr
     (63) expr -> expr . - expr
@@ -4212,8 +4212,8 @@ state 163
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    SEP             shift and go to state 191
-    ,               shift and go to state 192
+    SEP             reduce using rule 56 (buyStmt -> BUY expr .)
+    ,               shift and go to state 191
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -4230,31 +4230,31 @@ state 163
 
 state 164
 
-    (51) moveStmt -> MOVE RIGHT . SEP
-    SEP             shift and go to state 193
+    (51) moveStmt -> MOVE RIGHT .
+    SEP             reduce using rule 51 (moveStmt -> MOVE RIGHT .)
 
 
 state 165
 
-    (52) moveStmt -> MOVE LEFT . SEP
-    SEP             shift and go to state 194
+    (52) moveStmt -> MOVE LEFT .
+    SEP             reduce using rule 52 (moveStmt -> MOVE LEFT .)
 
 
 state 166
 
-    (53) moveStmt -> MOVE DOWN . SEP
-    SEP             shift and go to state 195
+    (53) moveStmt -> MOVE DOWN .
+    SEP             reduce using rule 53 (moveStmt -> MOVE DOWN .)
 
 
 state 167
 
-    (54) moveStmt -> MOVE UP . SEP
-    SEP             shift and go to state 196
+    (54) moveStmt -> MOVE UP .
+    SEP             reduce using rule 54 (moveStmt -> MOVE UP .)
 
 
 state 168
 
-    (55) moveStmt -> MOVE expr . , expr SEP
+    (55) moveStmt -> MOVE expr . , expr
     (61) expr -> expr . / expr
     (62) expr -> expr . * expr
     (63) expr -> expr . - expr
@@ -4267,7 +4267,7 @@ state 168
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    ,               shift and go to state 197
+    ,               shift and go to state 192
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -4337,7 +4337,7 @@ state 173
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    ,               shift and go to state 198
+    ,               shift and go to state 193
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -4410,7 +4410,7 @@ state 175
     FALSE           shift and go to state 54
     TRUE            shift and go to state 55
 
-    expr                           shift and go to state 199
+    expr                           shift and go to state 194
     call                           shift and go to state 41
     primitiveValue                 shift and go to state 45
     primary                        shift and go to state 46
@@ -4463,7 +4463,7 @@ state 176
     FALSE           shift and go to state 54
     TRUE            shift and go to state 55
 
-    listItems                      shift and go to state 200
+    listItems                      shift and go to state 195
     empty                          shift and go to state 88
     expr                           shift and go to state 89
     call                           shift and go to state 41
@@ -4492,7 +4492,7 @@ state 178
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    SEP             shift and go to state 201
+    SEP             shift and go to state 196
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -4510,7 +4510,7 @@ state 178
 state 179
 
     (39) primFuncStmt -> getter . listVoidFunc . SEP
-    SEP             shift and go to state 202
+    SEP             shift and go to state 197
 
 
 state 180
@@ -4569,7 +4569,7 @@ state 182
     FALSE           shift and go to state 54
     TRUE            shift and go to state 55
 
-    expr                           shift and go to state 203
+    expr                           shift and go to state 198
     call                           shift and go to state 41
     primitiveValue                 shift and go to state 45
     primary                        shift and go to state 46
@@ -4618,7 +4618,7 @@ state 183
     FALSE           shift and go to state 54
     TRUE            shift and go to state 55
 
-    expr                           shift and go to state 204
+    expr                           shift and go to state 199
     call                           shift and go to state 41
     primitiveValue                 shift and go to state 45
     primary                        shift and go to state 46
@@ -4705,7 +4705,7 @@ state 186
     FALSE           shift and go to state 54
     TRUE            shift and go to state 55
 
-    expr                           shift and go to state 205
+    expr                           shift and go to state 200
     call                           shift and go to state 41
     primitiveValue                 shift and go to state 45
     primary                        shift and go to state 46
@@ -4744,7 +4744,7 @@ state 188
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    {               shift and go to state 206
+    {               shift and go to state 201
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -4803,7 +4803,7 @@ state 189
     FALSE           shift and go to state 54
     TRUE            shift and go to state 55
 
-    expr                           shift and go to state 207
+    expr                           shift and go to state 202
     call                           shift and go to state 41
     primitiveValue                 shift and go to state 45
     primary                        shift and go to state 46
@@ -4823,7 +4823,7 @@ state 190
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    {               shift and go to state 208
+    {               shift and go to state 203
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -4840,13 +4840,7 @@ state 190
 
 state 191
 
-    (56) buyStmt -> BUY expr SEP .
-    SEP             reduce using rule 56 (buyStmt -> BUY expr SEP .)
-
-
-state 192
-
-    (57) buyStmt -> BUY expr , . expr , expr SEP
+    (57) buyStmt -> BUY expr , . expr , expr
     (58) expr -> . call
     (59) expr -> . - expr
     (60) expr -> . ! expr
@@ -4888,85 +4882,61 @@ state 192
     FALSE           shift and go to state 54
     TRUE            shift and go to state 55
 
-    expr                           shift and go to state 209
+    expr                           shift and go to state 204
+    call                           shift and go to state 41
+    primitiveValue                 shift and go to state 45
+    primary                        shift and go to state 46
+
+state 192
+
+    (55) moveStmt -> MOVE expr , . expr
+    (58) expr -> . call
+    (59) expr -> . - expr
+    (60) expr -> . ! expr
+    (61) expr -> . expr / expr
+    (62) expr -> . expr * expr
+    (63) expr -> . expr - expr
+    (64) expr -> . expr + expr
+    (65) expr -> . expr GREATER expr
+    (66) expr -> . expr GREATEREQ expr
+    (67) expr -> . expr LESSEQ expr
+    (68) expr -> . expr LESS expr
+    (69) expr -> . expr EQEQ expr
+    (70) expr -> . expr NOTEQ expr
+    (71) expr -> . expr AND expr
+    (72) expr -> . expr OR expr
+    (73) call -> . ID dotTail
+    (74) call -> . primitiveValue
+    (75) call -> . primary
+    (83) primitiveValue -> . FIND PEERS
+    (84) primitiveValue -> . FIND OBJECTS
+    (85) primitiveValue -> . RANDOM FROM expr TO expr
+    (86) primary -> . ( expr )
+    (87) primary -> . { bookItems }
+    (88) primary -> . [ listItems ]
+    (89) primary -> . STRING
+    (90) primary -> . NUMBER
+    (91) primary -> . FALSE
+    (92) primary -> . TRUE
+    -               shift and go to state 42
+    !               shift and go to state 43
+    ID              shift and go to state 44
+    FIND            shift and go to state 47
+    RANDOM          shift and go to state 48
+    (               shift and go to state 49
+    {               shift and go to state 50
+    [               shift and go to state 51
+    STRING          shift and go to state 52
+    NUMBER          shift and go to state 53
+    FALSE           shift and go to state 54
+    TRUE            shift and go to state 55
+
+    expr                           shift and go to state 205
     call                           shift and go to state 41
     primitiveValue                 shift and go to state 45
     primary                        shift and go to state 46
 
 state 193
-
-    (51) moveStmt -> MOVE RIGHT SEP .
-    SEP             reduce using rule 51 (moveStmt -> MOVE RIGHT SEP .)
-
-
-state 194
-
-    (52) moveStmt -> MOVE LEFT SEP .
-    SEP             reduce using rule 52 (moveStmt -> MOVE LEFT SEP .)
-
-
-state 195
-
-    (53) moveStmt -> MOVE DOWN SEP .
-    SEP             reduce using rule 53 (moveStmt -> MOVE DOWN SEP .)
-
-
-state 196
-
-    (54) moveStmt -> MOVE UP SEP .
-    SEP             reduce using rule 54 (moveStmt -> MOVE UP SEP .)
-
-
-state 197
-
-    (55) moveStmt -> MOVE expr , . expr SEP
-    (58) expr -> . call
-    (59) expr -> . - expr
-    (60) expr -> . ! expr
-    (61) expr -> . expr / expr
-    (62) expr -> . expr * expr
-    (63) expr -> . expr - expr
-    (64) expr -> . expr + expr
-    (65) expr -> . expr GREATER expr
-    (66) expr -> . expr GREATEREQ expr
-    (67) expr -> . expr LESSEQ expr
-    (68) expr -> . expr LESS expr
-    (69) expr -> . expr EQEQ expr
-    (70) expr -> . expr NOTEQ expr
-    (71) expr -> . expr AND expr
-    (72) expr -> . expr OR expr
-    (73) call -> . ID dotTail
-    (74) call -> . primitiveValue
-    (75) call -> . primary
-    (83) primitiveValue -> . FIND PEERS
-    (84) primitiveValue -> . FIND OBJECTS
-    (85) primitiveValue -> . RANDOM FROM expr TO expr
-    (86) primary -> . ( expr )
-    (87) primary -> . { bookItems }
-    (88) primary -> . [ listItems ]
-    (89) primary -> . STRING
-    (90) primary -> . NUMBER
-    (91) primary -> . FALSE
-    (92) primary -> . TRUE
-    -               shift and go to state 42
-    !               shift and go to state 43
-    ID              shift and go to state 44
-    FIND            shift and go to state 47
-    RANDOM          shift and go to state 48
-    (               shift and go to state 49
-    {               shift and go to state 50
-    [               shift and go to state 51
-    STRING          shift and go to state 52
-    NUMBER          shift and go to state 53
-    FALSE           shift and go to state 54
-    TRUE            shift and go to state 55
-
-    expr                           shift and go to state 210
-    call                           shift and go to state 41
-    primitiveValue                 shift and go to state 45
-    primary                        shift and go to state 46
-
-state 198
 
     (16) envFunc -> PUT ID IN ID AT expr , . expr SEP
     (58) expr -> . call
@@ -5010,12 +4980,12 @@ state 198
     FALSE           shift and go to state 54
     TRUE            shift and go to state 55
 
-    expr                           shift and go to state 211
+    expr                           shift and go to state 206
     call                           shift and go to state 41
     primitiveValue                 shift and go to state 45
     primary                        shift and go to state 46
 
-state 199
+state 194
 
     (85) primitiveValue -> RANDOM FROM expr TO expr .
     (61) expr -> expr . / expr
@@ -5064,13 +5034,13 @@ state 199
     OR              shift and go to state 76
 
 
-state 200
+state 195
 
     (96) bookItems -> STRING : ( listItems . ) , bookItems
-    )               shift and go to state 212
+    )               shift and go to state 207
 
 
-state 201
+state 196
 
     (13) varDecl -> LET ID : type ASSIGN expr SEP .
     PUT             reduce using rule 13 (varDecl -> LET ID : type ASSIGN expr SEP .)
@@ -5095,7 +5065,7 @@ state 201
     }               reduce using rule 13 (varDecl -> LET ID : type ASSIGN expr SEP .)
 
 
-state 202
+state 197
 
     (39) primFuncStmt -> getter . listVoidFunc SEP .
     PUT             reduce using rule 39 (primFuncStmt -> getter . listVoidFunc SEP .)
@@ -5114,7 +5084,7 @@ state 202
     }               reduce using rule 39 (primFuncStmt -> getter . listVoidFunc SEP .)
 
 
-state 203
+state 198
 
     (50) listVoidFunc -> PUSH expr .
     (61) expr -> expr . / expr
@@ -5144,7 +5114,7 @@ state 203
     OR              shift and go to state 76
 
 
-state 204
+state 199
 
     (40) primFuncStmt -> PUT expr , expr . SEP
     (61) expr -> expr . / expr
@@ -5159,7 +5129,7 @@ state 204
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    SEP             shift and go to state 213
+    SEP             shift and go to state 208
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -5174,7 +5144,7 @@ state 204
     OR              shift and go to state 76
 
 
-state 205
+state 200
 
     (44) primFuncStmt -> SELL expr , expr . , expr SEP
     (61) expr -> expr . / expr
@@ -5189,7 +5159,7 @@ state 205
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    ,               shift and go to state 214
+    ,               shift and go to state 209
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -5204,7 +5174,7 @@ state 205
     OR              shift and go to state 76
 
 
-state 206
+state 201
 
     (35) incaseStmt -> IN CASE expr { . statementList } inothercaseStmt
     (25) statementList -> . empty
@@ -5232,13 +5202,13 @@ state 206
     (13) varDecl -> . LET ID : type ASSIGN expr SEP
     (14) varDecl -> . LET ID : type SEP
     (76) getter -> . ID dotTail
-    (56) buyStmt -> . BUY expr SEP
-    (57) buyStmt -> . BUY expr , expr , expr SEP
-    (51) moveStmt -> . MOVE RIGHT SEP
-    (52) moveStmt -> . MOVE LEFT SEP
-    (53) moveStmt -> . MOVE DOWN SEP
-    (54) moveStmt -> . MOVE UP SEP
-    (55) moveStmt -> . MOVE expr , expr SEP
+    (56) buyStmt -> . BUY expr
+    (57) buyStmt -> . BUY expr , expr , expr
+    (51) moveStmt -> . MOVE RIGHT
+    (52) moveStmt -> . MOVE LEFT
+    (53) moveStmt -> . MOVE DOWN
+    (54) moveStmt -> . MOVE UP
+    (55) moveStmt -> . MOVE expr , expr
     }               reduce using rule 102 (empty -> .)
     PUT             shift and go to state 107
     PICK            shift and go to state 108
@@ -5254,7 +5224,7 @@ state 206
     BUY             shift and go to state 118
     MOVE            shift and go to state 119
 
-    statementList                  shift and go to state 215
+    statementList                  shift and go to state 210
     empty                          shift and go to state 98
     statement                      shift and go to state 99
     primFuncStmt                   shift and go to state 100
@@ -5267,7 +5237,7 @@ state 206
     buyStmt                        shift and go to state 112
     moveStmt                       shift and go to state 113
 
-state 207
+state 202
 
     (34) foreachStmt -> FOREACH ID IN expr . { statementList }
     (61) expr -> expr . / expr
@@ -5282,7 +5252,7 @@ state 207
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    {               shift and go to state 216
+    {               shift and go to state 211
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -5297,7 +5267,7 @@ state 207
     OR              shift and go to state 76
 
 
-state 208
+state 203
 
     (33) repeatStmt -> REPEAT WHEN expr { . statementList }
     (25) statementList -> . empty
@@ -5325,13 +5295,13 @@ state 208
     (13) varDecl -> . LET ID : type ASSIGN expr SEP
     (14) varDecl -> . LET ID : type SEP
     (76) getter -> . ID dotTail
-    (56) buyStmt -> . BUY expr SEP
-    (57) buyStmt -> . BUY expr , expr , expr SEP
-    (51) moveStmt -> . MOVE RIGHT SEP
-    (52) moveStmt -> . MOVE LEFT SEP
-    (53) moveStmt -> . MOVE DOWN SEP
-    (54) moveStmt -> . MOVE UP SEP
-    (55) moveStmt -> . MOVE expr , expr SEP
+    (56) buyStmt -> . BUY expr
+    (57) buyStmt -> . BUY expr , expr , expr
+    (51) moveStmt -> . MOVE RIGHT
+    (52) moveStmt -> . MOVE LEFT
+    (53) moveStmt -> . MOVE DOWN
+    (54) moveStmt -> . MOVE UP
+    (55) moveStmt -> . MOVE expr , expr
     }               reduce using rule 102 (empty -> .)
     PUT             shift and go to state 107
     PICK            shift and go to state 108
@@ -5347,7 +5317,7 @@ state 208
     BUY             shift and go to state 118
     MOVE            shift and go to state 119
 
-    statementList                  shift and go to state 217
+    statementList                  shift and go to state 212
     empty                          shift and go to state 98
     statement                      shift and go to state 99
     primFuncStmt                   shift and go to state 100
@@ -5360,9 +5330,9 @@ state 208
     buyStmt                        shift and go to state 112
     moveStmt                       shift and go to state 113
 
-state 209
+state 204
 
-    (57) buyStmt -> BUY expr , expr . , expr SEP
+    (57) buyStmt -> BUY expr , expr . , expr
     (61) expr -> expr . / expr
     (62) expr -> expr . * expr
     (63) expr -> expr . - expr
@@ -5375,7 +5345,7 @@ state 209
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    ,               shift and go to state 218
+    ,               shift and go to state 213
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -5390,9 +5360,9 @@ state 209
     OR              shift and go to state 76
 
 
-state 210
+state 205
 
-    (55) moveStmt -> MOVE expr , expr . SEP
+    (55) moveStmt -> MOVE expr , expr .
     (61) expr -> expr . / expr
     (62) expr -> expr . * expr
     (63) expr -> expr . - expr
@@ -5405,7 +5375,7 @@ state 210
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    SEP             shift and go to state 219
+    SEP             reduce using rule 55 (moveStmt -> MOVE expr , expr .)
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -5420,7 +5390,7 @@ state 210
     OR              shift and go to state 76
 
 
-state 211
+state 206
 
     (16) envFunc -> PUT ID IN ID AT expr , expr . SEP
     (61) expr -> expr . / expr
@@ -5435,7 +5405,7 @@ state 211
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    SEP             shift and go to state 220
+    SEP             shift and go to state 214
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -5450,13 +5420,13 @@ state 211
     OR              shift and go to state 76
 
 
-state 212
+state 207
 
     (96) bookItems -> STRING : ( listItems ) . , bookItems
-    ,               shift and go to state 221
+    ,               shift and go to state 215
 
 
-state 213
+state 208
 
     (40) primFuncStmt -> PUT expr , expr SEP .
     PUT             reduce using rule 40 (primFuncStmt -> PUT expr , expr SEP .)
@@ -5475,7 +5445,7 @@ state 213
     }               reduce using rule 40 (primFuncStmt -> PUT expr , expr SEP .)
 
 
-state 214
+state 209
 
     (44) primFuncStmt -> SELL expr , expr , . expr SEP
     (58) expr -> . call
@@ -5519,18 +5489,18 @@ state 214
     FALSE           shift and go to state 54
     TRUE            shift and go to state 55
 
-    expr                           shift and go to state 222
+    expr                           shift and go to state 216
     call                           shift and go to state 41
     primitiveValue                 shift and go to state 45
     primary                        shift and go to state 46
 
-state 215
+state 210
 
     (35) incaseStmt -> IN CASE expr { statementList . } inothercaseStmt
-    }               shift and go to state 223
+    }               shift and go to state 217
 
 
-state 216
+state 211
 
     (34) foreachStmt -> FOREACH ID IN expr { . statementList }
     (25) statementList -> . empty
@@ -5558,13 +5528,13 @@ state 216
     (13) varDecl -> . LET ID : type ASSIGN expr SEP
     (14) varDecl -> . LET ID : type SEP
     (76) getter -> . ID dotTail
-    (56) buyStmt -> . BUY expr SEP
-    (57) buyStmt -> . BUY expr , expr , expr SEP
-    (51) moveStmt -> . MOVE RIGHT SEP
-    (52) moveStmt -> . MOVE LEFT SEP
-    (53) moveStmt -> . MOVE DOWN SEP
-    (54) moveStmt -> . MOVE UP SEP
-    (55) moveStmt -> . MOVE expr , expr SEP
+    (56) buyStmt -> . BUY expr
+    (57) buyStmt -> . BUY expr , expr , expr
+    (51) moveStmt -> . MOVE RIGHT
+    (52) moveStmt -> . MOVE LEFT
+    (53) moveStmt -> . MOVE DOWN
+    (54) moveStmt -> . MOVE UP
+    (55) moveStmt -> . MOVE expr , expr
     }               reduce using rule 102 (empty -> .)
     PUT             shift and go to state 107
     PICK            shift and go to state 108
@@ -5580,7 +5550,7 @@ state 216
     BUY             shift and go to state 118
     MOVE            shift and go to state 119
 
-    statementList                  shift and go to state 224
+    statementList                  shift and go to state 218
     empty                          shift and go to state 98
     statement                      shift and go to state 99
     primFuncStmt                   shift and go to state 100
@@ -5593,15 +5563,15 @@ state 216
     buyStmt                        shift and go to state 112
     moveStmt                       shift and go to state 113
 
-state 217
+state 212
 
     (33) repeatStmt -> REPEAT WHEN expr { statementList . }
-    }               shift and go to state 225
+    }               shift and go to state 219
 
 
-state 218
+state 213
 
-    (57) buyStmt -> BUY expr , expr , . expr SEP
+    (57) buyStmt -> BUY expr , expr , . expr
     (58) expr -> . call
     (59) expr -> . - expr
     (60) expr -> . ! expr
@@ -5643,18 +5613,12 @@ state 218
     FALSE           shift and go to state 54
     TRUE            shift and go to state 55
 
-    expr                           shift and go to state 226
+    expr                           shift and go to state 220
     call                           shift and go to state 41
     primitiveValue                 shift and go to state 45
     primary                        shift and go to state 46
 
-state 219
-
-    (55) moveStmt -> MOVE expr , expr SEP .
-    SEP             reduce using rule 55 (moveStmt -> MOVE expr , expr SEP .)
-
-
-state 220
+state 214
 
     (16) envFunc -> PUT ID IN ID AT expr , expr SEP .
     PUT             reduce using rule 16 (envFunc -> PUT ID IN ID AT expr , expr SEP .)
@@ -5668,7 +5632,7 @@ state 220
     $end            reduce using rule 16 (envFunc -> PUT ID IN ID AT expr , expr SEP .)
 
 
-state 221
+state 215
 
     (96) bookItems -> STRING : ( listItems ) , . bookItems
     (95) bookItems -> . empty
@@ -5677,10 +5641,10 @@ state 221
     STRING          shift and go to state 86
     }               reduce using rule 102 (empty -> .)
 
-    bookItems                      shift and go to state 227
+    bookItems                      shift and go to state 221
     empty                          shift and go to state 85
 
-state 222
+state 216
 
     (44) primFuncStmt -> SELL expr , expr , expr . SEP
     (61) expr -> expr . / expr
@@ -5695,7 +5659,7 @@ state 222
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    SEP             shift and go to state 228
+    SEP             shift and go to state 222
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -5710,7 +5674,7 @@ state 222
     OR              shift and go to state 76
 
 
-state 223
+state 217
 
     (35) incaseStmt -> IN CASE expr { statementList } . inothercaseStmt
     (36) inothercaseStmt -> . empty
@@ -5718,8 +5682,8 @@ state 223
     (38) inothercaseStmt -> . IN OTHER CASE expr { statementList } inothercaseStmt
     (102) empty -> .
   ! shift/reduce conflict for IN resolved as shift
-    OTHERWISE       shift and go to state 232
-    IN              shift and go to state 229
+    OTHERWISE       shift and go to state 226
+    IN              shift and go to state 223
     PUT             reduce using rule 102 (empty -> .)
     PICK            reduce using rule 102 (empty -> .)
     STOP            reduce using rule 102 (empty -> .)
@@ -5734,16 +5698,16 @@ state 223
     MOVE            reduce using rule 102 (empty -> .)
     }               reduce using rule 102 (empty -> .)
 
-    inothercaseStmt                shift and go to state 230
-    empty                          shift and go to state 231
+    inothercaseStmt                shift and go to state 224
+    empty                          shift and go to state 225
 
-state 224
+state 218
 
     (34) foreachStmt -> FOREACH ID IN expr { statementList . }
-    }               shift and go to state 233
+    }               shift and go to state 227
 
 
-state 225
+state 219
 
     (33) repeatStmt -> REPEAT WHEN expr { statementList } .
     PUT             reduce using rule 33 (repeatStmt -> REPEAT WHEN expr { statementList } .)
@@ -5762,9 +5726,9 @@ state 225
     }               reduce using rule 33 (repeatStmt -> REPEAT WHEN expr { statementList } .)
 
 
-state 226
+state 220
 
-    (57) buyStmt -> BUY expr , expr , expr . SEP
+    (57) buyStmt -> BUY expr , expr , expr .
     (61) expr -> expr . / expr
     (62) expr -> expr . * expr
     (63) expr -> expr . - expr
@@ -5777,7 +5741,7 @@ state 226
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    SEP             shift and go to state 234
+    SEP             reduce using rule 57 (buyStmt -> BUY expr , expr , expr .)
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -5792,13 +5756,13 @@ state 226
     OR              shift and go to state 76
 
 
-state 227
+state 221
 
     (96) bookItems -> STRING : ( listItems ) , bookItems .
     }               reduce using rule 96 (bookItems -> STRING : ( listItems ) , bookItems .)
 
 
-state 228
+state 222
 
     (44) primFuncStmt -> SELL expr , expr , expr SEP .
     PUT             reduce using rule 44 (primFuncStmt -> SELL expr , expr , expr SEP .)
@@ -5817,13 +5781,13 @@ state 228
     }               reduce using rule 44 (primFuncStmt -> SELL expr , expr , expr SEP .)
 
 
-state 229
+state 223
 
     (38) inothercaseStmt -> IN . OTHER CASE expr { statementList } inothercaseStmt
-    OTHER           shift and go to state 235
+    OTHER           shift and go to state 228
 
 
-state 230
+state 224
 
     (35) incaseStmt -> IN CASE expr { statementList } inothercaseStmt .
     PUT             reduce using rule 35 (incaseStmt -> IN CASE expr { statementList } inothercaseStmt .)
@@ -5842,7 +5806,7 @@ state 230
     }               reduce using rule 35 (incaseStmt -> IN CASE expr { statementList } inothercaseStmt .)
 
 
-state 231
+state 225
 
     (36) inothercaseStmt -> empty .
     PUT             reduce using rule 36 (inothercaseStmt -> empty .)
@@ -5861,13 +5825,13 @@ state 231
     }               reduce using rule 36 (inothercaseStmt -> empty .)
 
 
-state 232
+state 226
 
     (37) inothercaseStmt -> OTHERWISE . { statementList }
-    {               shift and go to state 236
+    {               shift and go to state 229
 
 
-state 233
+state 227
 
     (34) foreachStmt -> FOREACH ID IN expr { statementList } .
     PUT             reduce using rule 34 (foreachStmt -> FOREACH ID IN expr { statementList } .)
@@ -5886,19 +5850,13 @@ state 233
     }               reduce using rule 34 (foreachStmt -> FOREACH ID IN expr { statementList } .)
 
 
-state 234
-
-    (57) buyStmt -> BUY expr , expr , expr SEP .
-    SEP             reduce using rule 57 (buyStmt -> BUY expr , expr , expr SEP .)
-
-
-state 235
+state 228
 
     (38) inothercaseStmt -> IN OTHER . CASE expr { statementList } inothercaseStmt
-    CASE            shift and go to state 237
+    CASE            shift and go to state 230
 
 
-state 236
+state 229
 
     (37) inothercaseStmt -> OTHERWISE { . statementList }
     (25) statementList -> . empty
@@ -5926,13 +5884,13 @@ state 236
     (13) varDecl -> . LET ID : type ASSIGN expr SEP
     (14) varDecl -> . LET ID : type SEP
     (76) getter -> . ID dotTail
-    (56) buyStmt -> . BUY expr SEP
-    (57) buyStmt -> . BUY expr , expr , expr SEP
-    (51) moveStmt -> . MOVE RIGHT SEP
-    (52) moveStmt -> . MOVE LEFT SEP
-    (53) moveStmt -> . MOVE DOWN SEP
-    (54) moveStmt -> . MOVE UP SEP
-    (55) moveStmt -> . MOVE expr , expr SEP
+    (56) buyStmt -> . BUY expr
+    (57) buyStmt -> . BUY expr , expr , expr
+    (51) moveStmt -> . MOVE RIGHT
+    (52) moveStmt -> . MOVE LEFT
+    (53) moveStmt -> . MOVE DOWN
+    (54) moveStmt -> . MOVE UP
+    (55) moveStmt -> . MOVE expr , expr
     }               reduce using rule 102 (empty -> .)
     PUT             shift and go to state 107
     PICK            shift and go to state 108
@@ -5948,7 +5906,7 @@ state 236
     BUY             shift and go to state 118
     MOVE            shift and go to state 119
 
-    statementList                  shift and go to state 238
+    statementList                  shift and go to state 231
     empty                          shift and go to state 98
     statement                      shift and go to state 99
     primFuncStmt                   shift and go to state 100
@@ -5961,7 +5919,7 @@ state 236
     buyStmt                        shift and go to state 112
     moveStmt                       shift and go to state 113
 
-state 237
+state 230
 
     (38) inothercaseStmt -> IN OTHER CASE . expr { statementList } inothercaseStmt
     (58) expr -> . call
@@ -6005,18 +5963,18 @@ state 237
     FALSE           shift and go to state 54
     TRUE            shift and go to state 55
 
-    expr                           shift and go to state 239
+    expr                           shift and go to state 232
     call                           shift and go to state 41
     primitiveValue                 shift and go to state 45
     primary                        shift and go to state 46
 
-state 238
+state 231
 
     (37) inothercaseStmt -> OTHERWISE { statementList . }
-    }               shift and go to state 240
+    }               shift and go to state 233
 
 
-state 239
+state 232
 
     (38) inothercaseStmt -> IN OTHER CASE expr . { statementList } inothercaseStmt
     (61) expr -> expr . / expr
@@ -6031,7 +5989,7 @@ state 239
     (70) expr -> expr . NOTEQ expr
     (71) expr -> expr . AND expr
     (72) expr -> expr . OR expr
-    {               shift and go to state 241
+    {               shift and go to state 234
     /               shift and go to state 65
     *               shift and go to state 66
     -               shift and go to state 67
@@ -6046,7 +6004,7 @@ state 239
     OR              shift and go to state 76
 
 
-state 240
+state 233
 
     (37) inothercaseStmt -> OTHERWISE { statementList } .
     PUT             reduce using rule 37 (inothercaseStmt -> OTHERWISE { statementList } .)
@@ -6065,7 +6023,7 @@ state 240
     }               reduce using rule 37 (inothercaseStmt -> OTHERWISE { statementList } .)
 
 
-state 241
+state 234
 
     (38) inothercaseStmt -> IN OTHER CASE expr { . statementList } inothercaseStmt
     (25) statementList -> . empty
@@ -6093,13 +6051,13 @@ state 241
     (13) varDecl -> . LET ID : type ASSIGN expr SEP
     (14) varDecl -> . LET ID : type SEP
     (76) getter -> . ID dotTail
-    (56) buyStmt -> . BUY expr SEP
-    (57) buyStmt -> . BUY expr , expr , expr SEP
-    (51) moveStmt -> . MOVE RIGHT SEP
-    (52) moveStmt -> . MOVE LEFT SEP
-    (53) moveStmt -> . MOVE DOWN SEP
-    (54) moveStmt -> . MOVE UP SEP
-    (55) moveStmt -> . MOVE expr , expr SEP
+    (56) buyStmt -> . BUY expr
+    (57) buyStmt -> . BUY expr , expr , expr
+    (51) moveStmt -> . MOVE RIGHT
+    (52) moveStmt -> . MOVE LEFT
+    (53) moveStmt -> . MOVE DOWN
+    (54) moveStmt -> . MOVE UP
+    (55) moveStmt -> . MOVE expr , expr
     }               reduce using rule 102 (empty -> .)
     PUT             shift and go to state 107
     PICK            shift and go to state 108
@@ -6115,7 +6073,7 @@ state 241
     BUY             shift and go to state 118
     MOVE            shift and go to state 119
 
-    statementList                  shift and go to state 242
+    statementList                  shift and go to state 235
     empty                          shift and go to state 98
     statement                      shift and go to state 99
     primFuncStmt                   shift and go to state 100
@@ -6128,13 +6086,13 @@ state 241
     buyStmt                        shift and go to state 112
     moveStmt                       shift and go to state 113
 
-state 242
+state 235
 
     (38) inothercaseStmt -> IN OTHER CASE expr { statementList . } inothercaseStmt
-    }               shift and go to state 243
+    }               shift and go to state 236
 
 
-state 243
+state 236
 
     (38) inothercaseStmt -> IN OTHER CASE expr { statementList } . inothercaseStmt
     (36) inothercaseStmt -> . empty
@@ -6142,8 +6100,8 @@ state 243
     (38) inothercaseStmt -> . IN OTHER CASE expr { statementList } inothercaseStmt
     (102) empty -> .
   ! shift/reduce conflict for IN resolved as shift
-    OTHERWISE       shift and go to state 232
-    IN              shift and go to state 229
+    OTHERWISE       shift and go to state 226
+    IN              shift and go to state 223
     PUT             reduce using rule 102 (empty -> .)
     PICK            reduce using rule 102 (empty -> .)
     STOP            reduce using rule 102 (empty -> .)
@@ -6158,10 +6116,10 @@ state 243
     MOVE            reduce using rule 102 (empty -> .)
     }               reduce using rule 102 (empty -> .)
 
-    inothercaseStmt                shift and go to state 244
-    empty                          shift and go to state 231
+    inothercaseStmt                shift and go to state 237
+    empty                          shift and go to state 225
 
-state 244
+state 237
 
     (38) inothercaseStmt -> IN OTHER CASE expr { statementList } inothercaseStmt .
     PUT             reduce using rule 38 (inothercaseStmt -> IN OTHER CASE expr { statementList } inothercaseStmt .)
@@ -6197,17 +6155,17 @@ shift/reduce conflict for EQEQ in state 62 resolved as shift
 shift/reduce conflict for NOTEQ in state 62 resolved as shift
 shift/reduce conflict for AND in state 62 resolved as shift
 shift/reduce conflict for OR in state 62 resolved as shift
-shift/reduce conflict for / in state 199 resolved as shift
-shift/reduce conflict for * in state 199 resolved as shift
-shift/reduce conflict for - in state 199 resolved as shift
-shift/reduce conflict for + in state 199 resolved as shift
-shift/reduce conflict for GREATER in state 199 resolved as shift
-shift/reduce conflict for GREATEREQ in state 199 resolved as shift
-shift/reduce conflict for LESSEQ in state 199 resolved as shift
-shift/reduce conflict for LESS in state 199 resolved as shift
-shift/reduce conflict for EQEQ in state 199 resolved as shift
-shift/reduce conflict for NOTEQ in state 199 resolved as shift
-shift/reduce conflict for AND in state 199 resolved as shift
-shift/reduce conflict for OR in state 199 resolved as shift
-shift/reduce conflict for IN in state 223 resolved as shift
-shift/reduce conflict for IN in state 243 resolved as shift
+shift/reduce conflict for / in state 194 resolved as shift
+shift/reduce conflict for * in state 194 resolved as shift
+shift/reduce conflict for - in state 194 resolved as shift
+shift/reduce conflict for + in state 194 resolved as shift
+shift/reduce conflict for GREATER in state 194 resolved as shift
+shift/reduce conflict for GREATEREQ in state 194 resolved as shift
+shift/reduce conflict for LESSEQ in state 194 resolved as shift
+shift/reduce conflict for LESS in state 194 resolved as shift
+shift/reduce conflict for EQEQ in state 194 resolved as shift
+shift/reduce conflict for NOTEQ in state 194 resolved as shift
+shift/reduce conflict for AND in state 194 resolved as shift
+shift/reduce conflict for OR in state 194 resolved as shift
+shift/reduce conflict for IN in state 217 resolved as shift
+shift/reduce conflict for IN in state 236 resolved as shift

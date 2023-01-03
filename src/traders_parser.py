@@ -238,31 +238,31 @@ class TradersParser(Parser):
     def listVoidFunc(self, p):
         return ('reverse', ())
 
-    @_('MOVE expr "," expr SEP')
+    @_('MOVE expr "," expr')
     def moveStmt(self, p):
         return ('moveStmt_0', p.expr0, p.expr1)
 
-    @_('MOVE UP SEP')
+    @_('MOVE UP')
     def moveStmt(self, p):
         return ('moveStmt_1', 'up')
 
-    @_('MOVE DOWN SEP')
+    @_('MOVE DOWN')
     def moveStmt(self, p):
         return ('moveStmt_1', 'down')
 
-    @_('MOVE LEFT SEP')
+    @_('MOVE LEFT')
     def moveStmt(self, p):
         return ('moveStmt_1', 'left')
 
-    @_('MOVE RIGHT SEP')
+    @_('MOVE RIGHT')
     def moveStmt(self, p):
         return ('moveStmt_1', 'down')
 
-    @_('BUY expr "," expr "," expr SEP')
+    @_('BUY expr "," expr "," expr')
     def buyStmt(self, p):
         return ('buyStmt_0', p.expr0, p.expr1, p.expr2)
 
-    @_('BUY expr SEP')
+    @_('BUY expr')
     def buyStmt(self, p):
         return ('buyStmt_1', p.expr)
     
