@@ -206,7 +206,7 @@ class TradersParser(Parser):
     def primFuncStmt(self, p):
         return ('sell', p.expr0, p.expr1, p.expr2)
         
-    @_('RESTART BEHAVE')
+    @_('RESTART BEHAVE SEP')
     def primFuncStmt(self, p):
         return ('restart')
         

@@ -229,7 +229,7 @@ class Process:
                             inner_context.update(
                                 {attr: agent.attributes[attr]})
                         # up to add extra predefined variables
-                        self.env = deepcopy(inner_context)
+                        self.env = inner_context
                         self.actual_agent = agent
 
                         # print("xxx: {}".format(self.stringify(self.env['location'])))
@@ -278,12 +278,6 @@ class Process:
                     env_instance.add_item(obj, row, column)
 
             elif action == 'restart':
-                # Copying changed variables
-                for attr in ['balance','on_keep', 'on_sale', 'location']:
-                    self.actual_agent.__dict__[attr] = deepcopy(self.env[attr])
-                for attr in self.actual_agent.attributes.keys():
-                    self.actual_agent.attributes[attr] = deepcopy(self.env[attr])
-
                 inner_context = Env()
                 actual_context = self.env
 
@@ -297,7 +291,7 @@ class Process:
                         {attr: self.actual_agent.attributes[attr]})
 
                 # up to add extra predefined variables
-                self.env = deepcopy(inner_context)
+                self.env = inner_context
                 # print(self.stringify(self.actual_agent.location))
                 # print(" ")
 
