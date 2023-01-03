@@ -177,9 +177,9 @@ $\vert$ $"restart"$ $"behave"$ $";"$ \\
 $\vert$ $"stop"$ $";"$ \\
 $\vert$ $"pick"$ expr $";"$ \\
 $\vert$ $"put"$ expr $","$ expr $";"$ \\
-$\vert$ $"random"$ $"from"$ expr $"to"$ expr $")"$ \\
-$\vert$ $"find objects"$ \\
-$\vert$ $"find peers"$ \\
+$\vert$ getter $"."$ listVoidFunc $";"$ \\
+
+listVoidFunc $\rightarrow$ $"push"$ expr $\vert$ $"pop"$ $\vert$ $"reverse"$ \\
 
 moveStmt $\rightarrow$ $"move"$ expr $","$ expr $\vert$ $"move"$ $"up"$ $\vert$ $"move"$ $"down"$ $\vert$ $"move"$ $"left"$ $\vert$ $"move"$ $"right"$ \\
 
@@ -203,15 +203,17 @@ $\vert$ $"!"$ expr \\
 $\vert$ $"-"$ expr \\
 $\vert$ call \\
 
-call $\rightarrow$ primary $\vert$ id dotTail \\
+call $\rightarrow$ primary $\vert$ primitiveValue $\vert$ id dotTail \\
 
 getter $\rightarrow$ id dotTail \\
 
-dotTail $\rightarrow$ $"."$ idTail $\vert$ $\epsilon$ \\
+dotTail $\rightarrow$ $"."$ idTail dotTail $\vert$ $\epsilon$ \\
 
-idTail $\rightarrow$ id dotTail $\vert$ listFunc dotTail \\
+idTail $\rightarrow$ id $\vert$ listValueFunc \\
 
-listFunc $\rightarrow$ $"get"$ $"("$ expr $")"$ $\vert$ $"push"$ $"("$ expr $")"$ $\vert$ $"size"$ $"("$ $")"$ $\vert$ $"pop"$ $"("$ $")"$ $\vert$ $"reverse"$ $"("$ $")"$ \\
+listValueFunc $\rightarrow$ $"get"$ expr $\vert$ $"size"$ \\
+
+primitiveValue $\rightarrow$ $"random"$ $"from"$ expr $"to"$ expr $\vert$ $"find"$ $"objects"$ $\vert$ $"find"$ $"peers"$ \\
 
 primary $\rightarrow$ $"true"$ $\vert$ $"false"$ $\vert$ number $\vert$ string $\vert$ $"["$ listItems $"]"$ $\vert$ $"\{"$ bookItems $"\}"$ $\vert$ $"("$ expr $")"$ \\
 

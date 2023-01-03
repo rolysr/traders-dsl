@@ -4,15 +4,23 @@ class Behavior:
         an agent can do on an environment
     """
 
-    def __init__(self, name) -> None:
+    def __init__(self, name, statement_list) -> None:
         """
             Class constructor
         """
-        
+        self.type = "behave"
         self.name = name
-        self.agent = None
-        self.matrix = None
-        self.function = None
+        self.statement_list = statement_list
 
-    def execute(self):
-        return self.function(self.agent, self.matrix)
+    def copy(self, other):
+        self.statement_list = other.statement_list
+    
+    def __eq__(self, other):
+        ans = True
+        ans&=self.statement_list == other.statement_list
+        return ans
+
+    def get(self, dotTail, process):
+        if len(dotTail) == 0:
+            return self
+        raise Exception("{} does not have any attribute.".format(self))

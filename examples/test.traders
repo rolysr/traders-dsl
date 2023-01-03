@@ -1,6 +1,41 @@
-let a : number = 6;
-a = 9;
 
-env base{
-    sizee = 1;
+let book1: book = { "carne" : (5, 300, ), "aceite" : (-10, 300, ), };
+let bs: list = [-20, 0, 20, ];
+foreach ent in book1{
+    let b: number = ent.amount;
+    let a: number =0;
+    in case b<0{
+        repeat when b<0{
+            a = a - b;
+            b = b + 1;
+        }
+    }
+    in other case b>0{
+        repeat when b>0{
+            a = a + 2*b;
+            b = b - 1;
+        }
+    }
+    otherwise{
+        a=-1000;
+    }
+    talk a;
 }
+let b: number =0;
+let a: number =0;
+in case b<0{
+    repeat when b<0{
+        a = a - b;
+        b = b + 1;
+    }
+}
+in other case b>0{
+    repeat when b>0{
+        a = a + 2*b;
+        b = b - 1;
+    }
+}
+otherwise{
+    a=-1000;
+}
+talk a;

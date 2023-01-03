@@ -43,8 +43,8 @@ def exec_file():
         tree = parser.parse(tokens)
         print(tree)
 
-        # program = Process(tree)
-        # program.run()
+        program = Process(tree)
+        program.run()
         # print(program.env)
 
 
@@ -54,3 +54,9 @@ if __name__ == "__main__":
         repl()
     else:
         exec_file()
+
+# behave normal{
+#     foreach item in book1{
+#         talk a;
+#     }
+# }
