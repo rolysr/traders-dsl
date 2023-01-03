@@ -96,7 +96,7 @@ class TradersParser(Parser):
 
     @_('PUT ID IN ID AT expr "," expr SEP')
     def envFunc(self, p):
-        return ('putEnv', p.ID, p.expr0, p.expr1, p.expr2, p.expr3)
+        return ('putEnv', p.ID0, p.ID1, p.expr0, p.expr1)
 
     #Declarations productions end
 
@@ -238,7 +238,7 @@ class TradersParser(Parser):
     def listVoidFunc(self, p):
         return ('reverse', ())
 
-    @_('MOVE SEP expr "," expr SEP')
+    @_('MOVE expr "," expr SEP')
     def moveStmt(self, p):
         return ('moveStmt_0', p.expr0, p.expr1)
 
