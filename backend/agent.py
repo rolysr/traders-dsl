@@ -71,20 +71,17 @@ class TradersAgent:
 
         try:
             sale_price = agent.on_sale.get_price(name).value
-            sale_amount = agent.on_sale.get_amount(name).vale
+            sale_amount = agent.on_sale.get_amount(name).value
             final_amount = min(sale_amount, amount,
-                               self.balance.value // sale_amount)
+                               self.balance.value // sale_price)
 
-            if self.balance.value >= sale_price*amount or final_amount > 0:
+            if self.balance.value >= sale_price*final_amount and final_amount > 0:
 
                 agent.on_sale.set_amount(
                     name, Number(sale_amount - final_amount))
-                agent.balance.value += sale_price*amount
+                agent.balance.value += sale_price*final_amount
 
-                if agent.on_sale.get_amount(name) == 0:
-                    agent.on_sale.pop(name)
-
-                self.balance.value -= sale_price*amount
+                self.balance.value -= sale_price*final_amount
                 actual_amount = self.on_keep.get_amount(name).value
                 self.on_keep.set_amount(
                     name, Number(actual_amount + final_amount))

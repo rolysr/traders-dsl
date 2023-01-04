@@ -433,16 +433,18 @@ class Process:
 
                 if not (isinstance(seller_agent, TradersAgent) and isinstance(product_name, String) and isinstance(buy_amount, Number)):
                     raise ValueError("buyStmt_0: Wrong parameter types.")
-                
-                self.actual_agent.buy_item_to_agent(seller_agent, product_name.value, buy_amount.value)
+
+                self.actual_agent.buy_item_to_agent(
+                    seller_agent, product_name.value, buy_amount.value)
                 return None
 
             elif action == 'buyStmt_1':
                 seller_agent = self.evaluate(parsed[1])
 
-                if isinstance(seller_agent, TradersAgent):
-                    raise ValueError("buy function parameter must be an agent.")
-                
+                if not isinstance(seller_agent, TradersAgent):
+                    raise ValueError(
+                        "buy function parameter must be an agent.")
+
                 self.actual_agent.buy_to_agent(seller_agent)
                 return None
 
@@ -453,12 +455,13 @@ class Process:
             elif action == 'random':
                 low_lim = self.evaluate(parsed[1])
                 sup_lim = self.evaluate(parsed[2])
-                low_lim = Number(int(low_lim.value))
-                sup_lim = Number(int(sup_lim.value))
 
-                if not (isinstance(seller_agent, Number) and isinstance(product_name, Number)):
-                    raise ValueError("random: Both parameters must integers.")
-                
+                if not (isinstance(low_lim, Number) and isinstance(sup_lim, Number)):
+                    raise ValueError("random: Both parameters must numbers.")
+
+                low_lim = int(low_lim.value)
+                sup_lim = int(sup_lim.value)
+
                 if low_lim > sup_lim:
                     low_lim += sup_lim
                     sup_lim = low_lim - sup_lim

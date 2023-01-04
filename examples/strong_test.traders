@@ -4,22 +4,49 @@ let x: number = 0;
 
 behave xxx{
     sell "carne", 1, 200;
+    foreach item in find objects{
+        pick item.product;
+    }
+
+    talk "";
+    talk "Initial Balance:";
+    talk balance;
     foreach ent in on_keep{
         talk ent.product;
         talk ent.amount;
     }
-    pick "colcha";
-    pick "palo";
-    put "mondongo",70*100;
+    foreach agx in find peers{
+        buy agx, "carne", random from 0 to 10000;
+        in case balance > 0
+        {
+            talk "A buy-sell operation is going to start";
+            talk "other agent on_sale book";
+            foreach ent in agx.on_sale{
+                talk ent.product;
+                talk ent.amount;
+                talk ent.price;
+            }
+            buy agx;
+            talk "Results:";
+            talk "Balance:";
+            talk balance;
+            talk "on_keep book"; 
+            foreach ent in on_keep{
+                talk ent.product;
+                talk ent.amount;
+            }
+            talk "other agent on_sale book";
+            foreach ent in agx.on_sale{
+                talk ent.product;
+                talk ent.amount;
+            }
+        }
+    }
 
     let a: list = [3, 5, 1, ];
-
     a.push 5;
-    talk a;
     a.reverse;
-    talk a;
     a.pop;
-    talk a;
 }
 
 agent pepito {
