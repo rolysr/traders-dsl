@@ -111,7 +111,7 @@ class TradersEnvironment:
 
     def get(self, dotTail, process):
         if len(dotTail) == 0:
-            return self
+            return (self, (None, False))
         id = dotTail[1][1]
         if id == "rows":
             ans = self.rows

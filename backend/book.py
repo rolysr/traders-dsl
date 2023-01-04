@@ -79,7 +79,7 @@ class Book:
 
     def get(self, dotTail, process):
         if len(dotTail) == 0:
-            return self
+            return (self, (None, False))
         raise Exception("{} does not have any attribute.".format(self))
     
 class Entry:
@@ -88,7 +88,7 @@ class Entry:
     
     def get(self, dotTail, process):
         if len(dotTail) == 0:
-            return self
+            return (self, (None, False))
         id = dotTail[1][1]
         if id in self.attributes:
             if id == "product":

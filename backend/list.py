@@ -45,13 +45,16 @@ class List:
             if len(self.value) > index:
                 return self.value[index]
             raise Exception("List::get(): indexing out of range")
+
         if len(dotTail) == 0:
-            return self
+            return (self, (None, False))
+
         ans = None
         if dotTail[1][0] == 'idTail_1': 
             listFunc = dotTail[1][1][0]
             if listFunc == 'size':
                 ans = Number(len(self.value))
+
             elif listFunc == 'get':
                 index = process.evaluate(dotTail[1][1][1])
                 if index.type != 'number':
@@ -62,12 +65,15 @@ class List:
                 if index < 0:
                     Exception("Invalid index: Negative index.")
                 ans = self.value[index]
+
             elif listFunc == 'push':
                 self.push(process.evaluate(dotTail[1][1][1]))
                 ans = self
+
             elif listFunc == 'pop':
                 self.pop()
                 ans = self
+                
             elif listFunc == 'reverse':
                 self.reverse()
                 ans = self

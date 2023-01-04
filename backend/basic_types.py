@@ -13,7 +13,7 @@ class Number:
 
     def get(self, dotTail, process):
         if len(dotTail) == 0:
-            return self
+            return (self, (None, False))
         raise Exception("{} does not have any attribute.".format(self))
 
 class String:
@@ -31,7 +31,7 @@ class String:
 
     def get(self, dotTail, process):
         if len(dotTail) == 0:
-            return self
+            return (self, (None, False))
         raise Exception("{} does not have any attribute.".format(self))
 
 class Bool:
@@ -49,5 +49,5 @@ class Bool:
 
     def get(self, dotTail, process):
         if len(dotTail) == 0:
-            return self
+            return (self, (None, False))
         raise Exception("{} does not have any attribute.".format(self))

@@ -32,8 +32,12 @@ class Process:
                       'bool': bool, 'list': list, 'dict': dict}
         self.rtypes = {int: 'int', float: 'float', str: 'string',
                        bool: 'bool', list: 'list', dict: 'dict'}
+        # Behave inner variables
         self.actual_agent = None
         self.env_instance = None
+        
+        self.call_owner = None
+        self.is_protected = False
 
     def run(self, tree=None, env={}):
         current_env = self.env
@@ -117,11 +121,17 @@ class Process:
 
             if action == 'call':
                 func = self.env.find(parsed[1])
-                if isinstance(func, Number) or isinstance(func, Bool) or isinstance(func, String) or isinstance(func, List) or isinstance(func, Book) or isinstance(func, Entry) or isinstance(func, TradersAgent) or isinstance(func, TradersEnvironment):
-                    return func.get(parsed[2], self)
-
-                elif isinstance(func, Behavior):
-                    return func
+                if isinstance(func, Number) or isinstance(func, Bool) or isinstance(func, String) or isinstance(func, List) or isinstance(func, Book) or isinstance(func, Entry) or isinstance(func, TradersAgent) or isinstance(func, TradersEnvironment) or isinstance(func, Behavior):
+                    (ans, (self.call_owner, self.is_protected)) = func.get(parsed[2], self)
+                    if self.actual_agent is not None:
+                        if parsed[1] in ['balance', 'on_keep', 'on_sale', 'location']:
+                            self.call_owner = self.actual_agent
+                            self.is_protected = True
+                        if parsed[1] in self.actual_agent.attributes.keys():
+                            self.call_owner = self.actual_agent
+                            self.is_protected = False
+                    return ans
+                
                 raise Exception("Error while resolving {}.".format(parsed))
 
             elif action == 'behave':
@@ -549,6 +559,18 @@ class Process:
 
             elif action == 'varAssign':
                 var = self.evaluate(parsed[1])
+                
+                owner = self.call_owner
+                is_protected = self.is_protected
+
+                if self.actual_agent is not None and owner is not None: # Means we are inside a behave call
+                    if owner is not self.actual_agent:
+                        print(owner)
+                        print(self.actual_agent)
+                        raise Exception('Illegal assignment, other agent assigment : {}'.format(parsed))
+                    if is_protected:
+                        raise Exception('Illegal assignment, protected attributes assignment : {}'.format(parsed))
+
                 result = self.evaluate(parsed[2])
                 if result.type != var.type:
                     raise ValueError("Type of variable '{}' should be '{}' but instead got '{}'".format(

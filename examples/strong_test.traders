@@ -8,6 +8,10 @@ behave xxx{
         pick item.product;
     }
 
+    let balancex : number = balance + 1000;
+    let on_keepx: book = {"xxx":(1,2,),};
+    abc = 0;
+
     talk "";
     talk "Initial Balance:";
     talk balance;
@@ -75,6 +79,8 @@ agent juan {
     on_sale = {"carne" : (5, 100, ), "mondongo" : (99999999, 1000, ), };
     let extra_attr: list = dim2;
 }
+
+juan.on_keep = {"carne" : (5, ), "mondongo" : (99999999, ), };
 
 let a: number = 10;
 env la_tinta{

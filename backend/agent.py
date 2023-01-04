@@ -109,8 +109,10 @@ class TradersAgent:
 
     def get(self, dotTail, process):
         if len(dotTail) == 0:
-            return self
+            return (self, (self, True))
+
         id = dotTail[1][1]
+        extra = (self, True)
         if id == "balance":
             ans = self.balance
         elif id == "behavior":
@@ -124,7 +126,9 @@ class TradersAgent:
         else:
             if id in self.attributes:
                 ans = self.attributes[id]
+                extra = (self, False)
             else:
                 raise Exception(
                     "{} must be an attribute of {}".format(id, self))
-        return ans.get(dotTail[2], process)
+
+        return (ans.get(dotTail[2], process)[0], extra)
