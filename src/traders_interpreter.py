@@ -242,6 +242,7 @@ class Process:
                         self.actual_agent = None
 
                 self.env_instance = None
+                return None
 
             elif action == 'resetEnv':
                 env_instance = self.env[parsed[1]]
@@ -250,6 +251,7 @@ class Process:
                         "Reset statement must be called on an Environment instance.")
 
                 env_instance.reset()
+                return None
 
             elif action == 'putEnv':
                 # get object to add
@@ -273,6 +275,7 @@ class Process:
                 # check if type is item
                 if isinstance(obj, Book):
                     env_instance.add_items(obj, row, column)
+                return None
 
             elif action == 'restart':
                 inner_context = Env()
@@ -329,6 +332,7 @@ class Process:
 
                 on_sale.set_amount(produt_name, amount)
                 on_sale.set_price(produt_name, price)
+                return None
 
             elif action == 'pick':
                 product_name = self.evaluate(parsed[1])
@@ -347,6 +351,7 @@ class Process:
                 on_keep = self.actual_agent.on_keep
                 new_amount = on_keep.get_amount(product_name).value + amount
                 on_keep.set_amount(product_name, Number(new_amount))
+                return None
 
             elif action == 'put':
                 product_name = self.evaluate(parsed[1])
@@ -369,7 +374,8 @@ class Process:
                     return ValueError("The dropped amount must not be greater then possesed amount.\n \
                     The amount is set to the limit.")
 
-                on_keep.set_amount(product_name, Number(actual_amount.value - amount.value))
+                on_keep.set_amount(product_name, Number(
+                    actual_amount.value - amount.value))
 
                 row = self.env['location'].get(0).value
                 column = self.env['location'].get(1).value
@@ -378,6 +384,7 @@ class Process:
                     product_name)
                 self.env_instance.matrix[(row, column)].set_amount(
                     product_name, Number(amount.value + floor_amount.value))
+                return None
 
             elif action == 'moveStmt':
                 return self.evaluate(parsed[1])
@@ -392,6 +399,7 @@ class Process:
                     self.env_instance.make_valid_position(new_location)
 
                     self.env['location'].copy(new_location)
+                    return None
                 except:
                     raise Exception("Some error accoured when moving")
 
@@ -413,25 +421,64 @@ class Process:
                     raise ValueError("Invalid move direction")
 
                 self.env_instance.make_valid_position(location)
+                return None
 
             elif action == 'buyStmt':
                 return self.evaluate(parsed[1])
 
             elif action == 'buyStmt_0':
-                raise Exception("Not implemented")
+                seller_agent = self.evaluate(parsed[1])
+                product_name = self.evaluate(parsed[2])
+                buy_amount = self.evaluate(parsed[3])
+
+                if not (isinstance(seller_agent, TradersAgent) and isinstance(product_name, String) and isinstance(buy_amount, Number)):
+                    raise ValueError("buyStmt_0: Wrong parameter types.")
+                
+                self.actual_agent.buy_item_to_agent(seller_agent, product_name.value, buy_amount.value)
+                return None
 
             elif action == 'buyStmt_1':
-                raise Exception("Not implemented")
+                seller_agent = self.evaluate(parsed[1])
+
+                if isinstance(seller_agent, TradersAgent):
+                    raise ValueError("buy function parameter must be an agent.")
+                
+                self.actual_agent.buy_to_agent(seller_agent)
+                return None
 
             elif action == 'talk':
                 print(self.stringify(self.evaluate(parsed[1])))
                 return None
 
             elif action == 'random':
-                raise Exception("Not implemented")
+                low_lim = self.evaluate(parsed[1])
+                sup_lim = self.evaluate(parsed[2])
+                low_lim = Number(int(low_lim.value))
+                sup_lim = Number(int(sup_lim.value))
+
+                if not (isinstance(seller_agent, Number) and isinstance(product_name, Number)):
+                    raise ValueError("random: Both parameters must integers.")
+                
+                if low_lim > sup_lim:
+                    low_lim += sup_lim
+                    sup_lim = low_lim - sup_lim
+                    low_lim = low_lim - sup_lim
+
+                ans = randint(low_lim, sup_lim)
+                return Number(ans)
 
             elif action == 'find':
-                raise Exception("Not implemented")
+                row = self.env['location'].get(0).value
+                column = self.env['location'].get(1).value
+
+                if parsed[1] == 'objects':
+                    return self.env_instance.matrix[(row, column)]
+                if parsed[1] == 'peers':
+                    ans = List('agent', [])
+                    for x in self.env_instance.agents.value:
+                        if x.location.get(0).value == row and x.location.get(1).value == column and x != self.actual_agent:
+                            ans.value.append(x)
+                    return ans
 
             elif action == 'primary_bool':
                 return Bool(parsed[1])

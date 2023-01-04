@@ -14,7 +14,8 @@ class TradersAgent:
                  behavior: Behavior = Behavior("unknown_behavior", ()),
                  on_keep: Book = Book((1, 'list', 'number'), {}),
                  on_sale: Book = Book((2, 'list', 'number'), {}),
-                 location: List = List(element_type='number', value=[Number(0),Number(0)]), 
+                 location: List = List(element_type='number', value=[
+                                       Number(0), Number(0)]),
                  attributes: dict = {}) -> None:
         """
             Class constructor
@@ -24,7 +25,7 @@ class TradersAgent:
         self.behavior = deepcopy(behavior)
         self.on_keep = deepcopy(on_keep)
         self.on_sale = deepcopy(on_sale)
-        #location[0] is x coordinate and location[1] is y coordinate
+        # location[0] is x coordinate and location[1] is y coordinate
         self.location = deepcopy(location)
         self.attributes = deepcopy(attributes)
 
@@ -33,7 +34,7 @@ class TradersAgent:
             A method for buying as much as possible to an agent
         """
         for item_name in agent.on_sale.value.keys():
-            amount = agent.on_sale.get_amount(item_name)
+            amount = agent.on_sale.get_amount(item_name).value
             self.buy_item_to_agent(agent, item_name, amount)
 
     def pick_item(self, name, amount):
@@ -61,7 +62,7 @@ class TradersAgent:
         except:
             pass
 
-    def buy_item_to_agent(self, agent, name, amount):
+    def buy_item_to_agent(self, agent, name: str, amount: int):
         """
             Buys an item in a given amount to an specific agent
         """
@@ -69,24 +70,24 @@ class TradersAgent:
             return
 
         try:
-            sale_price = agent.on_sale[name][1]
-            sale_amount = agent.on_sale[name][0]
+            sale_price = agent.on_sale.get_price(name).value
+            sale_amount = agent.on_sale.get_amount(name).vale
             final_amount = min(sale_amount, amount,
-                               self.balance // sale_amount)
+                               self.balance.value // sale_amount)
 
-            if self.balance >= sale_price*amount or final_amount > 0:
+            if self.balance.value >= sale_price*amount or final_amount > 0:
 
-                agent.on_sale[name][0] -= amount
-                agent.balance += sale_price*amount
+                agent.on_sale.set_amount(
+                    name, Number(sale_amount - final_amount))
+                agent.balance.value += sale_price*amount
 
-                if agent.on_sale[name][0] == 0:
+                if agent.on_sale.get_amount(name) == 0:
                     agent.on_sale.pop(name)
-                self.balance -= sale_price*amount
 
-                try:
-                    self.on_keep[name][0] += amount
-                except:
-                    self.on_keep[name] = [amount]
+                self.balance.value -= sale_price*amount
+                actual_amount = self.on_keep.get_amount(name).value
+                self.on_keep.set_amount(
+                    name, Number(actual_amount + final_amount))
 
         except:
             pass
