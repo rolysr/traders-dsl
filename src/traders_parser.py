@@ -340,6 +340,10 @@ class TradersParser(Parser):
     def dotTail(self, p):
         return ('dotTail', p.idTail, p.dotTail)
 
+    @_('"[" expr "]" dotTail')
+    def dotTail(self, p):
+        return ('dotTail', ('idTail_1', ('get', p.expr)) , p.dotTail) 
+
     @_('empty')
     def dotTail(self, p):
         return ()
@@ -351,10 +355,6 @@ class TradersParser(Parser):
     @_('listFunc')
     def idTail(self, p):
         return ('idTail_1', p.listFunc)
-
-    @_('GET expr')
-    def listFunc(self, p):
-        return ('get', p.expr)
 
     @_('SIZE')
     def listFunc(self, p):

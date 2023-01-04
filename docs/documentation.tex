@@ -204,11 +204,11 @@ call $\rightarrow$ primary $\vert$ primitiveValue $\vert$ id dotTail \\
 
 getter $\rightarrow$ id dotTail \\
 
-dotTail $\rightarrow$ $"."$ idTail dotTail $\vert$ $\epsilon$ \\
+dotTail $\rightarrow$ $"."$ idTail dotTail $\vert$ $"["$ expr $"]"$ dotTail $\vert$ $\epsilon$ \\
 
 idTail $\rightarrow$ id $\vert$ listFunc \\
 
-listFunc $\rightarrow$ $"get"$ expr $\vert$ $"size"$ $\vert$ $"push"$ expr $\vert$ $"pop"$ $\vert$ $"reverse"$ \\
+listFunc $\rightarrow$ $"size"$ $\vert$ $"push"$ expr $\vert$ $"pop"$ $\vert$ $"reverse"$ \\
 
 primitiveValue $\rightarrow$ $"random"$ $"from"$ expr $"to"$ expr $\vert$ $"find"$ $"objects"$ $\vert$ $"find"$ $"peers"$ \\
 
