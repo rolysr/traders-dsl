@@ -52,7 +52,7 @@ class TradersEnvironment:
             A method that sets an agent on an
             environment in a given location
         """
-        if self.is_valid_position(row, column):
+        if not self.is_valid_position(row, column):
             return
 
         agent.location = List(element_type='number', value=[row, column])
@@ -63,12 +63,12 @@ class TradersEnvironment:
             A method that sets an item on an
             environment in a given location
         """
-        if self.is_valid_position(row, column):
+        if not self.is_valid_position(row, column):
             return
 
         # update items' amount on that position
-        for item in book.keys():
-            self.matrix[(row, column)].set_amount(item, book.get_amount(item))
+        for item in book.value.keys():
+            self.matrix[(row.value, column.value)].set_amount(item, Number(self.matrix[(row.value, column.value)].get_amount(item).value + book.get_amount(item).value))
 
     def find_peers(self, row, column):
         """

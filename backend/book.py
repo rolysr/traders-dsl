@@ -16,7 +16,11 @@ class Book:
         self.value = value
 
     def get_amount(self, product):
-        product = product.value
+        ini_val = product
+        try:
+            product = product.value
+        except:
+            product = ini_val
         if product not in self.value.keys():
             if self.type[1][0] == 1:
                 self.value[product] = List("number", [Number(0)])
@@ -25,7 +29,11 @@ class Book:
         return self.value[product].get(0)
 
     def get_price(self, product):
-        product = product.value
+        ini_val = product
+        try:
+            product = product.value
+        except:
+            product = ini_val
         if product not in self.value.keys():
             if self.type[1][0] == 1:
                 self.value[product] = List("number", [Number(0)])
@@ -33,8 +41,12 @@ class Book:
                 self.value[product] = List("number", [Number(0), Number(0)])
         return self.value[product].get(1)
 
-    def set_amount(self, product, amount):
-        product = product.value
+    def set_amount(self, product, amount: Number):
+        ini_val = product
+        try:
+            product = product.value
+        except:
+            product = ini_val
         if product not in self.value.keys():
             if self.type[1][0] == 1:
                 self.value[product] = List("number", [Number(0)])
@@ -42,8 +54,12 @@ class Book:
                 self.value[product] = List("number", [Number(0), Number(0)])
         self.value[product].set(0, amount)
 
-    def set_price(self, product, price):
-        product = product.value
+    def set_price(self, product, price: Number):
+        ini_val = product
+        try:
+            product = product.value
+        except:
+            product = ini_val
         if product not in self.value.keys():
             if self.type[1][0] == 1:
                 self.value[product] = List("number", [Number(0)])

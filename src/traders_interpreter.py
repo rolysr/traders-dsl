@@ -255,12 +255,12 @@ class Process:
                 # get object to add
                 obj = None
                 try:
-                    obj = self.env[parsed[1]]
+                    obj = self.evaluate(parsed[2])
                 except:
                     raise Exception("There is no instance for {} object.".format(parsed[1]))
 
                 # get environment instance
-                env_instance = self.env[parsed[2]]
+                env_instance = self.env[parsed[1]]
                 if env_instance.type != 'env':
                     raise Exception(
                         "Put statement must be called on an Environment instance.")
@@ -271,11 +271,12 @@ class Process:
 
                 # check if type is agent
                 if obj.type == 'agent':
-                    env_instance.add_agent(obj, row, column)
+                    new_agent = deepcopy(obj)
+                    env_instance.add_agent(new_agent, row, column)
 
                 # check if type is item
-                if obj.type == 'item':
-                    env_instance.add_item(obj, row, column)
+                if isinstance(obj, Book):
+                    env_instance.add_items(obj, row, column)
 
             elif action == 'restart':
                 inner_context = Env()

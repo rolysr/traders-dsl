@@ -50,4 +50,10 @@ env la_tinta{
     number_iterations = 2;
 }
 
+let stuff: book = {"colcha":(1,), "palo": (1, ),};
+
+put juan in la_tinta at 2,0;
+
+put stuff in la_tinta at 2,0;
+
 run la_tinta with 5 iterations;

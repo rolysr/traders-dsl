@@ -94,9 +94,9 @@ class TradersParser(Parser):
     def envFunc(self, p):
         return ('runEnv', p.ID, p.expr)
 
-    @_('PUT ID IN ID AT expr "," expr SEP')
+    @_('PUT expr IN ID AT expr "," expr SEP')
     def envFunc(self, p):
-        return ('putEnv', p.ID0, p.ID1, p.expr0, p.expr1)
+        return ('putEnv', p.ID, p.expr0, p.expr1, p.expr2)
 
     #Declarations productions end
 

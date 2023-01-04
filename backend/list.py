@@ -4,15 +4,11 @@ class List:
     def __init__(self, element_type, value) -> None:
         self.type = ("list", element_type)
         self.value = value
-    
-    def get(self, index):
-        if len(self.value) > index:
-            return self.value[index]
-        raise Exception("List::get(): indexing out of range")
 
     def set(self, index, value):
         if len(self.value)>index and self.type[1]==value.type:
             self.value[index] = value
+            return 
         raise Exception("List::set(): indexing out of range or different type of value")
 
     def push(self, element):
@@ -43,7 +39,12 @@ class List:
         ans&=self.value == other.value
         return ans
     
-    def get(self, dotTail, process):
+    def get(self, dotTail, process = None):
+        if process == None:
+            index = dotTail
+            if len(self.value) > index:
+                return self.value[index]
+            raise Exception("List::get(): indexing out of range")
         if len(dotTail) == 0:
             return self
         ans = None
