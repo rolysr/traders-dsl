@@ -158,7 +158,7 @@ statementList $\rightarrow$ statement statementList $\vert$ $\epsilon$ \\
 
 \underline{Statements}: \\
 
-statement $\rightarrow$ varDecl $\vert$ varAssign $\vert$ repeatStmt $\vert$ foreachStmt $\vert$ incaseStmt $\vert$ primFuncStmt \\
+statement $\rightarrow$ expr $";"$ $\vert$ varDecl $\vert$ varAssign $\vert$ repeatStmt $\vert$ foreachStmt $\vert$ incaseStmt $\vert$ primFuncStmt \\
 
 repeatStmt $\rightarrow$ $"repeat"$ $"when"$ expr $"\{"$ statementList  $"\}"$ \\
 
@@ -177,9 +177,6 @@ $\vert$ $"restart"$ $"behave"$ $";"$ \\
 $\vert$ $"stop"$ $";"$ \\
 $\vert$ $"pick"$ expr $";"$ \\
 $\vert$ $"put"$ expr $","$ expr $";"$ \\
-$\vert$ getter $"."$ listVoidFunc $";"$ \\
-
-listVoidFunc $\rightarrow$ $"push"$ expr $\vert$ $"pop"$ $\vert$ $"reverse"$ \\
 
 moveStmt $\rightarrow$ $"move"$ expr $","$ expr $\vert$ $"move"$ $"up"$ $\vert$ $"move"$ $"down"$ $\vert$ $"move"$ $"left"$ $\vert$ $"move"$ $"right"$ \\
 
@@ -209,9 +206,9 @@ getter $\rightarrow$ id dotTail \\
 
 dotTail $\rightarrow$ $"."$ idTail dotTail $\vert$ $\epsilon$ \\
 
-idTail $\rightarrow$ id $\vert$ listValueFunc \\
+idTail $\rightarrow$ id $\vert$ listFunc \\
 
-listValueFunc $\rightarrow$ $"get"$ expr $\vert$ $"size"$ \\
+listFunc $\rightarrow$ $"get"$ expr $\vert$ $"size"$ $\vert$ $"push"$ expr $\vert$ $"pop"$ $\vert$ $"reverse"$ \\
 
 primitiveValue $\rightarrow$ $"random"$ $"from"$ expr $"to"$ expr $\vert$ $"find"$ $"objects"$ $\vert$ $"find"$ $"peers"$ \\
 

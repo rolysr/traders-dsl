@@ -1,0 +1,7 @@
+let a: list = [3, 5, 1, ];
+a.push 5;
+talk a;
+a.reverse;
+talk a;
+a.pop;
+talk a;

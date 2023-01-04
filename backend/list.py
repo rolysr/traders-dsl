@@ -52,7 +52,7 @@ class List:
             listFunc = dotTail[1][1][0]
             if listFunc == 'size':
                 ans = Number(len(self.value))
-            if listFunc == 'get':
+            elif listFunc == 'get':
                 index = process.evaluate(dotTail[1][1][1])
                 if index.type != 'number':
                     raise Exception("Index value must be a number.")
@@ -62,6 +62,15 @@ class List:
                 if index < 0:
                     Exception("Invalid index: Negative index.")
                 ans = self.value[index]
+            elif listFunc == 'push':
+                self.push(process.evaluate(dotTail[1][1][1]))
+                ans = self
+            elif listFunc == 'pop':
+                self.pop()
+                ans = self
+            elif listFunc == 'reverse':
+                self.reverse()
+                ans = self
         else:
             raise Exception("{} must be an attribute of {}".format(id, self))
         return ans.get(dotTail[2], process)

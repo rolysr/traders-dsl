@@ -139,6 +139,10 @@ class TradersParser(Parser):
     #Statements productions:
     
     ##Statement types
+    @_('expr SEP')
+    def statement(self, p):
+        return p.expr
+
     @_('varDecl')
     def statement(self, p):
         return p.varDecl
@@ -221,22 +225,6 @@ class TradersParser(Parser):
     @_('PUT expr "," expr SEP')
     def primFuncStmt(self, p):
         return ('put', p.expr0, p.expr1)
-
-    @_('getter "." listVoidFunc SEP')
-    def primFuncStmt(self, p):
-        return ('listVoidFunc', p.getter, p.listVoidFunc)
-
-    @_('PUSH expr')
-    def listVoidFunc(self, p):
-        return ('push', p.expr)
-
-    @_('POP')
-    def listVoidFunc(self, p):
-        return ('pop', ())
-
-    @_('REVERSE')
-    def listVoidFunc(self, p):
-        return ('reverse', ())
 
     @_('MOVE expr "," expr')
     def moveStmt(self, p):
@@ -360,17 +348,29 @@ class TradersParser(Parser):
     def idTail(self, p):
         return ('idTail_0', p.ID)
 
-    @_('listValueFunc')
+    @_('listFunc')
     def idTail(self, p):
-        return ('idTail_1', p.listValueFunc)
+        return ('idTail_1', p.listFunc)
 
     @_('GET expr')
-    def listValueFunc(self, p):
+    def listFunc(self, p):
         return ('get', p.expr)
 
     @_('SIZE')
-    def listValueFunc(self, p):
+    def listFunc(self, p):
         return ('size', )
+
+    @_('PUSH expr')
+    def listFunc(self, p):
+        return ('push', p.expr)
+
+    @_('POP')
+    def listFunc(self, p):
+        return ('pop', ())
+
+    @_('REVERSE')
+    def listFunc(self, p):
+        return ('reverse', ())
 
     @_('RANDOM FROM expr TO expr')
     def primitiveValue(self, p):

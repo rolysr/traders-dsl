@@ -379,9 +379,6 @@ class Process:
                 self.env_instance.matrix[(row, column)].set_amount(
                     product_name, Number(amount.value + floor_amount.value))
 
-            elif action == 'listVoidFunc':
-                raise Exception("Not implemented")
-
             elif action == 'moveStmt':
                 return self.evaluate(parsed[1])
 
