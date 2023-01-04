@@ -253,12 +253,8 @@ class Process:
 
             elif action == 'putEnv':
                 # get object to add
-                obj = None
-                try:
-                    obj = self.evaluate(parsed[2])
-                except:
-                    raise Exception("There is no instance for {} object.".format(parsed[1]))
-
+                obj = self.evaluate(parsed[2])
+                
                 # get environment instance
                 env_instance = self.env[parsed[1]]
                 if env_instance.type != 'env':
@@ -318,15 +314,15 @@ class Process:
                 on_keep = self.env['on_keep']
                 on_sale = self.env['on_sale']
 
-                if produt_name.value not in on_keep.value.keys() or amount.value < 1 or amount.value > on_keep.value.get_amount(produt_name) or price.value < 0:
+                if produt_name.value not in on_keep.value.keys() or amount.value < 1 or amount.value > on_keep.get_amount(produt_name).value or price.value < 0:
                     raise ValueError('Invalid values for sell operation')
-                
+
                 # update on_keep
-                on_keep.set_amount(produt_name, on_keep.get_amount(produt_name).value - amount.value)
+                on_keep.set_amount(produt_name, Number(on_keep.get_amount(produt_name).value - amount.value))
 
                 if produt_name.value in on_sale.value.keys():
-                    amount = on_sale.get_amount(produt_name) + amount
-                    price = min(price, on_sale.get_price(produt_name))
+                    amount = Number(on_sale.get_amount(produt_name).value + amount.value)
+                    price = Number(min(price.value, on_sale.get_price(produt_name).value))
 
                 on_sale.set_amount(produt_name, amount)
                 on_sale.set_price(produt_name, price)

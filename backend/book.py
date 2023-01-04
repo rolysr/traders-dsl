@@ -91,7 +91,10 @@ class Entry:
             return self
         id = dotTail[1][1]
         if id in self.attributes:
-            ans=self.attributes[id]
+            if id == "product":
+                ans = String(self.attributes[id])
+            else:
+                ans = self.attributes[id]
         else:
             raise Exception("{} must be an attribute of {}".format(id, self))
         return ans.get(dotTail[2], process)

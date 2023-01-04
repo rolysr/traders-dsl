@@ -3,14 +3,10 @@ let dim2: list = [dim1, dim1, dim1, dim1, ];
 let x: number = 0; 
 
 behave xxx{
-    talk location.get 0;
-    in case (location.get 0) == 5{
-        move up;
-        talk "sex";
-    }
-    in other case (location.get 0) > 0{
-        move down;
-        restart behave;
+    sell "carne", 1, 200;
+    foreach ent in on_keep{
+        talk ent.product;
+        talk ent.amount;
     }
 }
 
