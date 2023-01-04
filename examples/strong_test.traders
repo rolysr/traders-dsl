@@ -10,6 +10,7 @@ behave xxx{
     }
     pick "colcha";
     pick "palo";
+    put "mondongo",70*100;
 }
 
 agent pepito {

@@ -349,7 +349,35 @@ class Process:
                 on_keep.set_amount(product_name, Number(new_amount))
 
             elif action == 'put':
-                raise Exception("Not implemented")
+                product_name = self.evaluate(parsed[1])
+                amount = self.evaluate(parsed[2])
+
+                if not isinstance(product_name, String):
+                    return ValueError("put first parameter must be a string representing the product_name.")
+
+                if not isinstance(amount, Number):
+                    return ValueError("put second parameter must be a number representing the amount dropped on the floor.")
+
+                if amount.value < 0:
+                    return ValueError("The dropped amount must not be negative.")
+
+                on_keep = self.actual_agent.on_keep
+                actual_amount = on_keep.get_amount(product_name)
+
+                if actual_amount.value < amount.value:
+                    amount.value = actual_amount.value
+                    return ValueError("The dropped amount must not be greater then possesed amount.\n \
+                    The amount is set to the limit.")
+
+                on_keep.set_amount(product_name, Number(actual_amount.value - amount.value))
+
+                row = self.env['location'].get(0).value
+                column = self.env['location'].get(1).value
+
+                floor_amount = self.env_instance.matrix[(row, column)].get_amount(
+                    product_name)
+                self.env_instance.matrix[(row, column)].set_amount(
+                    product_name, Number(amount.value + floor_amount.value))
 
             elif action == 'listVoidFunc':
                 raise Exception("Not implemented")
