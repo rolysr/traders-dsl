@@ -8,6 +8,8 @@ behave xxx{
         talk ent.product;
         talk ent.amount;
     }
+    pick "colcha";
+    pick "palo";
 }
 
 agent pepito {
@@ -51,5 +53,7 @@ let stuff: book = {"colcha":(1,), "palo": (1, ),};
 put juan in la_tinta at 2,0;
 
 put stuff in la_tinta at 2,0;
+put stuff in la_tinta at 2,0;
+put stuff in la_tinta at 2,1;
 
 run la_tinta with 5 iterations;

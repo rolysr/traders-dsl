@@ -122,7 +122,7 @@ class Process:
 
                 elif isinstance(func, Behavior):
                     return func
-                raise Exception("Error while resolving {}.".format(parsed)) 
+                raise Exception("Error while resolving {}.".format(parsed))
 
             elif action == 'behave':
                 self.env.update({parsed[1]: Behavior(
@@ -240,7 +240,7 @@ class Process:
                         self.should_return = False
                         self.env = actual_context
                         self.actual_agent = None
-                
+
                 self.env_instance = None
 
             elif action == 'resetEnv':
@@ -254,14 +254,14 @@ class Process:
             elif action == 'putEnv':
                 # get object to add
                 obj = self.evaluate(parsed[2])
-                
+
                 # get environment instance
                 env_instance = self.env[parsed[1]]
                 if env_instance.type != 'env':
                     raise Exception(
                         "Put statement must be called on an Environment instance.")
 
-                # get location 
+                # get location
                 row = self.evaluate(parsed[3])
                 column = self.evaluate(parsed[4])
 
@@ -318,17 +318,35 @@ class Process:
                     raise ValueError('Invalid values for sell operation')
 
                 # update on_keep
-                on_keep.set_amount(produt_name, Number(on_keep.get_amount(produt_name).value - amount.value))
+                on_keep.set_amount(produt_name, Number(
+                    on_keep.get_amount(produt_name).value - amount.value))
 
                 if produt_name.value in on_sale.value.keys():
-                    amount = Number(on_sale.get_amount(produt_name).value + amount.value)
-                    price = Number(min(price.value, on_sale.get_price(produt_name).value))
+                    amount = Number(on_sale.get_amount(
+                        produt_name).value + amount.value)
+                    price = Number(
+                        min(price.value, on_sale.get_price(produt_name).value))
 
                 on_sale.set_amount(produt_name, amount)
                 on_sale.set_price(produt_name, price)
 
             elif action == 'pick':
-                raise Exception("Not implemented")
+                product_name = self.evaluate(parsed[1])
+
+                if not isinstance(product_name, String):
+                    return ValueError("pick function must receive a product name as a String.")
+
+                row = self.env['location'].get(0).value
+                column = self.env['location'].get(1).value
+
+                amount = self.env_instance.matrix[(row, column)].get_amount(
+                    product_name).value
+                self.env_instance.matrix[(row, column)].set_amount(
+                    product_name, Number(0))
+
+                on_keep = self.actual_agent.on_keep
+                new_amount = on_keep.get_amount(product_name).value + amount
+                on_keep.set_amount(product_name, Number(new_amount))
 
             elif action == 'put':
                 raise Exception("Not implemented")
@@ -345,7 +363,7 @@ class Process:
                     column = self.evaluate(parsed[2])
 
                     new_location = List("number", [row, column])
-                    
+
                     self.env_instance.make_valid_position(new_location)
 
                     self.env['location'].copy(new_location)
@@ -368,7 +386,7 @@ class Process:
                     location.value[1] = Number(column.value + 1)
                 else:
                     raise ValueError("Invalid move direction")
-                
+
                 self.env_instance.make_valid_position(location)
 
             elif action == 'buyStmt':
