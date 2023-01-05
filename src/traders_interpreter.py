@@ -218,7 +218,9 @@ class Process:
                     raise Exception(
                         "Run statement must be called on an Environment instance.")
 
-                iterations = self.evaluate(parsed[2])
+                iterations = env_instance.number_iterations
+                if len(parsed) == 3:
+                    iterations = self.evaluate(parsed[2])
                 if not isinstance(iterations, Number):
                     raise Exception("Iterations param must be a number.")
 

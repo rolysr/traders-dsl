@@ -90,6 +90,10 @@ class TradersParser(Parser):
     def envFunc(self, p):
         return ('resetEnv', p.ID)
 
+    @_('RUN ID SEP')
+    def envFunc(self, p):
+        return ('runEnv', p.ID)
+
     @_('RUN ID WITH expr ITERATIONS SEP')
     def envFunc(self, p):
         return ('runEnv', p.ID, p.expr)

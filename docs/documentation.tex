@@ -139,6 +139,7 @@ varDecl $\rightarrow$ $"let"$ id $":"$ type $";"$ $\vert$ $"let"$ id $":"$ type 
 varAssign $\rightarrow$ getter $"="$ expr $";"$ \\
 
 envFunc $\rightarrow$ $"reset"$ id $";"$ \\
+$\vert$ $"run"$ id $";"$\\
 $\vert$ $"run"$ id $"with"$ expr $"iterations"$ $";"$\\
 $\vert$ $"put"$ expr $"in"$ id $"at"$ expr $","$ expr  $";"$\\
 

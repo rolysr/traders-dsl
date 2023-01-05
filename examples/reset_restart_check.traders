@@ -18,10 +18,11 @@ agent carletto{
 
 env italy{
     agents = [carletto, ];
+    number_iterations = 3;
 }
 
 run italy with 5 iterations;
 
 reset italy;
 
-run italy with 5 iterations;
+run italy;
