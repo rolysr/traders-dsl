@@ -5,21 +5,21 @@
 - Andry Rosquet Rodríguez (@aXoXoR2) - C311
 
 ## Descripción general:
-**Traders DSL** es un proyecto basado en el diseño de un lenguaje de dominio específico (**DSL** por sus siglas en inglés) que tiene como objetivo inicializar y ejecutar múltiples entornos con presencia de agentes y objetos de intercambio entre los mismos. Cada entorno es representado por un mundo con formato de una grilla rectangular, el cual será inicializado con una cantidad de filas y columnas determinada. En cada casilla de dicha matriz se podrán colocar los agentes negociadores. Los entornos también tendrán funcionalidades que permitirán añadir agentes y objetos en ciertas posiciones.
+**Traders DSL** es un proyecto basado en el diseño de un lenguaje de dominio específico (**DSL** por sus siglas en inglés) que tiene como objetivo inicializar y ejecutar múltiples entornos con presencia de agentes y objetos de intercambio entre los mismos. Cada entorno es representado por un mundo con formato de una grilla rectangular, el cual será inicializado con una cantidad de filas y columnas determinada. En cada casilla de dicha matriz se podrán colocar los agentes negociadores.
 
-El lenguaje permite crear agentes negociadores, los cuales tendrán definidos una serie de objetos a vender y el precio al cual desea venderlos. Estos contarán también con un conjunto de objetos que prefieren consevar, es decir, que no estarán en venta. Además, los agentes podrán decidir si desean conservar un objeto previamente en estado de venta y viceversa.
+El lenguaje permite crear agentes negociadores, los cuales tendrán definidos una serie de objetos a vender y el precio al cual desea venderlos. Estos contarán también con un conjunto de objetos que prefieren conservar, es decir, que no estarán en venta. Además, los agentes podrán decidir si desean conservar un objeto previamente en estado de venta y viceversa.
 
-Con el **DSL** propuesto es posible definir comportamientos de estos en un entornos. Dichos comportamientos son definidos de forma independiente y permiten estar encapsulados e identificados correctamente de tal forma que puedan ser reutilizados para la lógica de comportamiento de otros agentes. Los comportamientos de los agentes incluyen operaciones para moverse, detectar la presencia de objetos en su posición en la grilla, saber quiénes son los agentes cercanos con los cuáles es posible iniciar un proceso de negociación así como la capacidad de negociar o no con un agente dado.
+Con el **DSL** propuesto es posible definir los comportamientos de un agente en un entorno. Dichos comportamientos son definidos de forma independiente y permiten estar encapsulados e identificados correctamente de tal forma que puedan ser reutilizados para la lógica de comportamiento de otros agentes. Los comportamientos de los agentes incluyen operaciones para moverse, detectar la presencia de objetos en su posición en la grilla, saber quiénes son los agentes cercanos con los cuáles es posible iniciar un proceso de negociación así como la capacidad de negociar o no con un agente dado.
 
 El lenguaje propuesto será *Turing-Completo*, es decir, podrá ser usado para resolver cualquier problema tratable en lenguajes de propósito general, lo que en este caso utilizando una sintaxis mucho más expresiva y acotada. Será posible realizar operaciones de declaraciones de variables, tipado de variables (`number`, `bool`, `string`), expresiones de operaciones aritméticas y booleanas con estas, declaración de funciones (en este caso serían las funciones que expresan las acciones de los agentes) que pueden tener un comportamiento recursivo y control del flujo de código a partir de condicionales e implementación de ciclos.
 
 ## Requerimientos:
-Este proyecto fue desarrollado utilizando el lenguaje de programación *Python* en su versión $3.9$. No es necesario instalar ninguna dependencia adicional si cuenta con la versión de Python mencionada. En última instancia se recomienda comprobar la correcta instalación de los paquetes mencionados en [requirements.txt](https://github.com/rolysr/traders-dsl/blob/main/requirements.txt).
+Este proyecto fue desarrollado utilizando el lenguaje de programación *Python* en su versión $3.9$. No es necesario instalar ninguna dependencia adicional si cuenta con la versión de *Python* mencionada. En última instancia, se recomienda comprobar la correcta instalación de los paquetes mencionados en [requirements.txt](https://github.com/rolysr/traders-dsl/blob/main/requirements.txt).
 
 ## Ejecución del proyecto:
-Para ejecutar un archivo de código, nótese que es necesario crea un fichero con terminación *.traders*. Luego localice dicho fichero obteniéndo su dirección de localización en su *PC*.
+Para ejecutar un archivo de código, nótese que es necesario crear un fichero con terminación *.traders*. Luego, localice dicho fichero obteniendo su dirección de localización en su *PC*.
 
-Por ejemplo, sea el archivo `strong_test.traders` en la carpeta `examples` del proyecto. Para poder ejecutar bastaría con hacer en una consola con *Python* habilitado:
+Por ejemplo, sea el archivo `strong_test.traders` en la carpeta `examples` del proyecto. Para poder ejecutarlo, bastaría con hacer en una consola con *Python* habilitado:
 
 ```
 $ python main.py ./examples/strong_test.traders
@@ -65,14 +65,14 @@ repeat when a > 0 {
     a = a - 1;
 }
 ```
-En el segmento de anterior se muestra un ejemplo de un ciclo que se repite mientras la variable `a` sea positiva.
+En el segmento de código anterior se muestra un ejemplo de un ciclo que se repite mientras la variable `a` sea positiva.
 
 ### Iteradores:
 También es posible realizar iteraciones sobre algunos tipos específicos como por ejempos `list` y `book` utilizando la sentencia `foreach`. 
 
 El tipo `list` funciona como una lista en *Python*, es decir, la misma se puede indexar mediante corchetes (`[]`), además, estas cuentan con funciones predefinidas como `push`, `pop`, `reverse` y `size`, las cuales permiten añadir un elemento al final de la lista, eliminar un elemento al inicio de esta, hallar el reverso y determinar la cantidad de elementos que contiene respectivamente.
 
-El tipo `book` se asemeja al clásico tipo *diccionario* presenten en un gran número de lenguajes. Este permite representar con gran facilidad los elementos que un agente tiene a la venta y aquellos que desea conservar.
+El tipo `book` se asemeja al clásico tipo *diccionario* presente en un gran número de lenguajes. Este permite representar con gran facilidad los elementos que un agente tiene a la venta y aquellos que desea conservar.
 ```
 let arr: list = [1, 2, 3,];
 foreach elem in arr {
@@ -82,9 +82,9 @@ foreach elem in arr {
 Con el código anterior se logra recorrer una lista predefinida. Nótese la utilidad de esta funcionalidad para revisar el conjunto de agentes cercanos y objetos en el suelo dado el estado actual de un agente.
 
 ### Comportamientos:
-Los comportamientos de los agente son declarados como funciones. La diferencia fundamente con las funciones convencionales es que estos no pueden ser ejecutados arbitrariamente en el código, para dicho caso, habría que asignarle dicho comportamiento a un agente, añadir a este a un entorno determinado y finalmente ejecutar el entorno. De esta forma cuando toque el turno de ejecución a dicho agente, este realizará todas las acciones predefinidas en su comportamiento.
+Los comportamientos de los agentes son declarados como funciones. La diferencia fundamental con las funciones convencionales es que estos no pueden ser ejecutados arbitrariamente en el código, para dicho caso, habría que asignarle dicho comportamiento a un agente, añadir a este a un entorno determinado y finalmente ejecutar el entorno. De esta forma cuando toque el turno de ejecución a dicho agente, este realizará todas las acciones predefinidas en su comportamiento.
 
-Dado que los comportamientos tienen un identificador, esto permite crear múltiples agentes con un mismo comportamiento de forma sencilla, lo cual trae consigo aprovechar la reutilización de código. Además, dentro de un comportamiento se puede acceder a los campos definidos en un agente.
+Dado que los comportamientos tienen un identificador, esto permite crear múltiples agentes con un mismo comportamiento de forma sencilla, lo cual permite la reutilización de código. Además, dentro de un comportamiento se puede acceder a los campos definidos en un agente.
 
 ```
 behave normal {
@@ -109,7 +109,7 @@ move left;
 move right;
 move x,y;
 ```
-Las cuatro primeras acciones mostradas permiten que el agente se mueva en cada una de las cuatro direcciones cardinales principales, mientras que la última de estas permite que el mismo pueda trasladarse instantáneamente a una posición determinada por dos coordenas del tablero separadas por coma (dichas coordenas deben ser expresiones o variables cuyo tipo final de evaluación sea un entero que represente el índice de una casilla del entorno donde se encuentra el agente)
+Las cuatro primeras acciones mostradas permiten que el agente se mueva en cada una de las cuatro direcciones cardinales principales, mientras que la última de estas permite que el mismo pueda trasladarse instantáneamente a una posición determinada por dos coordenas del tablero separadas por coma (dichas coordenas deben ser expresiones o variables cuyo tipo final de evaluación sea un entero que represente el índice de una casilla del entorno donde se encuentra el agente).
 
 - #### Comprar y vender objetos:
 Para comprar objetos se cuentan con dos vías fundamentales:
@@ -136,7 +136,7 @@ De esta forma el agente intenta coger un objeto llamado "zapato" en el suelo de 
 
 Por otro lado, para poner un objeto en el suelo, solo basta con hacer:
 ```
-pick "zapato", 2;
+put "zapato", 2;
 ```
 Con lo cual un agente toma un objeto de nombre "zapato" y debe colocar en el suelo dos unidades del mismo. 
 
@@ -156,7 +156,7 @@ find objects;
 El cual devuelve un conjunto de los elementos localizados en la misma posición del agente que ejecuta dicha acción en un entorno dado.
 
 ### Agentes:
-Los agentes son un tipo que representan a los entes que participarán en las simulaciones de un entorno específico. Estos son inicializados directamente un con identificador y un conjunto de parámetros principales:
+Los agentes son un tipo que representa los entes que participarán en las simulaciones de un entorno específico. Estos son inicializados directamente un con un identificador y un conjunto de parámetros principales:
 ```
 behave b1 {
     move left;
@@ -176,7 +176,7 @@ agent a1 {
     let extra_attr: list = dim2;
 }
 ```
-Con este código estamos inicializando un agente denominado *a1*, que al añadirse a un entorno este será colocado en la posición *(2, 0)*. Este cuenta con los atributos adicionales (otra de las capacidades de un agente) *attr*, *attr2* y *abc*. Tiene un comportamiento definido denominado *b1* y posee los conjuntos *on_keep* y *on_sale* (son considerados los conjuntos destinados a tener seguimiento de los objetos a conservar y a vender respectivamente). El conjunto *on_keep* relaciona al nombre de un objeto con la cantidad del mismo mientras que *on_sale* lo relaciones con una cantidad y un precio de venta.
+Con este código estamos inicializando un agente denominado *a1*, que al añadirse a un entorno este será colocado en la posición *(2, 0)*. Este cuenta con los atributos adicionales (otra de las capacidades de un agente) *attr*, *attr2* y *abc*. Tiene un comportamiento definido denominado *b1* y posee los conjuntos *on_keep* y *on_sale* (son considerados los conjuntos destinados a tener seguimiento de los objetos a conservar y a vender respectivamente). El conjunto *on_keep* relaciona al nombre de un objeto con la cantidad del mismo mientras que *on_sale* lo relaciona con una cantidad y un precio de venta.
 
 ### Entornos:
 Los entornos representan los espacios acotados donde coexistirán un conjunto de agentes. Como ya se mecionó, estos están representados internamente por una grilla rectangular con dimensiones especificadas. A continuación se muestra una forma de inicializar un entorno:
@@ -188,7 +188,7 @@ env la_tinta{
     columns = 5;
 }
 ```
-En este caso estamos inicializando un entorno denominado *la_tinta*, que posee unos agentes denominados *Pepito* (dos instancias de *Pepito*) y *Juan* (nótese que la repetición del nombre *Pepito* demuestra la capacidad de reutilizar tipos de agentes ya definidos). El campo *log* denota si se desean imprimir el historial de sucesos que ocurren en el ambiente.
+En este caso estamos inicializando un entorno denominado *la_tinta*, que posee unos agentes denominados *Pepito* (dos instancias de *Pepito*, nótese que la repetición del nombre *Pepito* demuestra la capacidad de reutilizar tipos de agentes ya definidos) y *Juan*. El campo *log* denota si se desean imprimir el historial de sucesos que ocurren en el ambiente.
 
 Para trabajar con un entorno se dispone de un conjunto de operaciones fundamentales:
 
@@ -320,7 +320,7 @@ Rule 102   empty -> <empty>
 El proyecto está dividido en tres módulos fundamentales: `backend`, `sly` y `src`. Las implementaciones realizadas en `src` dependen de aquellas contenidas en `backend` y `sly`. El punto de entrada a la aplicación del proyecto lo denota el archivo *main.py*, que cuenta con la funcionalidad básica para ejecutar el compilador del **DSL** ya que importa las principales herramientas del proyecto implementadas en `src`.
 
 ### Módulo `backend`:
-Este módulo contiene las implementaciones de los tipos básico utilizados para el proyecto. Dentro del mismo tenemos:
+Este módulo contiene las implementaciones de los tipos básicos utilizados para el proyecto. Dentro del mismo tenemos:
 - `TradersAgent`:
     Representa un agente del entorno y es el encargado de contener los campos y métodos principales a ejecutar por el tipo `agent`.
 
@@ -340,20 +340,20 @@ Este módulo contiene las implementaciones de los tipos básico utilizados para 
     Clase utilizada para manejar el contexto de los procesos ejecutados en el lenguaje. Internamente contiene un diccionario que representa el espacio de nombres definidos en un archivo de código. Contiene el método `find(...)`, el cual permite comprobar la presencia o no de un determinado identificador en el espacio de nombres definido.
 
 ### Módulo `sly`:
-Este módulo se encarga de contener las implementaciones de los objetos encargados de realizar el análisis lexicográfico y los procesos de *parsing*. 
+Este módulo se encarga de contener las implementaciones de los objetos orientados al análisis lexicográfico y los procesos de *parsing*. 
 
 Para la primera de estas tareas se cuenta con la clase `Lexer`, la cual contiene una implementación báscia de un *lexer* que recibe un conjunto de tokens principales, y logra identificar a estos en una cadena cualquiera del lenguaje. En el caso de la segunda tarea se cuenta con la clase `Parser`, el cual es un *parser* de tipo **LALR(1)**.
 
 Este módulo fue tomado de una [biblioteca](https://github.com/dabeaz/sly) que contiene ya implementada dichos algoritmos de *lexing* y *parsing*.
 
 ### Módulo `src`:
-Es el módulo principal del proyecto y el mismo fue implementado desde cero. Contiene tres principales clases que componen la base de funcionamiento del proyecto: `TradersLexer`, ``TradersParser` y `TradersInterpreter`.
+Es el módulo principal del proyecto. Contiene tres principales clases que componen la base de funcionamiento del compilador: `TradersLexer`, `TradersParser` y `TradersInterpreter`.
 
 - `TradersLexer`: 
-    Hereda de la clase `Lexer` del módulo `sly`. Contiene las especificaciones de los token y palabras resevadas principales del proyecto. Contiene el método `tokenize(...)` encargado de identificar y separar los *tokens* del lenguaje.
+    Hereda de la clase `Lexer` del módulo `sly`. Contiene las especificaciones de los token y palabras reservadas principales del proyecto. Contiene el método `tokenize(...)` encargado de identificar y separar los *tokens* del lenguaje.
 
 - `TradersParser`:
     Hereda de la clase `Parser` del módulo `sly`. Contiene la gramática del lenguaje y genera el autómata **LALR(1)** utilizado durante el proceso de *parsing*.
 
 - `TradersInterpreter`:
-    Contituye el intérprete del lenguaje. Permite la ejecución de cada uno de los procesos y funcionalidades del proyecto, además de que realiza todos los análisis semánticos principales (chequeo y consistencia de tipos).
+    Constituye el intérprete del lenguaje. Permite la ejecución de cada uno de los procesos y funcionalidades del proyecto, además de que realiza las acciones relacionadas con el análisis semántico del proyecto.
