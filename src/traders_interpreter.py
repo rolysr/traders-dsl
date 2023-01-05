@@ -12,7 +12,7 @@ from backend.env import *
 
 class Process:
     """
-    The main process the executes Traders Abstract Syntax Tree
+    The main process that executes Traders Abstract Syntax Tree
     """
 
     def __init__(self, tree, filename="?", env={}):
