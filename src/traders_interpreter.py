@@ -278,7 +278,7 @@ class Process:
                 column = self.evaluate(parsed[4])
 
                 # check if type is agent
-                if obj.type == 'agent':
+                if isinstance(obj, TradersAgent):
                     new_agent = deepcopy(obj)
                     env_instance.add_agent(new_agent, row, column)
 
@@ -637,7 +637,7 @@ class Process:
             elif action == 'or':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                if result.type == 'bool' and result2.type == 'bool':
+                if isinstance(result, Bool) and isinstance(result2, Bool):
                     return Bool(result.value or result2.value)
                 raise Exception("unsupported operand type(s) for \'and\': {0} and {1}".format(
                     result.type, result2.type))
@@ -645,7 +645,7 @@ class Process:
             elif action == 'and':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                if result.type == 'bool' and result2.type == 'bool':
+                if isinstance(result, Bool) and isinstance(result2, Bool):
                     return Bool(result.value and result2.value)
                 raise Exception("unsupported operand type(s) for \'and\': {0} and {1}".format(
                     result.type, result2.type))
@@ -653,7 +653,7 @@ class Process:
             elif action == '!=':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                if result.type == result2.type:
+                if result is not None and result2 is not None and result.type == result2.type:
                     return Bool(not (result.value == result2.value))
                 raise Exception("unsupported operand type(s) for !=: {0} and {1}".format(
                     result.type, result2.type))
@@ -661,7 +661,7 @@ class Process:
             elif action == '==':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                if result.type == result2.type:
+                if result is not None and result2 is not None and result.type == result2.type:
                     return Bool(result.value == result2.value)
                 raise Exception("unsupported operand type(s) for ==: {0} and {1}".format(
                     result.type, result2.type))
@@ -669,7 +669,7 @@ class Process:
             elif action == '<':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                if result.type == 'number' and result2.type == 'number':
+                if isinstance(result, Number) and isinstance(result2, Number):
                     return Bool(result.value < result2.value)
                 raise Exception("unsupported operand type(s) for <: {0} and {1}".format(
                     result.type, result2.type))
@@ -677,7 +677,7 @@ class Process:
             elif action == '<=':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                if result.type == 'number' and result2.type == 'number':
+                if isinstance(result, Number) and isinstance(result2, Number):
                     return Bool(result.value <= result2.value)
                 raise Exception("unsupported operand type(s) for <=: {0} and {1}".format(
                     result.type, result2.type))
@@ -685,7 +685,7 @@ class Process:
             elif action == '>=':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                if result.type == 'number' and result2.type == 'number':
+                if isinstance(result, Number) and isinstance(result2, Number):
                     return Bool(result.value >= result2.value)
                 raise Exception("unsupported operand type(s) for >=: {0} and {1}".format(
                     result.type, result2.type))
@@ -693,7 +693,7 @@ class Process:
             elif action == '>':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                if result.type == 'number' and result2.type == 'number':
+                if isinstance(result, Number) and isinstance(result2, Number):
                     return Bool(result.value > result2.value)
                 raise Exception("unsupported operand type(s) for >: {0} and {1}".format(
                     result.type, result2.type))
@@ -701,9 +701,9 @@ class Process:
             elif action == '+':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                if result.type == 'string' and result2.type == 'string':
+                if isinstance(result, String) and isinstance(result2, String):
                     return String(result.value+result2.value)
-                if result.type == 'number' and result2.type == 'number':
+                if isinstance(result, Number) and isinstance(result2, Number):
                     return Number(result.value+result2.value)
                 raise Exception(
                     "unsupported operand type(s) for +: {0} and {1}".format(result.type, result2.type))
@@ -711,7 +711,7 @@ class Process:
             elif action == '-':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                if result.type == 'number' and result2.type == 'number':
+                if isinstance(result, Number) and isinstance(result2, Number):
                     return Number(result.value-result2.value)
                 raise Exception(
                     "unsupported operand type(s) for -: {0} and {1}".format(result.type, result2.type))
@@ -719,7 +719,7 @@ class Process:
             elif action == '*':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                if result.type == 'number' and result2.type == 'number':
+                if isinstance(result, Number) and isinstance(result2, Number):
                     return Number(result.value*result2.value)
                 raise Exception(
                     "unsupported operand type(s) for *: {0} and {1}".format(result.type, result2.type))
@@ -727,21 +727,21 @@ class Process:
             elif action == '/':
                 result = self.evaluate(parsed[1])
                 result2 = self.evaluate(parsed[2])
-                if result.type == 'number' and result2.type == 'number':
+                if isinstance(result, Number) and isinstance(result2, Number):
                     return Number(result.value/result2.value)
                 raise Exception(
                     "unsupported operand type(s) for /: {0} and {1}".format(result.type, result2.type))
 
             elif action == '!':
                 result = self.evaluate(parsed[1])
-                if result.type == 'bool':
+                if isinstance(result, Bool):
                     return Bool(not result.value)
                 raise Exception(
                     "unsupported operand type(s) for logical negation: {0}".format(result.type))
 
             elif action == 'neg':
                 result = self.evaluate(parsed[1])
-                if result.type == 'number':
+                if isinstance(result, Bool):
                     return Number(-result.value)
                 raise Exception(
                     "unsupported operand type(s) for negation: {0}".format(result.type))
