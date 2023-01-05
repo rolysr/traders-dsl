@@ -19,7 +19,7 @@ Este proyecto fue desarrollado utilizando el lenguaje de programación *Python* 
 ## Ejecución del proyecto:
 Para ejecutar un archivo de código, nótese que es necesario crea un fichero con terminación *.traders*. Luego localice dicho fichero obteniéndo su dirección de localización en su *PC*.
 
-Por ejemplo sea el archivo `strong_test.traders` en la carpeta `examples` del proyecto. Para poder ejecutar bastaría con hacer en una consola con *Python* habilitado:
+Por ejemplo, sea el archivo `strong_test.traders` en la carpeta `examples` del proyecto. Para poder ejecutar bastaría con hacer en una consola con *Python* habilitado:
 
 ```
 $ python main.py ./examples/strong_test.traders
