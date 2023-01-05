@@ -459,7 +459,8 @@ class Process:
                 return None
 
             elif action == 'talk':
-                print(self.stringify(self.evaluate(parsed[1])))
+                if self.env_instance is None or self.env_instance.log.value:
+                    print(self.stringify(self.evaluate(parsed[1])))
                 return None
 
             elif action == 'random':

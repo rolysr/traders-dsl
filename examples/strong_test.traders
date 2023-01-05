@@ -15,35 +15,22 @@ behave xxx{
     talk "";
     talk "Initial Balance:";
     talk balance;
-    foreach ent in on_keep{
-        talk ent.product;
-        talk ent.amount;
-    }
+    talk on_keep;
     foreach agx in find peers{
         buy agx, "carne", random from 0 to 10000;
         in case balance > 0
         {
             talk "A buy-sell operation is going to start";
-            talk "other agent on_sale book";
-            foreach ent in agx.on_sale{
-                talk ent.product;
-                talk ent.amount;
-                talk ent.price;
-            }
+            talk "other agent on_sale book:";
+            talk agx.on_sale;
             buy agx;
             talk "Results:";
             talk "Balance:";
             talk balance;
-            talk "on_keep book"; 
-            foreach ent in on_keep{
-                talk ent.product;
-                talk ent.amount;
-            }
-            talk "other agent on_sale book";
-            foreach ent in agx.on_sale{
-                talk ent.product;
-                talk ent.amount;
-            }
+            talk "on_keep book:"; 
+            talk on_keep;
+            talk "other agent on_sale book:";
+            talk agx.on_sale;
         }
     }
 
@@ -99,4 +86,4 @@ put stuff in la_tinta at 2,0;
 put stuff in la_tinta at 2,0;
 put stuff in la_tinta at 2,1;
 
-run la_tinta with 5 iterations;
+run la_tinta with 1 iterations;

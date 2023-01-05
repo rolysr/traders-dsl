@@ -106,21 +106,21 @@ Rule 102   empty -> <empty>
 
 Unused terminals:
 
-    XORASGN
-    SHLASGN
-    INC
     ORASGN
-    SLASHASGN
-    MINUSASGN
-    SHL
-    DEC
     PLUSASGN
-    GET
+    SHLASGN
     SHRASGN
-    SHR
+    GET
+    STARASGN
     MODULOASGN
     ANDASGN
-    STARASGN
+    SHL
+    DEC
+    SHR
+    MINUSASGN
+    SLASHASGN
+    XORASGN
+    INC
 
 Terminals, with rules where they appear:
 

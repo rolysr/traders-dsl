@@ -1,10 +1,8 @@
-behavior b1() {
-
+behave b1 {
     in case a == 2 {
-        print("Holaaa");
-    } otherwise {
-        print("Meh");
+        talk "Holaa";
+    } 
+    otherwise{
+        talk "Meh";
     }
 }
-
-b1();
