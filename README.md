@@ -16,6 +16,16 @@ El lenguaje propuesto será *Turing-Completo*, es decir, podrá ser usado para r
 ## Requerimientos:
 Este proyecto fue desarrollado utilizando el lenguaje de programación *Python* en su versión $3.9$. No es necesario instalar ninguna dependencia adicional si cuenta con la versión de Python mencionada. En última instancia se recomienda comprobar la correcta instalación de los paquetes mencionados en [requirements.txt]().
 
+## Ejecución del proyecto:
+Para ejecutar un archivo de código, nótese que es necesario crea un fichero con terminación *.traders*. Luego localice dicho fichero obteniéndo su dirección de localización en su *PC*.
+
+Por ejemplo sea el archivo `strong_test.traders` en la carpeta `examples` del proyecto. Para poder ejecutar bastaría con hacer en una consola con *Python* habilitado:
+
+```
+$ python main.py ./examples/strong_test.traders
+```
+Finalmente se ejecutará el archivo con el resultado esperado.
+
 ## Sintaxis del lenguaje y principales funcionalidades:
 La sintaxis del **DSL** propuesto se caracteriza por lograr un balance entre un estilo declarativo y uno imperativo a la hora de expresar las posibles intrucciones válidas en el mismo, lo cual permite una mayor expresividad.
 
@@ -86,6 +96,10 @@ behave normal {
 ```
 Este código refleja el comportamiento de un agente que se mueve a la izquiera, luego hacia abajo y finalmente dice *Hola Mundo*. En este caso se muestran ejempos de acciones de un agente en un entorno. Dichas acciones permiten realizar todo el conjunto de operaciones posibles por un agente en el dominio modelado por este proyecto.
 
+ - Recursividad:
+
+ Es posible diseñar métodos recursivos a partir de las sentencias `stop` y `restart behave`. La primera es equivalente a la clásica sentencia `return` en varios lenguajes de programación y la segunda permite que el agente pueda reiniciar su lógica de funcionamiento teniendo en cuenta el valor de las variables que posee actualmente.
+
 - #### Acciones de movimiento:
 Las acciones de movimiento expresan la forma en que se debe desplazar un agente en un entorno.
 ```
@@ -141,5 +155,215 @@ find objects;
 ```
 El cual devuelve un conjunto de los elementos localizados en la misma posición del agente que ejecuta dicha acción en un entorno dado.
 
+### Agentes:
+Los agentes son un tipo que representan a los entes que participarán en las simulaciones de un entorno específico. Estos son inicializados directamente un con identificador y un conjunto de parámetros principales:
+```
+behave b1 {
+    move left;
+    move down;
+
+    talk "Hola Mundo";
+}
+
+agent a1 {
+    location = [2,0,];
+    let atrr : string = "Pedro";
+    let atrr2 : string = "Jose";
+    let abc : number;
+    behavior = b1;
+    on_keep = {"carne" : (5, ), "mondongo" : (99999999, ),};
+    on_sale = {"carne" : (5, 100, ), "mondongo" : (99999999, 1000, ), };
+    let extra_attr: list = dim2;
+}
+```
+Con este código estamos inicializando un agente denominado *a1*, que al añadirse a un entorno este será colocado en la posición *(2, 0)*. Este cuenta con los atributos adicionales (otra de las capacidades de un agente) *attr*, *attr2* y *abc*. Tiene un comportamiento definido denominado *b1* y posee los conjuntos *on_keep* y *on_sale* (son considerados los conjuntos destinados a tener seguimiento de los objetos a conservar y a vender respectivamente). El conjunto *on_keep* relaciona al nombre de un objeto con la cantidad del mismo mientras que *on_sale* lo relaciones con una cantidad y un precio de venta.
+
 ### Entornos:
-Los entornos representan los espacios acotados donde coexistirán un conjunto de agentes. Como ya se mecionó, estos están representados internamente por una grilla rectangular con dimensiones especificadas. A continuación se muestra
+Los entornos representan los espacios acotados donde coexistirán un conjunto de agentes. Como ya se mecionó, estos están representados internamente por una grilla rectangular con dimensiones especificadas. A continuación se muestra una forma de inicializar un entorno:
+```
+env la_tinta{
+    agents = [Pepito, Juan, Pepito, ];
+    log = true;
+    rows = 5;
+    columns = 5;
+}
+```
+En este caso estamos inicializando un entorno denominado *la_tinta*, que posee unos agentes denominados *Pepito* (dos instancias de *Pepito*) y *Juan* (nótese que la repetición del nombre *Pepito* demuestra la capacidad de reutilizar tipos de agentes ya definidos). El campo *log* denota si se desean imprimir el historial de sucesos que ocurren en el ambiente.
+
+Para trabajar con un entorno se dispone de un conjunto de operaciones fundamentales:
+
+- Ejecutar el entorno:
+
+Para la ejecución del entorno se utiliza la siguiente sintaxis:
+```
+run e1 with 5 iterations;
+```
+Con lo cual estamos haciendo que un entorno denominado *e1* ejecute cinco iteraciones, lo cual es recorrer cinco veces el conjunto de agentes del mismo y por cada uno ejecutar su comportamiento predefinido.
+
+- Reiniciar el entorno:
+
+```
+reset e1;
+```
+Con este código logramos que un entorno vuelva al estado inicial que tenía justo antes de la primera iteración.
+
+## Gramática:
+La gramática implementada fue diseñada con el objetivo de ser parseable de la mejor manera posible por un *paser* **LALR(1)**. La misma fue generada por el proyecto en el archivo [aiuda.pofavo]() que se encuentra en el directorio principal.
+
+```
+Rule 0     S' -> program
+Rule 1     program -> declarationList
+Rule 2     declarationList -> empty
+Rule 3     declarationList -> declaration declarationList
+Rule 4     declaration -> envFunc
+Rule 5     declaration -> varAssign
+Rule 6     declaration -> varDecl
+Rule 7     declaration -> behaveDecl
+Rule 8     declaration -> agentDecl
+Rule 9     declaration -> envDecl
+Rule 10    envDecl -> ENV ID { envBody }
+Rule 11    agentDecl -> AGENT ID { agentBody }
+Rule 12    behaveDecl -> BEHAVE ID { behaveBody }
+Rule 13    varDecl -> LET ID : type ASSIGN expr SEP
+Rule 14    varDecl -> LET ID : type SEP
+Rule 15    varAssign -> getter ASSIGN expr SEP
+Rule 16    envFunc -> PUT expr IN ID AT expr , expr SEP
+Rule 17    envFunc -> RUN ID WITH expr ITERATIONS SEP
+Rule 18    envFunc -> RESET ID SEP
+Rule 19    envBody -> varList
+Rule 20    agentBody -> varList
+Rule 21    behaveBody -> statementList
+Rule 22    varList -> empty
+Rule 23    varList -> varAssign varList
+Rule 24    varList -> varDecl varList
+Rule 25    statementList -> empty
+Rule 26    statementList -> statement statementList
+Rule 27    statement -> primFuncStmt
+Rule 28    statement -> incaseStmt
+Rule 29    statement -> foreachStmt
+Rule 30    statement -> repeatStmt
+Rule 31    statement -> varAssign
+Rule 32    statement -> varDecl
+Rule 33    statement -> expr SEP
+Rule 34    repeatStmt -> REPEAT WHEN expr { statementList }
+Rule 35    foreachStmt -> FOREACH ID IN expr { statementList }
+Rule 36    incaseStmt -> IN CASE expr { statementList } inothercaseStmt
+Rule 37    inothercaseStmt -> empty
+Rule 38    inothercaseStmt -> OTHERWISE { statementList }
+Rule 39    inothercaseStmt -> IN OTHER CASE expr { statementList } inothercaseStmt
+Rule 40    primFuncStmt -> PUT expr , expr SEP
+Rule 41    primFuncStmt -> PICK expr SEP
+Rule 42    primFuncStmt -> STOP SEP
+Rule 43    primFuncStmt -> RESTART BEHAVE SEP
+Rule 44    primFuncStmt -> SELL expr , expr , expr SEP
+Rule 45    primFuncStmt -> buyStmt SEP
+Rule 46    primFuncStmt -> moveStmt SEP
+Rule 47    primFuncStmt -> TALK expr SEP
+Rule 48    moveStmt -> MOVE RIGHT
+Rule 49    moveStmt -> MOVE LEFT
+Rule 50    moveStmt -> MOVE DOWN
+Rule 51    moveStmt -> MOVE UP
+Rule 52    moveStmt -> MOVE expr , expr
+Rule 53    buyStmt -> BUY expr
+Rule 54    buyStmt -> BUY expr , expr , expr
+Rule 55    expr -> call
+Rule 56    expr -> - expr  [precedence=right, level=9]
+Rule 57    expr -> ! expr  [precedence=right, level=10]
+Rule 58    expr -> expr / expr  [precedence=left, level=8]
+Rule 59    expr -> expr * expr  [precedence=left, level=8]
+Rule 60    expr -> expr - expr  [precedence=left, level=7]
+Rule 61    expr -> expr + expr  [precedence=left, level=7]
+Rule 62    expr -> expr GREATER expr  [precedence=left, level=5]
+Rule 63    expr -> expr GREATEREQ expr  [precedence=left, level=5]
+Rule 64    expr -> expr LESSEQ expr  [precedence=left, level=5]
+Rule 65    expr -> expr LESS expr  [precedence=left, level=5]
+Rule 66    expr -> expr EQEQ expr  [precedence=left, level=4]
+Rule 67    expr -> expr NOTEQ expr  [precedence=left, level=4]
+Rule 68    expr -> expr AND expr  [precedence=left, level=3]
+Rule 69    expr -> expr OR expr  [precedence=left, level=2]
+Rule 70    call -> ID dotTail
+Rule 71    call -> primitiveValue
+Rule 72    call -> primary
+Rule 73    getter -> ID dotTail
+Rule 74    dotTail -> empty
+Rule 75    dotTail -> [ expr ] dotTail
+Rule 76    dotTail -> . idTail dotTail
+Rule 77    idTail -> listFunc
+Rule 78    idTail -> ID
+Rule 79    listFunc -> REVERSE
+Rule 80    listFunc -> POP
+Rule 81    listFunc -> PUSH expr
+Rule 82    listFunc -> SIZE
+Rule 83    primitiveValue -> FIND PEERS
+Rule 84    primitiveValue -> FIND OBJECTS
+Rule 85    primitiveValue -> RANDOM FROM expr TO expr
+Rule 86    primary -> ( expr )
+Rule 87    primary -> { bookItems }
+Rule 88    primary -> [ listItems ]
+Rule 89    primary -> STRING
+Rule 90    primary -> NUMBER
+Rule 91    primary -> FALSE
+Rule 92    primary -> TRUE
+Rule 93    listItems -> empty
+Rule 94    listItems -> expr , listItems
+Rule 95    bookItems -> empty
+Rule 96    bookItems -> STRING : ( listItems ) , bookItems
+Rule 97    type -> BOOK_TYPE
+Rule 98    type -> LIST_TYPE
+Rule 99    type -> STRING_TYPE
+Rule 100   type -> BOOL_TYPE
+Rule 101   type -> NUMBER_TYPE
+Rule 102   empty -> <empty>
+```
+
+## Arquitectura del proyecto:
+El proyecto está dividido en tres módulos fundamentales: `backend`, `sly` y `src`. Las implementaciones realizadas en `src` dependen de aquellas contenidas en `backend` y `sly`. El punto de entrada a la aplicación del proyecto lo denota el archivo *main.py*, que cuenta con la funcionalidad básica para ejecutar el compilador del **DSL** ya que importa las principales herramientas del proyecto implementadas en `src`.
+
+### Módulo `backend`:
+Este módulo contiene las implementaciones de los tipos básico utilizados para el proyecto. Dentro del mismo tenemos:
+- `TradersAgent`:
+    Representa un agente del entorno y es el encargado de contener los campos y métodos principales a ejecutar por el tipo `agent`.
+
+- `Number`, `String`, `Bool`: 
+    Representaciones de los tipos `number` (representado de forma interna como flotantes, trata siempre de parsear cualquier dato numérico de esta forma), `string` y `bool`.
+
+- `Behavior`: 
+    Contiene las especificaciones fundamentales para la ejecución de métodos. Esta clase recibe un identificador (nombre del comportamiento) una lista de sentencias a ejecutar (instrucciones del lenguaje a ejecutar).
+
+- `List`, `Book`: 
+    Implementaciones de los tipos `list` y `book`, los cuales son manejados internamente como listas y diccionarios de *Python* respectivamente.
+
+- `TradersEnvironment`: 
+    Representación de los entornos del **DSL**.
+
+- `Env`: 
+    Clase utilizada para manejar el contexto de los procesos ejecutados en el lenguaje. Internamente contiene un diccionario que representa el espacio de nombres definidos en un archivo de código. Contiene el método `find(...)`, el cual permite comprobar la presencia o no de un determinado identificador en el espacio de nombres definido.
+
+### Módulo `sly`:
+Este módulo se encarga de contener las implementaciones de los objetos encargados de realizar el análisis lexicográfico y los procesos de *parsing*. 
+
+Para la primera de estas tareas se cuenta con la clase `Lexer`, la cual contiene una implementación báscia de un *lexer* que recibe un conjunto de tokens principales, y logra identificar a estos en una cadena cualquiera del lenguaje. En el caso de la segunda tarea se cuenta con la clase `Parser`, el cual es un *parser* de tipo **LALR(1)**.
+
+Este módulo fue tomado de una [biblioteca](https://github.com/dabeaz/sly) que contiene ya implementada dichos algoritmos de *lexing* y *parsing*.
+
+### Módulo `src`:
+Es el módulo principal del proyecto y el mismo fue implementado desde cero. Contiene tres principales clases que componen la base de funcionamiento del proyecto: `TradersLexer`, ``TradersParser` y `TradersInterpreter`.
+
+- `TradersLexer`: 
+    Hereda de la clase `Lexer` del módulo `sly`. Contiene las especificaciones de los token y palabras resevadas principales del proyecto. Contiene el método `tokenize(...)` encargado de identificar y separar los *tokens* del lenguaje.
+
+- `TradersParser`:
+    Hereda de la clase `Parser` del módulo `sly`. Contiene la gramática del lenguaje y genera el autómata **LALR(1)** utilizado durante el proceso de *parsing*.
+
+- `TradersInterpreter`:
+    Contituye el intérprete del lenguaje. Permite la ejecución de cada uno de los procesos y funcionalidades del proyecto, además de que realiza todos los análisis semánticos principales (chequeo y consistencia de tipos).
+
+## Funcionalidad adicional:
+Se recomienda revisar el archivo [aiuda.pofavo]() ya que contiene una serie de resultados interesantes que se derivan del proceso de parsing y análisis léxico. Este brinda informaciones tales como:
+
+- Conjunto de reglas de la gramática.
+- Terminales no utilizados.
+- Por cada terminal, las reglas en las que aparece.
+- Por cada no terminal, las reglas en las que aparece.
+- Los estados del autómata **LALR(1)** con varias especificaciones.
+- Los conflictos con cada *token* por cada estado y la operación finalmente decidida (*shift* o *reduce*). 
