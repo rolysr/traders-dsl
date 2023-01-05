@@ -565,8 +565,6 @@ class Process:
 
                 if self.actual_agent is not None and owner is not None: # Means we are inside a behave call
                     if owner is not self.actual_agent:
-                        print(owner)
-                        print(self.actual_agent)
                         raise Exception('Illegal assignment, other agent assigment : {}'.format(parsed))
                     if is_protected:
                         raise Exception('Illegal assignment, protected attributes assignment : {}'.format(parsed))
@@ -741,7 +739,7 @@ class Process:
 
             elif action == 'neg':
                 result = self.evaluate(parsed[1])
-                if isinstance(result, Bool):
+                if isinstance(result, Number):
                     return Number(-result.value)
                 raise Exception(
                     "unsupported operand type(s) for negation: {0}".format(result.type))
