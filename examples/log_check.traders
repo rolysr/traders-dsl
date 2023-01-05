@@ -1,0 +1,29 @@
+behave speak_bla{
+    talk "blah blah blah";
+}
+
+behave speak_po{
+    talk "poh poh poh";
+}
+
+agent normal{
+    behavior = speak_bla;
+}
+
+agent durako{
+    behavior = speak_po;
+}
+
+env quiet{
+    agents = [normal, ];
+    log = false;
+}
+
+env talking{
+    agents = [normal, durako, ];
+    log = true;
+}
+
+run quiet with 3 iterations;
+
+run talking with 3 iterations;

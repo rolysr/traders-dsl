@@ -11,16 +11,13 @@ class TradersParser(Parser):
     debugfile = 'aiuda.pofavo'
 
     precedence = (
-        ('right', PLUSASGN, MINUSASGN, STARASGN, SLASHASGN,
-         MODULOASGN, ANDASGN, ORASGN, XORASGN, SHLASGN, SHRASGN),
         ('left', OR),
         ('left', AND),
         ('left', EQEQ, NOTEQ),
         ('left', LESS, LESSEQ, GREATER, GREATEREQ),
-        ('left', SHL, SHR),
         ('left', '+', '-'),
         ('left', '*', '/'),
-        ('right', 'UMINUS', INC, DEC),
+        ('right', 'UMINUS'),
         ('right', '!'),
     )
 
@@ -28,7 +25,7 @@ class TradersParser(Parser):
     def program(self, p):
         return ('program', p.declarationList)
 
-    #Declarations productions:
+    # Declarations productions:
 
     @_('declaration declarationList')
     def declarationList(self, p):
@@ -84,11 +81,15 @@ class TradersParser(Parser):
 
     @_('getter ASSIGN expr SEP')
     def varAssign(self, p):
-        return ('varAssign', p.getter , p.expr)
+        return ('varAssign', p.getter, p.expr)
 
     @_('RESET ID SEP')
     def envFunc(self, p):
         return ('resetEnv', p.ID)
+
+    @_('RUN ID SEP')
+    def envFunc(self, p):
+        return ('runEnv', p.ID)
 
     @_('RUN ID WITH expr ITERATIONS SEP')
     def envFunc(self, p):
@@ -98,9 +99,9 @@ class TradersParser(Parser):
     def envFunc(self, p):
         return ('putEnv', p.ID, p.expr0, p.expr1, p.expr2)
 
-    #Declarations productions end
+    # Declarations productions end
 
-    #Bodies productions:
+    # Bodies productions:
 
     @_('varList')
     def envBody(self, p):
@@ -124,7 +125,7 @@ class TradersParser(Parser):
 
     @_('empty')
     def varList(self, p):
-        return ( )
+        return ()
 
     @_('statement statementList')
     def statementList(self, p):
@@ -132,13 +133,13 @@ class TradersParser(Parser):
 
     @_('empty')
     def statementList(self, p):
-        return ( )
+        return ()
 
-    #Bodies productions end
-    
-    #Statements productions:
-    
-    ##Statement types
+    # Bodies productions end
+
+    # Statements productions:
+
+    # Statement types
     @_('expr SEP')
     def statement(self, p):
         return p.expr
@@ -150,19 +151,19 @@ class TradersParser(Parser):
     @_('varAssign')
     def statement(self, p):
         return p.varAssign
-        
+
     @_('repeatStmt')
     def statement(self, p):
         return p.repeatStmt
-        
+
     @_('foreachStmt')
     def statement(self, p):
         return p.foreachStmt
-        
+
     @_('incaseStmt')
     def statement(self, p):
         return p.incaseStmt
-        
+
     @_('primFuncStmt')
     def statement(self, p):
         return p.primFuncStmt
@@ -191,8 +192,8 @@ class TradersParser(Parser):
     @_('empty')
     def inothercaseStmt(self, p):
         return ('inothercaseStmt_2', )
-    
-    ##Primitive Functions Statements
+
+    # Primitive Functions Statements
 
     @_('TALK expr SEP')
     def primFuncStmt(self, p):
@@ -209,19 +210,19 @@ class TradersParser(Parser):
     @_('SELL expr "," expr "," expr SEP')
     def primFuncStmt(self, p):
         return ('sell', p.expr0, p.expr1, p.expr2)
-        
+
     @_('RESTART BEHAVE SEP')
     def primFuncStmt(self, p):
         return ('restart', )
-        
+
     @_('STOP SEP')
     def primFuncStmt(self, p):
         return ('stop', )
-        
+
     @_('PICK expr SEP')
     def primFuncStmt(self, p):
         return ('pick', p.expr)
-        
+
     @_('PUT expr "," expr SEP')
     def primFuncStmt(self, p):
         return ('put', p.expr0, p.expr1)
@@ -253,9 +254,9 @@ class TradersParser(Parser):
     @_('BUY expr')
     def buyStmt(self, p):
         return ('buyStmt_1', p.expr)
-    
 
-    #Expression productions
+    # Expression productions
+
     @_('expr OR expr')
     def expr(self, p):
         return ('or', p.expr0, p.expr1)
@@ -316,9 +317,9 @@ class TradersParser(Parser):
     def expr(self, p):
         return p.call
 
-    #Expression productions end
+    # Expression productions end
 
-    #Calling productions
+    # Calling productions
 
     @_('primary')
     def call(self, p):
@@ -342,7 +343,7 @@ class TradersParser(Parser):
 
     @_('"[" expr "]" dotTail')
     def dotTail(self, p):
-        return ('dotTail', ('idTail_1', ('get', p.expr)) , p.dotTail) 
+        return ('dotTail', ('idTail_1', ('get', p.expr)), p.dotTail)
 
     @_('empty')
     def dotTail(self, p):
@@ -375,11 +376,11 @@ class TradersParser(Parser):
     @_('RANDOM FROM expr TO expr')
     def primitiveValue(self, p):
         return ('random', p.expr0, p.expr1)
-        
+
     @_('FIND OBJECTS')
     def primitiveValue(self, p):
         return ('find', 'objects')
-        
+
     @_('FIND PEERS')
     def primitiveValue(self, p):
         return ('find', 'peers')
@@ -418,7 +419,7 @@ class TradersParser(Parser):
 
     @_('empty')
     def listItems(self, p):
-        return ( )
+        return ()
 
     @_('STRING ":" "(" listItems ")" "," bookItems')
     def bookItems(self, p):
@@ -426,7 +427,7 @@ class TradersParser(Parser):
 
     @_('empty')
     def bookItems(self, p):
-        return ( )
+        return ()
 
     @_('NUMBER_TYPE')
     def type(self, p):
@@ -447,7 +448,7 @@ class TradersParser(Parser):
     @_('BOOK_TYPE')
     def type(self, p):
         return 'book'
-    
+
     @_('')
     def empty(self, p):
         pass

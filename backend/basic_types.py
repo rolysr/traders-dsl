@@ -2,19 +2,20 @@ class Number:
     def __init__(self, value: float) -> None:
         self.type = "number"
         self.value = value
-    
+
     def copy(self, other):
         self.value = other.value
 
     def __eq__(self, other):
         ans = True
-        ans&=self.value == other.value
+        ans &= self.value == other.value
         return ans
 
     def get(self, dotTail, process):
         if len(dotTail) == 0:
             return (self, (None, False))
         raise Exception("{} does not have any attribute.".format(self))
+
 
 class String:
     def __init__(self, value: str) -> None:
@@ -26,13 +27,14 @@ class String:
 
     def __eq__(self, other):
         ans = True
-        ans&=self.value == other.value
+        ans &= self.value == other.value
         return ans
 
     def get(self, dotTail, process):
         if len(dotTail) == 0:
             return (self, (None, False))
         raise Exception("{} does not have any attribute.".format(self))
+
 
 class Bool:
     def __init__(self, value: bool) -> None:
@@ -41,9 +43,9 @@ class Bool:
 
     def __eq__(self, other):
         ans = True
-        ans&=self.value == other.value
+        ans &= self.value == other.value
         return ans
-        
+
     def copy(self, other):
         self.value = other.value
 

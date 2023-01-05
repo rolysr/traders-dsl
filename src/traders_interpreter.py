@@ -22,17 +22,14 @@ class Process:
             _env = env
             env = Env(outer=Env({}))
             env.update(_env)
-        self.env = Env(outer=env)
+        # Context of variables
+        self.env = Env(outer=env) 
         self.should_return = False
         self.depth = 0
-        self.types = {'int': int, 'float': float, 'string': str,
-                      'bool': bool, 'list': list, 'dict': dict}
-        self.rtypes = {int: 'int', float: 'float', str: 'string',
-                       bool: 'bool', list: 'list', dict: 'dict'}
         # Behave inner variables
         self.actual_agent = None
         self.env_instance = None
-        
+
         self.call_owner = None
         self.is_protected = False
 
@@ -119,7 +116,8 @@ class Process:
             if action == 'call':
                 func = self.env.find(parsed[1])
                 if isinstance(func, Number) or isinstance(func, Bool) or isinstance(func, String) or isinstance(func, List) or isinstance(func, Book) or isinstance(func, Entry) or isinstance(func, TradersAgent) or isinstance(func, TradersEnvironment) or isinstance(func, Behavior):
-                    (ans, (self.call_owner, self.is_protected)) = func.get(parsed[2], self)
+                    (ans, (self.call_owner, self.is_protected)
+                     ) = func.get(parsed[2], self)
                     if self.actual_agent is not None:
                         if parsed[1] in ['balance', 'on_keep', 'on_sale', 'location']:
                             self.call_owner = self.actual_agent
@@ -128,7 +126,7 @@ class Process:
                             self.call_owner = self.actual_agent
                             self.is_protected = False
                     return ans
-                
+
                 raise Exception("Error while resolving {}.".format(parsed))
 
             elif action == 'behave':
@@ -189,7 +187,7 @@ class Process:
                 self.env.update({'rows': Number(1)})
                 self.env.update({'columns': Number(1)})
                 self.env.update({'number_iterations': Number(0)})
-                self.env.update({'log': Bool(False)})
+                self.env.update({'log': Bool(True)})
                 self.env.update(
                     {'agents': List(element_type='agent', value=[])})
 
@@ -211,13 +209,17 @@ class Process:
 
             elif action == 'runEnv':
                 env_instance = self.env[parsed[1]]
-                if env_instance.type != 'env':
+                if not isinstance(env_instance, TradersEnvironment):
                     raise Exception(
                         "Run statement must be called on an Environment instance.")
 
-                iterations = self.evaluate(parsed[2])
-                if iterations.type != 'number':
+                iterations = env_instance.number_iterations
+                if len(parsed) == 3:
+                    iterations = self.evaluate(parsed[2])
+                if not isinstance(iterations, Number):
                     raise Exception("Iterations param must be a number.")
+
+                env_instance.save()
 
                 agents = env_instance.agents.value
                 self.env_instance = env_instance
@@ -456,7 +458,8 @@ class Process:
                 return None
 
             elif action == 'talk':
-                print(self.stringify(self.evaluate(parsed[1])))
+                if self.env_instance is None or self.env_instance.log.value:
+                    print(self.stringify(self.evaluate(parsed[1])))
                 return None
 
             elif action == 'random':
@@ -556,22 +559,21 @@ class Process:
 
             elif action == 'varAssign':
                 var = self.evaluate(parsed[1])
-                
+
                 owner = self.call_owner
                 is_protected = self.is_protected
 
-                if self.actual_agent is not None and owner is not None: # Means we are inside a behave call
+                if self.actual_agent is not None and owner is not None:  # Means we are inside a behave call
                     if owner is not self.actual_agent:
-                        print(owner)
-                        print(self.actual_agent)
-                        raise Exception('Illegal assignment, other agent assigment : {}'.format(parsed))
+                        raise Exception(
+                            'Illegal assignment, other agent assigment : {}'.format(parsed))
                     if is_protected:
-                        raise Exception('Illegal assignment, protected attributes assignment : {}'.format(parsed))
+                        raise Exception(
+                            'Illegal assignment, protected attributes assignment : {}'.format(parsed))
 
                 result = self.evaluate(parsed[2])
-                if result.type != var.type:
-                    raise ValueError("Type of variable '{}' should be '{}' but instead got '{}'".format(
-                        parsed[1], self.rtypes[var.type], self.rtypes[type(result)]))
+                if type(result) != type(var):
+                    raise ValueError("Mismatching types in assignment.")
 
                 var.copy(result)
                 return None
@@ -744,6 +746,7 @@ class Process:
                     "unsupported operand type(s) for negation: {0}".format(result.type))
 
             else:
+                # If the production is not of one of the above types, then try this:
                 if len(parsed) > 0 and type(parsed[0]) == tuple:
                     return self.run(parsed)
 

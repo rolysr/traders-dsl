@@ -1,6 +1,6 @@
 class Env(dict):
     """
-    Environment Class
+        Context of variables Class
     """
 
     def __init__(self, params=(), args=(), outer=None):

@@ -37,16 +37,10 @@ def exec_file():
         text = opened_file.read()
         tokens = lexer.tokenize(text)
 
-        # for token in lexer.tokenize(text):
-        #     print(token)
-
         tree = parser.parse(tokens)
-        # print(tree)
 
         program = Process(tree)
         program.run()
-        # print(program.env)
-
 
 
 if __name__ == "__main__":
@@ -54,9 +48,3 @@ if __name__ == "__main__":
         repl()
     else:
         exec_file()
-
-# behave normal{
-#     foreach item in book1{
-#         talk a;
-#     }
-# }

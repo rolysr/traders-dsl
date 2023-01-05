@@ -25,9 +25,9 @@ agent pepito {
     let extra_attr: list = dim2;
 }
 
-dim2.get x+1.get x+2 = -1;
+dim2[x+1][x+2] = -1;
 x=x+1;
-dim2.get (dim2.get 1.get 2) + 1.get x+2 = (dim2.get 0.get 3) + 1;
+dim2[dim2[1][2]+1][x+2] = dim2[0][3] + 1;
 
 agent juan {
     location = [2,0,];
