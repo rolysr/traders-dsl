@@ -60,7 +60,7 @@ class List:
 
             elif listFunc == 'get':
                 index = process.evaluate(dotTail[1][1][1])
-                if index.type != 'number':
+                if not isinstance(index, Number):
                     raise Exception("Index value must be a number.")
                 index = int(index.value)
                 if len(self.value) <= index:
@@ -70,7 +70,11 @@ class List:
                 ans = self.value[index]
 
             elif listFunc == 'push':
-                self.push(process.evaluate(dotTail[1][1][1]))
+                new_element = process.evaluate(dotTail[1][1][1])
+                if new_element.type != self.type[1]:
+                    raise ValueError("Invalid element type")
+
+                self.push(new_element)
                 ans = self
 
             elif listFunc == 'pop':

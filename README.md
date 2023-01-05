@@ -186,9 +186,10 @@ env la_tinta{
     log = true;
     rows = 5;
     columns = 5;
+    number_iterations = 2;
 }
 ```
-En este caso estamos inicializando un entorno denominado *la_tinta*, que posee unos agentes denominados *Pepito* (dos instancias de *Pepito*, nótese que la repetición del nombre *Pepito* demuestra la capacidad de reutilizar tipos de agentes ya definidos) y *Juan*. El campo *log* denota si se desean imprimir el historial de sucesos que ocurren en el ambiente.
+En este caso estamos inicializando un entorno denominado *la_tinta*, que posee unos agentes denominados *Pepito* (dos instancias de *Pepito*, nótese que la repetición del nombre *Pepito* demuestra la capacidad de reutilizar tipos de agentes ya definidos) y *Juan*. El campo *log* denota si se desea mostrar en consola los resultados de las instrucciones `talk` realizadas por los agentes.
 
 Para trabajar con un entorno se dispone de un conjunto de operaciones fundamentales:
 
@@ -197,8 +198,9 @@ Para trabajar con un entorno se dispone de un conjunto de operaciones fundamenta
 Para la ejecución del entorno se utiliza la siguiente sintaxis:
 ```
 run e1 with 5 iterations;
+run e2;
 ```
-Con lo cual estamos haciendo que un entorno denominado *e1* ejecute cinco iteraciones, lo cual es recorrer cinco veces el conjunto de agentes del mismo y por cada uno ejecutar su comportamiento predefinido.
+Con la primera instruccion estamos haciendo que un entorno denominado *e1* ejecute cinco iteraciones, lo cual es recorrer cinco veces el conjunto de agentes del mismo y por cada uno ejecutar su comportamiento predefinido. Por otro lado, con la segunda instrucción estamos haciendo que el entorno sea ejecutado en una catidad de iteraciones igual a la que indique el campo `number_iterations` de la definición básica del entorno.
 
 - Reiniciar el entorno:
 
@@ -229,91 +231,92 @@ Rule 14    varDecl -> LET ID : type SEP
 Rule 15    varAssign -> getter ASSIGN expr SEP
 Rule 16    envFunc -> PUT expr IN ID AT expr , expr SEP
 Rule 17    envFunc -> RUN ID WITH expr ITERATIONS SEP
-Rule 18    envFunc -> RESET ID SEP
-Rule 19    envBody -> varList
-Rule 20    agentBody -> varList
-Rule 21    behaveBody -> statementList
-Rule 22    varList -> empty
-Rule 23    varList -> varAssign varList
-Rule 24    varList -> varDecl varList
-Rule 25    statementList -> empty
-Rule 26    statementList -> statement statementList
-Rule 27    statement -> primFuncStmt
-Rule 28    statement -> incaseStmt
-Rule 29    statement -> foreachStmt
-Rule 30    statement -> repeatStmt
-Rule 31    statement -> varAssign
-Rule 32    statement -> varDecl
-Rule 33    statement -> expr SEP
-Rule 34    repeatStmt -> REPEAT WHEN expr { statementList }
-Rule 35    foreachStmt -> FOREACH ID IN expr { statementList }
-Rule 36    incaseStmt -> IN CASE expr { statementList } inothercaseStmt
-Rule 37    inothercaseStmt -> empty
-Rule 38    inothercaseStmt -> OTHERWISE { statementList }
-Rule 39    inothercaseStmt -> IN OTHER CASE expr { statementList } inothercaseStmt
-Rule 40    primFuncStmt -> PUT expr , expr SEP
-Rule 41    primFuncStmt -> PICK expr SEP
-Rule 42    primFuncStmt -> STOP SEP
-Rule 43    primFuncStmt -> RESTART BEHAVE SEP
-Rule 44    primFuncStmt -> SELL expr , expr , expr SEP
-Rule 45    primFuncStmt -> buyStmt SEP
-Rule 46    primFuncStmt -> moveStmt SEP
-Rule 47    primFuncStmt -> TALK expr SEP
-Rule 48    moveStmt -> MOVE RIGHT
-Rule 49    moveStmt -> MOVE LEFT
-Rule 50    moveStmt -> MOVE DOWN
-Rule 51    moveStmt -> MOVE UP
-Rule 52    moveStmt -> MOVE expr , expr
-Rule 53    buyStmt -> BUY expr
-Rule 54    buyStmt -> BUY expr , expr , expr
-Rule 55    expr -> call
-Rule 56    expr -> - expr  [precedence=right, level=9]
-Rule 57    expr -> ! expr  [precedence=right, level=10]
-Rule 58    expr -> expr / expr  [precedence=left, level=8]
-Rule 59    expr -> expr * expr  [precedence=left, level=8]
-Rule 60    expr -> expr - expr  [precedence=left, level=7]
-Rule 61    expr -> expr + expr  [precedence=left, level=7]
-Rule 62    expr -> expr GREATER expr  [precedence=left, level=5]
-Rule 63    expr -> expr GREATEREQ expr  [precedence=left, level=5]
-Rule 64    expr -> expr LESSEQ expr  [precedence=left, level=5]
-Rule 65    expr -> expr LESS expr  [precedence=left, level=5]
-Rule 66    expr -> expr EQEQ expr  [precedence=left, level=4]
-Rule 67    expr -> expr NOTEQ expr  [precedence=left, level=4]
-Rule 68    expr -> expr AND expr  [precedence=left, level=3]
-Rule 69    expr -> expr OR expr  [precedence=left, level=2]
-Rule 70    call -> ID dotTail
-Rule 71    call -> primitiveValue
-Rule 72    call -> primary
-Rule 73    getter -> ID dotTail
-Rule 74    dotTail -> empty
-Rule 75    dotTail -> [ expr ] dotTail
-Rule 76    dotTail -> . idTail dotTail
-Rule 77    idTail -> listFunc
-Rule 78    idTail -> ID
-Rule 79    listFunc -> REVERSE
-Rule 80    listFunc -> POP
-Rule 81    listFunc -> PUSH expr
-Rule 82    listFunc -> SIZE
-Rule 83    primitiveValue -> FIND PEERS
-Rule 84    primitiveValue -> FIND OBJECTS
-Rule 85    primitiveValue -> RANDOM FROM expr TO expr
-Rule 86    primary -> ( expr )
-Rule 87    primary -> { bookItems }
-Rule 88    primary -> [ listItems ]
-Rule 89    primary -> STRING
-Rule 90    primary -> NUMBER
-Rule 91    primary -> FALSE
-Rule 92    primary -> TRUE
-Rule 93    listItems -> empty
-Rule 94    listItems -> expr , listItems
-Rule 95    bookItems -> empty
-Rule 96    bookItems -> STRING : ( listItems ) , bookItems
-Rule 97    type -> BOOK_TYPE
-Rule 98    type -> LIST_TYPE
-Rule 99    type -> STRING_TYPE
-Rule 100   type -> BOOL_TYPE
-Rule 101   type -> NUMBER_TYPE
-Rule 102   empty -> <empty>
+Rule 18    envFunc -> RUN ID SEP
+Rule 19    envFunc -> RESET ID SEP
+Rule 20    envBody -> varList
+Rule 21    agentBody -> varList
+Rule 22    behaveBody -> statementList
+Rule 23    varList -> empty
+Rule 24    varList -> varAssign varList
+Rule 25    varList -> varDecl varList
+Rule 26    statementList -> empty
+Rule 27    statementList -> statement statementList
+Rule 28    statement -> primFuncStmt
+Rule 29    statement -> incaseStmt
+Rule 30    statement -> foreachStmt
+Rule 31    statement -> repeatStmt
+Rule 32    statement -> varAssign
+Rule 33    statement -> varDecl
+Rule 34    statement -> expr SEP
+Rule 35    repeatStmt -> REPEAT WHEN expr { statementList }
+Rule 36    foreachStmt -> FOREACH ID IN expr { statementList }
+Rule 37    incaseStmt -> IN CASE expr { statementList } inothercaseStmt
+Rule 38    inothercaseStmt -> empty
+Rule 39    inothercaseStmt -> OTHERWISE { statementList }
+Rule 40    inothercaseStmt -> IN OTHER CASE expr { statementList } inothercaseStmt
+Rule 41    primFuncStmt -> PUT expr , expr SEP
+Rule 42    primFuncStmt -> PICK expr SEP
+Rule 43    primFuncStmt -> STOP SEP
+Rule 44    primFuncStmt -> RESTART BEHAVE SEP
+Rule 45    primFuncStmt -> SELL expr , expr , expr SEP
+Rule 46    primFuncStmt -> buyStmt SEP
+Rule 47    primFuncStmt -> moveStmt SEP
+Rule 48    primFuncStmt -> TALK expr SEP
+Rule 49    moveStmt -> MOVE RIGHT
+Rule 50    moveStmt -> MOVE LEFT
+Rule 51    moveStmt -> MOVE DOWN
+Rule 52    moveStmt -> MOVE UP
+Rule 53    moveStmt -> MOVE expr , expr
+Rule 54    buyStmt -> BUY expr
+Rule 55    buyStmt -> BUY expr , expr , expr
+Rule 56    expr -> call
+Rule 57    expr -> - expr  [precedence=right, level=7]
+Rule 58    expr -> ! expr  [precedence=right, level=8]
+Rule 59    expr -> expr / expr  [precedence=left, level=6]
+Rule 60    expr -> expr * expr  [precedence=left, level=6]
+Rule 61    expr -> expr - expr  [precedence=left, level=5]
+Rule 62    expr -> expr + expr  [precedence=left, level=5]
+Rule 63    expr -> expr GREATER expr  [precedence=left, level=4]
+Rule 64    expr -> expr GREATEREQ expr  [precedence=left, level=4]
+Rule 65    expr -> expr LESSEQ expr  [precedence=left, level=4]
+Rule 66    expr -> expr LESS expr  [precedence=left, level=4]
+Rule 67    expr -> expr EQEQ expr  [precedence=left, level=3]
+Rule 68    expr -> expr NOTEQ expr  [precedence=left, level=3]
+Rule 69    expr -> expr AND expr  [precedence=left, level=2]
+Rule 70    expr -> expr OR expr  [precedence=left, level=1]
+Rule 71    call -> ID dotTail
+Rule 72    call -> primitiveValue
+Rule 73    call -> primary
+Rule 74    getter -> ID dotTail
+Rule 75    dotTail -> empty
+Rule 76    dotTail -> [ expr ] dotTail
+Rule 77    dotTail -> . idTail dotTail
+Rule 78    idTail -> listFunc
+Rule 79    idTail -> ID
+Rule 80    listFunc -> REVERSE
+Rule 81    listFunc -> POP
+Rule 82    listFunc -> PUSH expr
+Rule 83    listFunc -> SIZE
+Rule 84    primitiveValue -> FIND PEERS
+Rule 85    primitiveValue -> FIND OBJECTS
+Rule 86    primitiveValue -> RANDOM FROM expr TO expr
+Rule 87    primary -> ( expr )
+Rule 88    primary -> { bookItems }
+Rule 89    primary -> [ listItems ]
+Rule 90    primary -> STRING
+Rule 91    primary -> NUMBER
+Rule 92    primary -> FALSE
+Rule 93    primary -> TRUE
+Rule 94    listItems -> empty
+Rule 95    listItems -> expr , listItems
+Rule 96    bookItems -> empty
+Rule 97    bookItems -> STRING : ( listItems ) , bookItems
+Rule 98    type -> BOOK_TYPE
+Rule 99    type -> LIST_TYPE
+Rule 100   type -> STRING_TYPE
+Rule 101   type -> BOOL_TYPE
+Rule 102   type -> NUMBER_TYPE
+Rule 103   empty -> <empty>
 ```
 
 ## Arquitectura del proyecto:
