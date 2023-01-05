@@ -25,13 +25,10 @@ class Process:
             _env = env
             env = Env(outer=Env({}))
             env.update(_env)
-        self.env = Env(outer=env)
+        # Context of variables
+        self.env = Env(outer=env) 
         self.should_return = False
         self.depth = 0
-        self.types = {'int': int, 'float': float, 'string': str,
-                      'bool': bool, 'list': list, 'dict': dict}
-        self.rtypes = {int: 'int', float: 'float', str: 'string',
-                       bool: 'bool', list: 'list', dict: 'dict'}
         # Behave inner variables
         self.actual_agent = None
         self.env_instance = None
@@ -578,9 +575,8 @@ class Process:
                             'Illegal assignment, protected attributes assignment : {}'.format(parsed))
 
                 result = self.evaluate(parsed[2])
-                if result.type != var.type:
-                    raise ValueError("Type of variable '{}' should be '{}' but instead got '{}'".format(
-                        parsed[1], self.rtypes[var.type], self.rtypes[type(result)]))
+                if type(result) != type(var):
+                    raise ValueError("Mismatching types in assignment.")
 
                 var.copy(result)
                 return None

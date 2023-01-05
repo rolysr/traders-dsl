@@ -1,6 +1,5 @@
 from copy import deepcopy
 from backend.environment_state import EnvironmentState
-from backend.logger import Logger
 from backend.basic_types import *
 from backend.list import *
 from backend.book import *
@@ -27,7 +26,6 @@ class TradersEnvironment:
         self.number_iterations = number_iterations
         self.agents = agents
         self.log = log
-        self.logger = Logger()
         self.reset_state = None
 
         # create the world's internal representation for items on the ground
@@ -36,7 +34,7 @@ class TradersEnvironment:
 
     def save(self):
         self.reset_state = EnvironmentState(
-            self.rows, self.columns, self.number_iterations, self.agents, self.log, self.logger, self.matrix)
+            self.rows, self.columns, self.number_iterations, self.agents, self.log, self.matrix)
 
     def reset(self):
         """
@@ -47,7 +45,6 @@ class TradersEnvironment:
         self.number_iterations = deepcopy(self.reset_state.number_iterations)
         self.agents = deepcopy(self.reset_state.agents)
         self.log = deepcopy(self.reset_state.log)
-        self.logger = deepcopy(self.reset_state.logger)
         self.matrix = deepcopy(self.reset_state.matrix)
 
     def add_agent(self, agent, row, column):

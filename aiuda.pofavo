@@ -57,20 +57,20 @@ Rule 53    moveStmt -> MOVE expr , expr
 Rule 54    buyStmt -> BUY expr
 Rule 55    buyStmt -> BUY expr , expr , expr
 Rule 56    expr -> call
-Rule 57    expr -> - expr  [precedence=right, level=9]
-Rule 58    expr -> ! expr  [precedence=right, level=10]
-Rule 59    expr -> expr / expr  [precedence=left, level=8]
-Rule 60    expr -> expr * expr  [precedence=left, level=8]
-Rule 61    expr -> expr - expr  [precedence=left, level=7]
-Rule 62    expr -> expr + expr  [precedence=left, level=7]
-Rule 63    expr -> expr GREATER expr  [precedence=left, level=5]
-Rule 64    expr -> expr GREATEREQ expr  [precedence=left, level=5]
-Rule 65    expr -> expr LESSEQ expr  [precedence=left, level=5]
-Rule 66    expr -> expr LESS expr  [precedence=left, level=5]
-Rule 67    expr -> expr EQEQ expr  [precedence=left, level=4]
-Rule 68    expr -> expr NOTEQ expr  [precedence=left, level=4]
-Rule 69    expr -> expr AND expr  [precedence=left, level=3]
-Rule 70    expr -> expr OR expr  [precedence=left, level=2]
+Rule 57    expr -> - expr  [precedence=right, level=7]
+Rule 58    expr -> ! expr  [precedence=right, level=8]
+Rule 59    expr -> expr / expr  [precedence=left, level=6]
+Rule 60    expr -> expr * expr  [precedence=left, level=6]
+Rule 61    expr -> expr - expr  [precedence=left, level=5]
+Rule 62    expr -> expr + expr  [precedence=left, level=5]
+Rule 63    expr -> expr GREATER expr  [precedence=left, level=4]
+Rule 64    expr -> expr GREATEREQ expr  [precedence=left, level=4]
+Rule 65    expr -> expr LESSEQ expr  [precedence=left, level=4]
+Rule 66    expr -> expr LESS expr  [precedence=left, level=4]
+Rule 67    expr -> expr EQEQ expr  [precedence=left, level=3]
+Rule 68    expr -> expr NOTEQ expr  [precedence=left, level=3]
+Rule 69    expr -> expr AND expr  [precedence=left, level=2]
+Rule 70    expr -> expr OR expr  [precedence=left, level=1]
 Rule 71    call -> ID dotTail
 Rule 72    call -> primitiveValue
 Rule 73    call -> primary
@@ -105,24 +105,6 @@ Rule 101   type -> BOOL_TYPE
 Rule 102   type -> NUMBER_TYPE
 Rule 103   empty -> <empty>
 
-Unused terminals:
-
-    SLASHASGN
-    MINUSASGN
-    INC
-    STARASGN
-    SHLASGN
-    ANDASGN
-    PLUSASGN
-    ORASGN
-    SHRASGN
-    SHR
-    SHL
-    XORASGN
-    DEC
-    GET
-    MODULOASGN
-
 Terminals, with rules where they appear:
 
 !                    : 58
@@ -137,7 +119,6 @@ Terminals, with rules where they appear:
 :                    : 13 14 97
 AGENT                : 11
 AND                  : 69
-ANDASGN              : 
 ASSIGN               : 13 15
 AT                   : 16
 BEHAVE               : 12 44
@@ -145,7 +126,6 @@ BOOK_TYPE            : 98
 BOOL_TYPE            : 101
 BUY                  : 54 55
 CASE                 : 37 40
-DEC                  : 
 DOWN                 : 51
 ENV                  : 10
 EQEQ                 : 67
@@ -153,32 +133,26 @@ FALSE                : 92
 FIND                 : 84 85
 FOREACH              : 36
 FROM                 : 86
-GET                  : 
 GREATER              : 63
 GREATEREQ            : 64
 ID                   : 10 11 12 13 14 16 17 18 19 36 71 74 79
 IN                   : 16 36 37 40
-INC                  : 
 ITERATIONS           : 17
 LEFT                 : 50
 LESS                 : 66
 LESSEQ               : 65
 LET                  : 13 14
 LIST_TYPE            : 99
-MINUSASGN            : 
-MODULOASGN           : 
 MOVE                 : 49 50 51 52 53
 NOTEQ                : 68
 NUMBER               : 91
 NUMBER_TYPE          : 102
 OBJECTS              : 85
 OR                   : 70
-ORASGN               : 
 OTHER                : 40
 OTHERWISE            : 39
 PEERS                : 84
 PICK                 : 42
-PLUSASGN             : 
 POP                  : 81
 PUSH                 : 82
 PUT                  : 16 41
@@ -191,13 +165,7 @@ RIGHT                : 49
 RUN                  : 17 18
 SELL                 : 45
 SEP                  : 13 14 15 16 17 18 19 34 41 42 43 44 45 46 47 48
-SHL                  : 
-SHLASGN              : 
-SHR                  : 
-SHRASGN              : 
 SIZE                 : 83
-SLASHASGN            : 
-STARASGN             : 
 STOP                 : 43
 STRING               : 90 97
 STRING_TYPE          : 100
@@ -207,7 +175,6 @@ TRUE                 : 93
 UP                   : 52
 WHEN                 : 35
 WITH                 : 17
-XORASGN              : 
 [                    : 76 89
 ]                    : 76 89
 error                : 

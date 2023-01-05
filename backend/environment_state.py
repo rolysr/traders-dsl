@@ -7,7 +7,7 @@ class EnvironmentState:
         It is mostly used for reset function on an environment
     """
 
-    def __init__(self, rows, columns, number_iterations, agents, log, logger, matrix) -> None:
+    def __init__(self, rows, columns, number_iterations, agents, log, matrix) -> None:
         """
             Class constructor
         """
@@ -17,5 +17,4 @@ class EnvironmentState:
         self.number_iterations = deepcopy(number_iterations)
         self.agents = deepcopy(agents)
         self.log = deepcopy(log)
-        self.logger = deepcopy(logger)
         self.matrix = deepcopy(matrix)
