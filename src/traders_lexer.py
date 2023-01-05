@@ -14,14 +14,12 @@ class TradersLexer(Lexer):
 
               TRUE, FALSE,
 
-              AND, OR, SHR, SHL, INC, DEC, PLUSASGN,
-              MINUSASGN, STARASGN, SLASHASGN, MODULOASGN,
-              ANDASGN, ORASGN, XORASGN, SHLASGN, SHRASGN,
+              AND, OR,
 
               AGENT, ENV, NUMBER_TYPE, BOOK_TYPE, BOOL_TYPE,
               LIST_TYPE, STRING_TYPE,
 
-              GET, PUSH, POP, SIZE, REVERSE,
+              PUSH, POP, SIZE, REVERSE,
 
               RANDOM, FROM, TO, OBJECTS, FIND, PEERS, MOVE, UP, LEFT, RIGHT, DOWN,
               SELL, BUY, PICK, PUT, AT, TALK}
@@ -35,22 +33,8 @@ class TradersLexer(Lexer):
                 '|', '^', '?', ':', '~',
                 '.'}
 
-    INC = r'\+\+'
-    DEC = r'--'
-    PLUSASGN = r'\+='
-    MINUSASGN = r'-='
-    STARASGN = r'\*='
-    SLASHASGN = r'/='
-    MODULOASGN = r'%='
-    ANDASGN = r'&='
-    ORASGN = r'\|='
-    XORASGN = r'^='
-    SHLASGN = r'<<='
-    SHRASGN = r'>>='
     LESSEQ = r'<='
     GREATEREQ = r'>='
-    SHR = r'>>'
-    SHL = r'<<'
     LESS = r'<'
     GREATER = r'>'
     NOTEQ = r'!='
@@ -95,7 +79,6 @@ class TradersLexer(Lexer):
     ID['to'] = TO
     ID['objects'] = OBJECTS
 
-    ID['get'] = GET
     ID['push'] = PUSH
     ID['pop'] = POP
     ID['size'] = SIZE

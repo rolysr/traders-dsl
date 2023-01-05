@@ -11,16 +11,13 @@ class TradersParser(Parser):
     debugfile = 'aiuda.pofavo'
 
     precedence = (
-        ('right', PLUSASGN, MINUSASGN, STARASGN, SLASHASGN,
-         MODULOASGN, ANDASGN, ORASGN, XORASGN, SHLASGN, SHRASGN),
         ('left', OR),
         ('left', AND),
         ('left', EQEQ, NOTEQ),
         ('left', LESS, LESSEQ, GREATER, GREATEREQ),
-        ('left', SHL, SHR),
         ('left', '+', '-'),
         ('left', '*', '/'),
-        ('right', 'UMINUS', INC, DEC),
+        ('right', 'UMINUS'),
         ('right', '!'),
     )
 
