@@ -14,10 +14,10 @@ class Behavior:
 
     def copy(self, other):
         self.statement_list = other.statement_list
-    
+
     def __eq__(self, other):
         ans = True
-        ans&=self.statement_list == other.statement_list
+        ans &= self.statement_list == other.statement_list
         return ans
 
     def get(self, dotTail, process):

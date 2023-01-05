@@ -73,19 +73,20 @@ class Book:
 
     def __eq__(self, other):
         ans = True
-        ans&=self.type == other.type
-        ans&=self.value == other.value
+        ans &= self.type == other.type
+        ans &= self.value == other.value
         return ans
 
     def get(self, dotTail, process):
         if len(dotTail) == 0:
             return (self, (None, False))
         raise Exception("{} does not have any attribute.".format(self))
-    
+
+
 class Entry:
     def __init__(self, attributes) -> None:
         self.attributes = attributes
-    
+
     def get(self, dotTail, process):
         if len(dotTail) == 0:
             return (self, (None, False))
@@ -98,7 +99,8 @@ class Entry:
         else:
             raise Exception("{} must be an attribute of {}".format(id, self))
         return ans.get(dotTail[2], process)
-    
+
+
 def convert_book_to_entry_list(book: Book) -> list:
     ans = []
     for product in book.value.keys():

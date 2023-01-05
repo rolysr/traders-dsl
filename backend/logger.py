@@ -17,5 +17,5 @@ class Logger:
         """
         if to_print_text:
             print(text)
-        
+
         self.history.append(text)
