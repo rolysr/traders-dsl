@@ -192,7 +192,7 @@ class Process:
                 self.env.update({'rows': Number(1)})
                 self.env.update({'columns': Number(1)})
                 self.env.update({'number_iterations': Number(0)})
-                self.env.update({'log': Bool(False)})
+                self.env.update({'log': Bool(True)})
                 self.env.update(
                     {'agents': List(element_type='agent', value=[])})
 
@@ -214,13 +214,15 @@ class Process:
 
             elif action == 'runEnv':
                 env_instance = self.env[parsed[1]]
-                if env_instance.type != 'env':
+                if not isinstance(env_instance, TradersEnvironment):
                     raise Exception(
                         "Run statement must be called on an Environment instance.")
 
                 iterations = self.evaluate(parsed[2])
-                if iterations.type != 'number':
+                if not isinstance(iterations, Number):
                     raise Exception("Iterations param must be a number.")
+
+                env_instance.save()
 
                 agents = env_instance.agents.value
                 self.env_instance = env_instance

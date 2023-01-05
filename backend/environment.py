@@ -25,14 +25,19 @@ class TradersEnvironment:
         self.rows = rows
         self.columns = columns
         self.number_iterations = number_iterations
-        self.number_executed_iterations = 0
         self.agents = agents
         self.log = log
         self.logger = Logger()
+        self.reset_state = None
 
         # create the world's internal representation for items on the ground
         self.matrix = {(i, j): Book((1, 'list', 'number'), {}) for i in range(int(self.rows.value))
                        for j in range(int(self.columns.value))}
+
+    def save(self):
+        self.reset_state = EnvironmentState(
+            self.rows, self.columns, self.number_iterations, self.agents, self.log, self.logger, self.matrix)
+
     def reset(self):
         """
             Resets the environment to its initial state
@@ -40,8 +45,6 @@ class TradersEnvironment:
         self.rows = deepcopy(self.reset_state.rows)
         self.columns = deepcopy(self.reset_state.columns)
         self.number_iterations = deepcopy(self.reset_state.number_iterations)
-        self.number_executed_iterations = deepcopy(
-            self.reset_state.number_executed_iterations)
         self.agents = deepcopy(self.reset_state.agents)
         self.log = deepcopy(self.reset_state.log)
         self.logger = deepcopy(self.reset_state.logger)
@@ -68,7 +71,8 @@ class TradersEnvironment:
 
         # update items' amount on that position
         for item in book.value.keys():
-            self.matrix[(row.value, column.value)].set_amount(item, Number(self.matrix[(row.value, column.value)].get_amount(item).value + book.get_amount(item).value))
+            self.matrix[(row.value, column.value)].set_amount(item, Number(self.matrix[(
+                row.value, column.value)].get_amount(item).value + book.get_amount(item).value))
 
     def find_peers(self, row, column):
         """
@@ -77,7 +81,8 @@ class TradersEnvironment:
         if self.is_valid_position(row, column):
             return
 
-        peers = [agent for agent in self.agents.value if agent.location.value[0] == row and agent.location.value[1] == column]
+        peers = [agent for agent in self.agents.value if agent.location.value[0]
+                 == row and agent.location.value[1] == column]
         return List(element_type='agent', value=peers)
 
     def find_objects(self, row, column):

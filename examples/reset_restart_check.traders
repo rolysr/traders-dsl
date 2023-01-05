@@ -1,0 +1,27 @@
+behave fib{
+    talk grillos1;
+    in case cont > 0{
+        grillos1 = grillos0 + grillos1;
+        grillos0 = grillos1 - grillos0;
+        cont = cont - 1;
+        restart behave;
+    }
+    talk "fin del behave";
+}
+
+agent carletto{
+    let grillos0: number = 0;
+    let grillos1: number = 1;
+    let cont: number = 5;
+    behavior = fib;
+}
+
+env italy{
+    agents = [carletto, ];
+}
+
+run italy with 5 iterations;
+
+reset italy;
+
+run italy with 5 iterations;
