@@ -14,7 +14,7 @@ Con el **DSL** propuesto es posible definir comportamientos de estos en un entor
 El lenguaje propuesto será *Turing-Completo*, es decir, podrá ser usado para resolver cualquier problema tratable en lenguajes de propósito general, lo que en este caso utilizando una sintaxis mucho más expresiva y acotada. Será posible realizar operaciones de declaraciones de variables, tipado de variables (`number`, `bool`, `string`), expresiones de operaciones aritméticas y booleanas con estas, declaración de funciones (en este caso serían las funciones que expresan las acciones de los agentes) que pueden tener un comportamiento recursivo y control del flujo de código a partir de condicionales e implementación de ciclos.
 
 ## Requerimientos:
-Este proyecto fue desarrollado utilizando el lenguaje de programación *Python* en su versión $3.9$. No es necesario instalar ninguna dependencia adicional si cuenta con la versión de Python mencionada. En última instancia se recomienda comprobar la correcta instalación de los paquetes mencionados en [requirements.txt]().
+Este proyecto fue desarrollado utilizando el lenguaje de programación *Python* en su versión $3.9$. No es necesario instalar ninguna dependencia adicional si cuenta con la versión de Python mencionada. En última instancia se recomienda comprobar la correcta instalación de los paquetes mencionados en [requirements.txt](https://github.com/rolysr/traders-dsl/blob/main/requirements.txt).
 
 ## Ejecución del proyecto:
 Para ejecutar un archivo de código, nótese que es necesario crea un fichero con terminación *.traders*. Luego localice dicho fichero obteniéndo su dirección de localización en su *PC*.
@@ -208,7 +208,7 @@ reset e1;
 Con este código logramos que un entorno vuelva al estado inicial que tenía justo antes de la primera iteración.
 
 ## Gramática:
-La gramática implementada fue diseñada con el objetivo de ser parseable de la mejor manera posible por un *paser* **LALR(1)**. La misma fue generada por el proyecto en el archivo [aiuda.pofavo]() que se encuentra en el directorio principal.
+La gramática implementada fue diseñada con el objetivo de ser parseable de la mejor manera posible por un *paser* **LALR(1)**.
 
 ```
 Rule 0     S' -> program
@@ -357,13 +357,3 @@ Es el módulo principal del proyecto y el mismo fue implementado desde cero. Con
 
 - `TradersInterpreter`:
     Contituye el intérprete del lenguaje. Permite la ejecución de cada uno de los procesos y funcionalidades del proyecto, además de que realiza todos los análisis semánticos principales (chequeo y consistencia de tipos).
-
-## Funcionalidad adicional:
-Se recomienda revisar el archivo [aiuda.pofavo]() ya que contiene una serie de resultados interesantes que se derivan del proceso de parsing y análisis léxico. Este brinda informaciones tales como:
-
-- Conjunto de reglas de la gramática.
-- Terminales no utilizados.
-- Por cada terminal, las reglas en las que aparece.
-- Por cada no terminal, las reglas en las que aparece.
-- Los estados del autómata **LALR(1)** con varias especificaciones.
-- Los conflictos con cada *token* por cada estado y la operación finalmente decidida (*shift* o *reduce*). 
