@@ -1,7 +1,4 @@
 from random import randint
-from math import sin, cos, tan, asin, acos, atan, sinh, cosh, tanh, ceil, floor, sqrt, degrees, radians, log
-from os.path import exists, dirname, join
-from os import getenv
 from src.traders_lexer import TradersLexer
 from src.traders_parser import TradersParser
 from backend.list import *
@@ -741,7 +738,7 @@ class Process:
 
             elif action == 'neg':
                 result = self.evaluate(parsed[1])
-                if isinstance(result, Bool):
+                if isinstance(result, Number):
                     return Number(-result.value)
                 raise Exception(
                     "unsupported operand type(s) for negation: {0}".format(result.type))

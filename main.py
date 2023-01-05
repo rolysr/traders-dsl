@@ -37,11 +37,11 @@ def exec_file():
         text = opened_file.read()
         tokens = lexer.tokenize(text)
 
-        for token in lexer.tokenize(text):
-            print(token)
+        # for token in lexer.tokenize(text):
+        #     print(token)
 
         tree = parser.parse(tokens)
-        print(tree)
+        # print(tree)
 
         program = Process(tree)
         program.run()
