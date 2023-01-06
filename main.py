@@ -17,8 +17,9 @@ def exec_file():
         checker = TradersSemanticsChecker(tree)
         checker.check()
 
-        program = Process(tree)
-        program.run()
+        if checker.ok:
+            program = Process(tree)
+            program.run()
 
 
 if __name__ == "__main__":
