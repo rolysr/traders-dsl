@@ -24,7 +24,7 @@ class Process:
             env = Env(outer=Env({}))
             env.update(_env)
         # Context of variables
-        self.env = Env(outer=env) 
+        self.env = Env(outer=env)
         self.should_return = False
         self.depth = 0
         # Behave inner variables
@@ -569,7 +569,8 @@ class Process:
                 owner = self.call_owner
                 is_protected = self.is_protected
 
-                if self.actual_agent is not None and owner is not None:  # Means we are inside a behave call and the left side variable is owned
+                # Means we are inside a behave call and the left side variable is owned
+                if self.actual_agent is not None and owner is not None:
                     if owner is not self.actual_agent:
                         raise Exception(
                             'Illegal assignment, other agent assigment : {}'.format(parsed))
@@ -587,7 +588,7 @@ class Process:
             elif action == 'repeatStmt':
                 cond = self.evaluate(parsed[1])
                 while isinstance(cond, Bool) and cond.value:
-                    self.env = Env(outer = self.env)
+                    self.env = Env(outer=self.env)
 
                     self.run(parsed[2])
                     cond = self.evaluate(parsed[1])
@@ -611,7 +612,7 @@ class Process:
                         "Unsupported iterable type: {}.".format(iterable.type))
 
                 for value in iterable:
-                    self.env = Env(outer = self.env)
+                    self.env = Env(outer=self.env)
 
                     self.env[iterator_name] = value
                     self.run(parsed[3])

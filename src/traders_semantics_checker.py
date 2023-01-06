@@ -148,6 +148,7 @@ class TradersSemanticsChecker:
                         if var_name in ['balance', 'on_keep', 'on_sale', 'behavior', 'location']:
                             raise AttributeError(
                                 'Redeclaring default agent attributes in {}'.format(varOp))
+                        self.visit(varOp)
 
                 attributes = {}
                 for attr in self.env.keys():
@@ -198,18 +199,19 @@ class TradersSemanticsChecker:
 
             elif action == 'runEnv':
                 env_instance = self.env[parsed[1]]
-                if env_instance != 'env':
+                if env_instance not in ['env', 'any']:
                     raise Exception(
                         "Run statement must be called on an Environment instance in {}".format(parsed))
 
-                if len(parsed) == 3 and self.visit(parsed[2]) != 'number':
-                    raise Exception("Iterations param must be a number in {}".format(parsed))
+                if len(parsed) == 3 and self.visit(parsed[2]) not in ['number', 'any']:
+                    raise Exception(
+                        "Iterations param must be a number in {}".format(parsed))
 
                 return 'void'
 
             elif action == 'resetEnv':
                 env_instance = self.env[parsed[1]]
-                if env_instance.type != 'env':
+                if env_instance not in ['env', 'any']:
                     raise Exception(
                         "Reset statement must be called on an Environment instance in {}".format(parsed))
 
@@ -221,7 +223,7 @@ class TradersSemanticsChecker:
 
                 # get environment instance
                 env_instance = self.env[parsed[1]]
-                if env_instance != 'env':
+                if env_instance not in ['env', 'any']:
                     raise Exception(
                         "Put statement must be called on an Environment instance.")
 
@@ -229,12 +231,14 @@ class TradersSemanticsChecker:
                 row = self.visit(parsed[3])
                 column = self.visit(parsed[4])
 
-                if row != 'number' or column != 'number':
-                    raise ValueError("Wrong parameter types in {}".format(parsed))
+                if row not in ['number', 'any'] or column not in ['number', 'any']:
+                    raise ValueError(
+                        "Wrong parameter types in {}".format(parsed))
 
                 # check if type is agent or book
-                if obj_type != "agent" and obj_type[0] != 'book':
-                    raise ValueError("Invalid value to add to environment in {}".format(parsed))
+                if obj_type not in ['agent', 'any'] and obj_type not in ['book', 'any']:
+                    raise ValueError(
+                        "Invalid value to add to environment in {}".format(parsed))
 
                 return 'void'
 
@@ -249,7 +253,7 @@ class TradersSemanticsChecker:
                 amount = self.visit(parsed[2])
                 price = self.visit(parsed[3])
 
-                if produt_name != 'string' and amount != 'number' and price != 'number':
+                if produt_name not in ['string', 'any'] or amount not in ['number', 'any'] or price not in ['number', 'any']:
                     return ValueError('Invalid values for sell operation in {}'.format(parsed))
 
                 return 'void'
@@ -257,7 +261,7 @@ class TradersSemanticsChecker:
             elif action == 'pick':
                 product_name = self.visit(parsed[1])
 
-                if product_name != 'string':
+                if product_name not in ['string', 'any']:
                     return ValueError("pick function must receive a product name as a String in {}".format(parsed))
 
                 return 'void'
@@ -266,10 +270,10 @@ class TradersSemanticsChecker:
                 product_name = self.visit(parsed[1])
                 amount = self.visit(parsed[2])
 
-                if product_name != 'string':
+                if product_name not in ['string', 'any']:
                     return ValueError("put first parameter must be a string representing the product_name in {}".format(parsed))
 
-                if amount != 'number':
+                if amount not in ['number', 'any']:
                     return ValueError("put second parameter must be a number representing the amount dropped on the floor in {}".format(parsed))
 
                 return 'void'
@@ -281,8 +285,9 @@ class TradersSemanticsChecker:
                 row = self.visit(parsed[1])
                 column = self.visit(parsed[2])
 
-                if row != 'number' or column != 'number':
-                    raise ValueError("Wrong parameter types in {}".format(parsed))
+                if row not in ['number', 'any'] or column not in ['number', 'any']:
+                    raise ValueError(
+                        "Wrong parameter types in {}".format(parsed))
 
                 return 'void'
 
@@ -297,15 +302,16 @@ class TradersSemanticsChecker:
                 product_name = self.visit(parsed[2])
                 buy_amount = self.visit(parsed[3])
 
-                if seller_agent != 'agent' or product_name != 'string' or buy_amount != 'number':
-                    raise ValueError("Wrong parameter types in {}".format(parsed))
+                if seller_agent not in ['agent', 'any'] or product_name not in ['string', 'any'] or buy_amount not in ['number', 'any']:
+                    raise ValueError(
+                        "Wrong parameter types in {}".format(parsed))
 
                 return 'void'
 
             elif action == 'buyStmt_1':
                 seller_agent = self.visit(parsed[1])
 
-                if seller_agent != 'agent':
+                if seller_agent not in ['agent', 'any']:
                     raise ValueError(
                         "Buy function parameter must be an agent in {}".format(parsed))
 
@@ -318,8 +324,9 @@ class TradersSemanticsChecker:
                 low_lim = self.visit(parsed[1])
                 sup_lim = self.visit(parsed[2])
 
-                if not (low_lim == 'number' and sup_lim == 'number'):
-                    raise ValueError("random: Both parameters must numbers.")
+                if low_lim not in ['number', 'any'] or sup_lim not in ['number', 'any']:
+                    raise ValueError(
+                        "Both parameters must be numbers in {}".format(parsed))
 
                 return 'number'
 
@@ -340,12 +347,18 @@ class TradersSemanticsChecker:
                 if len(list_value) == 0:
                     raise Exception("List must not be empty.")
 
-                for i in range(1, len(list_value)):
-                    if list_value[i] != list_value[0]:
-                        raise Exception(
-                            "Every list element must be of the same type.")
+                for i in range(len(list_value)):
+                    for j in range(len(list_value)):
+                        if list_value[i] != list_value[j] and list_value[j] != 'any' and list_value[1] != 'any':
+                            raise Exception(
+                                "Every list element must be of the same type.")
 
-                return ('list', list_value[0])
+                list_type = 'any'
+                for i in range(len(list_value)):
+                    if list_value[i] != 'any':
+                        list_type = list_value[i]
+
+                return ('list', list_type)
 
             elif action == 'primary_book':
                 dict_value = {}
@@ -355,7 +368,7 @@ class TradersSemanticsChecker:
                 if len(parsed[1]) == 0:
                     raise Exception("Book must not be empty.")
 
-                return ('book', dict_value[parsed[1][0][0]])
+                return 'book'
 
             elif action == 'varDecl_0':
                 name = parsed[1]
@@ -378,25 +391,37 @@ class TradersSemanticsChecker:
                 if name in self.env:
                     raise NameError('Cannot redefine variable \'%s\'' % name)
                 value = self.visit(parsed[3])
-                if not ((value in ["number", "bool", "string"] and value == parsed[2]) or value.type[0] == parsed[2]):
+                if (type(value) != tuple and value not in [parsed[2], 'any']) or (type(value) == tuple and value[0] not in [parsed[2], 'any']):
                     raise Exception(
                         "Declaration type and expression assignment do not match in {}".format(parsed))
 
-                self.env.update({name: value})
+                instance = None
+                if parsed[2] == "number":
+                    instance = Number(0)
+                elif parsed[2] == "bool":
+                    instance = Bool(0)
+                elif parsed[2] == "string":
+                    instance = String("")
+                elif parsed[2] == "list":
+                    instance = List(element_type=value, value=[])
+                elif parsed[2] == "book":
+                    instance = Book((1, 'list', 'number'), {})
+
+                self.env.update({name: instance})
 
                 return 'void'
 
             elif action == 'varAssign':
                 var = self.visit(parsed[1])
                 result = self.visit(parsed[2])
-                if result != var:
+                if result != var and result != 'any' and var != 'any':
                     raise ValueError("Mismatching types in {0}".format(parsed))
 
                 return 'void'
 
             elif action == 'repeatStmt':
                 cond = self.visit(parsed[1])
-                if cond != 'bool':
+                if cond not in ['bool', 'any']:
                     raise ValueError(
                         "Repeat statements must contain bool conditions in {}".format(parsed))
 
@@ -411,7 +436,7 @@ class TradersSemanticsChecker:
                         "Iterator name must not match any previous variable name in {}".format(parsed))
 
                 iterable = self.visit(parsed[2])
-                if not (type(iterable) == tuple and len(iterable) == 2 and iterable[0] in ['book', 'list']):
+                if not ((type(iterable) == tuple and len(iterable) == 2 and iterable[0] == 'list') or (type(iterable) == str and iterable in ['book', 'any'])):
                     raise Exception(
                         "Unsupported iterable type: {0} in {1}".format(iterable, parsed))
 
@@ -421,7 +446,7 @@ class TradersSemanticsChecker:
 
             elif action == 'incaseStmt' or action == 'inothercaseStmt_0':  # in case and in other case general form
                 cond = self.visit(parsed[1])
-                if cond != 'bool':
+                if cond not in ['bool', 'any']:
                     raise Exception(
                         "Condition must be boolean expr: {}".format(parsed))
 
@@ -439,7 +464,7 @@ class TradersSemanticsChecker:
             elif action in ['and', 'or']:
                 result = self.visit(parsed[1])
                 result2 = self.visit(parsed[2])
-                if result == 'bool' and result2 == 'bool':
+                if result in ['bool', 'any'] and result2 in ['bool', 'any']:
                     return 'bool'
                 raise Exception("unsupported operand type(s) for {3}: {0} and {1} in {2}".format(
                     result, result2, parsed, action))
@@ -447,7 +472,7 @@ class TradersSemanticsChecker:
             elif action in ['!=', '==']:
                 result = self.visit(parsed[1])
                 result2 = self.visit(parsed[2])
-                if result == result2:
+                if result == result2 or result == 'any' or result2 == 'any':
                     return 'bool'
                 raise Exception("unsupported operand type(s) for {3}: {0} and {1} in {2}".format(
                     result, result2, parsed, action))
@@ -455,7 +480,7 @@ class TradersSemanticsChecker:
             elif action in ['<', '<=', '>=', '>']:
                 result = self.visit(parsed[1])
                 result2 = self.visit(parsed[2])
-                if result == 'number' and result2 == 'number':
+                if result in ['number', 'any'] and result2 in ['number', 'any']:
                     return 'bool'
                 raise Exception("unsupported operand type(s) for {3}: {0} and {1} in {2}".format(
                     result, result2, parsed, action))
@@ -463,9 +488,9 @@ class TradersSemanticsChecker:
             elif action == '+':
                 result = self.visit(parsed[1])
                 result2 = self.visit(parsed[2])
-                if result == 'string' and result2 == 'string':
+                if result in ['string', 'any'] and result2 in ['string', 'any']:
                     return 'string'
-                if result == 'number' and result2 == 'number':
+                if result in ['number', 'any'] and result2 in ['number', 'any']:
                     return 'number'
                 raise Exception("unsupported operand type(s) for {3}: {0} and {1} in {2}".format(
                     result, result2, parsed, action))
@@ -473,33 +498,24 @@ class TradersSemanticsChecker:
             elif action in ['-', '*', '/']:
                 result = self.visit(parsed[1])
                 result2 = self.visit(parsed[2])
-                if result == 'number' and result2 == 'number':
+                if result in ['number', 'any'] and result2 in ['number', 'any']:
                     return 'number'
                 raise Exception("unsupported operand type(s) for {3}: {0} and {1} in {2}".format(
                     result, result2, parsed, action))
 
             elif action == '!':
                 result = self.visit(parsed[1])
-                if result == 'bool':
+                if result in ['bool', 'any']:
                     return 'bool'
                 raise Exception(
                     "unsupported operand type(s) for logical negation: {0} in {1}".format(result, parsed))
 
             elif action == 'neg':
                 result = self.visit(parsed[1])
-                if result == 'number':
+                if result in ['number', 'any']:
                     return 'number'
                 raise Exception(
                     "unsupported operand type(s) for negation: {0} in {1}".format(result, parsed))
 
             else:
                 raise Exception("Unknown production: {}".format(parsed))
-
-    def import_contents(self, file_contents):
-        lexer = TradersLexer()
-        parser = TradersParser()
-        tokens = lexer.tokenize(file_contents)
-        tree = parser.parse(tokens)
-        program = TradersSemanticsChecker(tree)
-        program.run()
-        self.env.update(program.env)

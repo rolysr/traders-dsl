@@ -1,33 +1,8 @@
 from src.traders_lexer import TradersLexer
 from src.traders_parser import TradersParser
 from src.traders_interpreter import Process
+from src.traders_semantics_checker import TradersSemanticsChecker
 import sys
-
-
-def repl():
-    lexer = TradersLexer()
-    parser = TradersParser()
-    env = {}
-    program = Process((), env=env)
-    while True:
-        try:
-            text = input('>> ')
-        except KeyboardInterrupt:
-            break
-        except EOFError:
-            break
-        if text:
-            tokens = lexer.tokenize(text)
-
-            try:
-                tree = parser.parse(tokens)
-                program.tree = tree
-                program.run()
-            except TypeError as e:
-                if str(e).startswith("'NoneType' object is not iterable"):
-                    print("Syntax Error")
-                else:
-                    print(e)
 
 
 def exec_file():
@@ -39,12 +14,15 @@ def exec_file():
 
         tree = parser.parse(tokens)
 
+        checker = TradersSemanticsChecker(tree)
+        checker.check()
+
         program = Process(tree)
         program.run()
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        repl()
-    else:
+    if len(sys.argv) != 1:
         exec_file()
+    else:
+        print("Must provide a file to compile and run.")
