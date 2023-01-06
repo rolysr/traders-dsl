@@ -184,6 +184,7 @@ Es importante tener en cuenta que todos los agentes tienen un conjunto de atribu
 - *location*, de tipo lista de number, con valor por default *(0,0)*.
 - *balance*, de tipo number, con valor por default 0.
 - *on_keep* y *on_sale*, de tipo book, con valor por default un book vacío.
+
 Si no se declaran estos atributos se declararán con el valor por defecto. Si se declaran, se tiene que declarar con el tipo específico.
 
 ### Entornos:
@@ -203,6 +204,7 @@ Es importante tener en cuenta que todos los entornos tienen un conjunto de atrib
 - *agents*, de tipo lista de agentes, con valor por default una lista vacía.
 - *log*, de tipo bool, con valor por default True.
 - *rows*, *columns* y *number_iterations*, de tipo number, con valor por default 0.
+
 Si no se declaran estos atributos se declararán con el valor por defecto. Si se declaran, se tiene que declarar con el tipo específico.
 
 Para trabajar con un entorno se dispone de un conjunto de operaciones fundamentales:

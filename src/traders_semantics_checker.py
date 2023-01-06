@@ -62,7 +62,7 @@ class TradersSemanticsChecker:
             return None
 
         if type(parsed) != tuple:
-            return (False, ())
+            raise Exception("Unexpected sentence form: {}".format(parsed))
         else:
             action = parsed[0]
 
