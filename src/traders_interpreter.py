@@ -349,8 +349,8 @@ class Process:
                 if not isinstance(product_name, String):
                     return ValueError("pick function must receive a product name as a String.")
 
-                row = self.env['location'].get(0).value
-                column = self.env['location'].get(1).value
+                row = self.env.find('location').get(0).value
+                column = self.env.find('location').get(1).value
 
                 amount = self.env_instance.matrix[(row, column)].get_amount(
                     product_name).value
@@ -601,17 +601,12 @@ class Process:
                         "Unsupported iterable type: {}.".format(iterable.type))
 
                 for value in iterable:
-                    actual_env_vars = list(self.env.keys())
+                    self.env = Env(outer = self.env)
 
                     self.env[iterator_name] = value
                     self.run(parsed[3])
 
-                    to_erase = []
-                    for var in self.env.keys():
-                        if var not in actual_env_vars:
-                            to_erase.append(var)
-                    for var in to_erase:
-                        self.env.pop(var)
+                    self.env = self.env.outer
                 return None
 
             elif action == 'incaseStmt' or action == 'inothercaseStmt_0':  # in case and in other case general form
