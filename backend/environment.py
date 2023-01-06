@@ -32,6 +32,8 @@ class TradersEnvironment:
         self.matrix = {(i, j): Book((1, 'list', 'number'), {}) for i in range(int(self.rows.value))
                        for j in range(int(self.columns.value))}
 
+        self.save() # Initial save
+
     def save(self):
         self.reset_state = EnvironmentState(
             self.rows, self.columns, self.number_iterations, self.agents, self.log, self.matrix)

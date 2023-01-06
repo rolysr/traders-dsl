@@ -47,6 +47,10 @@ class TradersParser(Parser):
     def declaration(self, p):
         return p.behaveDecl
 
+    @_('exprStmt')
+    def declaration(self, p):
+        return p.exprStmt
+
     @_('varDecl')
     def declaration(self, p):
         return p.varDecl
@@ -70,6 +74,10 @@ class TradersParser(Parser):
     @_('BEHAVE ID "{" behaveBody "}"')
     def behaveDecl(self, p):
         return ('behave', p.ID, p.behaveBody)
+
+    @_('expr SEP')
+    def exprStmt(self, p):
+        return p.expr
 
     @_('LET ID ":" type SEP')
     def varDecl(self, p):
@@ -140,9 +148,9 @@ class TradersParser(Parser):
     # Statements productions:
 
     # Statement types
-    @_('expr SEP')
+    @_('exprStmt')
     def statement(self, p):
-        return p.expr
+        return p.exprStmt
 
     @_('varDecl')
     def statement(self, p):

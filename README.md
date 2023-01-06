@@ -37,7 +37,7 @@ let n: number = 5;
 let b: bool = true;
 let s: string = "Hola Mundo";
 let arr: list = [1, 2, 3,];
-let bk: book = { "tomate" : (10, 10,)};
+let bk: book = { "tomate" : (10, 10,), };
 ```
 Con dichos tipos predefinidos es posible representar una serie de parámetros en el momento de inicializar un agente o entorno determinado. Solo basta especificar el nombre, el tipo y delante colocar la palabra reservada `let`. 
 
@@ -118,15 +118,16 @@ buy agent1, "picadillo", 20;
 buy agent1;
 ```
 Con la primera opción se realiza una compra a un agente dado (para lo cual se ofrece un identificador del mismo), el nombre del producto a comprar (representado `string`) y la cantidad que se desea adquirir (representado por un `number`).
+La segunda opción intenta comprar la myor cantidad de productos posibles del agente objetivo en un orden arbitrario.
 
 Otra de las acciones fundamentales que están relacionadas con el comercio es la venta, para ello un agente puede mover un objeto del conjunto de objetos a conservar hacia el conjunto de objetos en venta. La siguiente sintaxis permite este proceso:
 ```
 sell "pan", 1, 20;
 ```
-Con el código anterior, un agente decide mover una unidad de pan al conjunto de venta y ponerle un precio de $20$ unidades monetarias.
+Con el código anterior, un agente decide mover una unidad de pan al conjunto de venta y ponerle un precio de $20$ unidades monetarias. Si ya se encontraban unidades de "pan" a la venta, se toma el menor de los precios.
 
 - #### Recoger y tirar objetos:
-Las acciones de recoger y lanzar objetos al suelo permite lograr mayor flexibilidad en las acciones y sucesos que ocurren en un entorno. Es interesante lograr darle la capacidad a los agentes de poder buscar en la posición donde están, posibles objetos que puedan ser de su interés, por lo que se pueden programar entes que se dediquen solamente buscar un tipo específico de objeto. Además, la capcidad de colocar objetos en el suelo permite que algunos que no sea deseados por un agente en un momento dado, puedan formar parte de otro agente que lo encuentre en su recorrido por el entorno.
+Las acciones de recoger y lanzar objetos al suelo permite lograr mayor flexibilidad en las acciones y sucesos que ocurren en un entorno. Es interesante lograr darle la capacidad a los agentes de poder buscar en la posición donde están, posibles objetos que puedan ser de su interés, por lo que se pueden programar entes que se dediquen solamente buscar un tipo específico de objeto. Además, la capacidad de colocar objetos en el suelo permite que algunos que no sea deseados por un agente en un momento dado, puedan formar parte de otro agente que lo encuentre en su recorrido por el entorno.
 
 Para recoger objetos se utiliza el comando:
 ```
@@ -153,7 +154,7 @@ Para obtener los objetos posibles a recoger del suelo se utiliza el comando:
 ```
 find objects;
 ```
-El cual devuelve un conjunto de los elementos localizados en la misma posición del agente que ejecuta dicha acción en un entorno dado.
+El cual devuelve un book de los elementos localizados en la misma posición del agente que ejecuta dicha acción en un entorno dado.
 
 ### Agentes:
 Los agentes son un tipo que representa los entes que participarán en las simulaciones de un entorno específico. Estos son inicializados directamente un con un identificador y un conjunto de parámetros principales:
@@ -176,7 +177,14 @@ agent a1 {
     let extra_attr: list = dim2;
 }
 ```
-Con este código estamos inicializando un agente denominado *a1*, que al añadirse a un entorno este será colocado en la posición *(2, 0)*. Este cuenta con los atributos adicionales (otra de las capacidades de un agente) *attr*, *attr2* y *abc*. Tiene un comportamiento definido denominado *b1* y posee los conjuntos *on_keep* y *on_sale* (son considerados los conjuntos destinados a tener seguimiento de los objetos a conservar y a vender respectivamente). El conjunto *on_keep* relaciona al nombre de un objeto con la cantidad del mismo mientras que *on_sale* lo relaciona con una cantidad y un precio de venta.
+Con este código estamos inicializando un agente denominado *a1*, que al añadirse a un entorno este será colocado en la posición *(2, 0)*. Este cuenta con los atributos adicionales (otra de las capacidades de un agente) *attr*, *attr2* y *abc*. Tiene un comportamiento definido denominado *b1* y posee los conjuntos *on_keep* y *on_sale* (son considerados los conjuntos destinados a tener seguimiento de los objetos a conservar y a vender respectivamente). El conjunto *on_keep* relaciona al nombre de un objeto con la cantidad del mismo mientras que *on_sale* lo relaciona con una cantidad y un precio de venta. 
+
+Es importante tener en cuenta que todos los agentes tienen un conjunto de atributos por default que son:
+- *behavior*, de tipo behave, con valor por default un behave de nombre "unknown_behavior" y que no hace nada.
+- *location*, de tipo lista de number, con valor por default *(0,0)*.
+- *balance*, de tipo number, con valor por default 0.
+- *on_keep* y *on_sale*, de tipo book, con valor por default un book vacío.
+Si no se declaran estos atributos se declararán con el valor por defecto. Si se declaran, se tiene que declarar con el tipo específico.
 
 ### Entornos:
 Los entornos representan los espacios acotados donde coexistirán un conjunto de agentes. Como ya se mecionó, estos están representados internamente por una grilla rectangular con dimensiones especificadas. A continuación se muestra una forma de inicializar un entorno:
@@ -189,7 +197,13 @@ env la_tinta{
     number_iterations = 2;
 }
 ```
-En este caso estamos inicializando un entorno denominado *la_tinta*, que posee unos agentes denominados *Pepito* (dos instancias de *Pepito*, nótese que la repetición del nombre *Pepito* demuestra la capacidad de reutilizar tipos de agentes ya definidos) y *Juan*. El campo *log* denota si se desea mostrar en consola los resultados de las instrucciones `talk` realizadas por los agentes.
+En este caso estamos inicializando un entorno denominado *la_tinta*, que posee unos agentes denominados *Pepito* (dos instancias de *Pepito*, nótese que la repetición del nombre *Pepito* demuestra la capacidad de reutilizar tipos de agentes ya definidos) y *Juan*. El campo *log* denota si se desea mostrar en consola los resultados de las instrucciones `talk` realizadas por los agentes. 
+
+Es importante tener en cuenta que todos los entornos tienen un conjunto de atributos por default que son:
+- *agents*, de tipo lista de agentes, con valor por default una lista vacía.
+- *log*, de tipo bool, con valor por default True.
+- *rows*, *columns* y *number_iterations*, de tipo number, con valor por default 0.
+Si no se declaran estos atributos se declararán con el valor por defecto. Si se declaran, se tiene que declarar con el tipo específico.
 
 Para trabajar con un entorno se dispone de un conjunto de operaciones fundamentales:
 
@@ -200,17 +214,17 @@ Para la ejecución del entorno se utiliza la siguiente sintaxis:
 run e1 with 5 iterations;
 run e2;
 ```
-Con la primera instruccion estamos haciendo que un entorno denominado *e1* ejecute cinco iteraciones, lo cual es recorrer cinco veces el conjunto de agentes del mismo y por cada uno ejecutar su comportamiento predefinido. Por otro lado, con la segunda instrucción estamos haciendo que el entorno sea ejecutado en una catidad de iteraciones igual a la que indique el campo `number_iterations` de la definición básica del entorno.
+Con la primera instrucción estamos haciendo que un entorno denominado *e1* ejecute cinco iteraciones, lo cual es recorrer cinco veces el conjunto de agentes del mismo y por cada uno ejecutar su comportamiento predefinido. Por otro lado, con la segunda instrucción estamos haciendo que el entorno sea ejecutado en una catidad de iteraciones igual a la que indique el campo `number_iterations` de la definición básica del entorno.
 
 - Reiniciar el entorno:
 
 ```
 reset e1;
 ```
-Con este código logramos que un entorno vuelva al estado inicial que tenía justo antes de la primera iteración.
+Con este código logramos que un entorno vuelva al estado inicial que tenía justo antes de la primera iteración de la última vez que se ejecutó o al estado con el que se definió inicialmente si no se ha corrido ninguna iteración sobre ese entorno.
 
 ## Gramática:
-La gramática implementada fue diseñada con el objetivo de ser parseable de la mejor manera posible por un *paser* **LALR(1)**.
+La gramática implementada fue diseñada con el objetivo de ser parseable de la mejor manera posible por un *parser* **LALR(1)**.
 
 ```
 Rule 0     S' -> program
@@ -220,103 +234,105 @@ Rule 3     declarationList -> declaration declarationList
 Rule 4     declaration -> envFunc
 Rule 5     declaration -> varAssign
 Rule 6     declaration -> varDecl
-Rule 7     declaration -> behaveDecl
-Rule 8     declaration -> agentDecl
-Rule 9     declaration -> envDecl
-Rule 10    envDecl -> ENV ID { envBody }
-Rule 11    agentDecl -> AGENT ID { agentBody }
-Rule 12    behaveDecl -> BEHAVE ID { behaveBody }
-Rule 13    varDecl -> LET ID : type ASSIGN expr SEP
-Rule 14    varDecl -> LET ID : type SEP
-Rule 15    varAssign -> getter ASSIGN expr SEP
-Rule 16    envFunc -> PUT expr IN ID AT expr , expr SEP
-Rule 17    envFunc -> RUN ID WITH expr ITERATIONS SEP
-Rule 18    envFunc -> RUN ID SEP
-Rule 19    envFunc -> RESET ID SEP
-Rule 20    envBody -> varList
-Rule 21    agentBody -> varList
-Rule 22    behaveBody -> statementList
-Rule 23    varList -> empty
-Rule 24    varList -> varAssign varList
-Rule 25    varList -> varDecl varList
-Rule 26    statementList -> empty
-Rule 27    statementList -> statement statementList
-Rule 28    statement -> primFuncStmt
-Rule 29    statement -> incaseStmt
-Rule 30    statement -> foreachStmt
-Rule 31    statement -> repeatStmt
-Rule 32    statement -> varAssign
-Rule 33    statement -> varDecl
-Rule 34    statement -> expr SEP
-Rule 35    repeatStmt -> REPEAT WHEN expr { statementList }
-Rule 36    foreachStmt -> FOREACH ID IN expr { statementList }
-Rule 37    incaseStmt -> IN CASE expr { statementList } inothercaseStmt
-Rule 38    inothercaseStmt -> empty
-Rule 39    inothercaseStmt -> OTHERWISE { statementList }
-Rule 40    inothercaseStmt -> IN OTHER CASE expr { statementList } inothercaseStmt
-Rule 41    primFuncStmt -> PUT expr , expr SEP
-Rule 42    primFuncStmt -> PICK expr SEP
-Rule 43    primFuncStmt -> STOP SEP
-Rule 44    primFuncStmt -> RESTART BEHAVE SEP
-Rule 45    primFuncStmt -> SELL expr , expr , expr SEP
-Rule 46    primFuncStmt -> buyStmt SEP
-Rule 47    primFuncStmt -> moveStmt SEP
-Rule 48    primFuncStmt -> TALK expr SEP
-Rule 49    moveStmt -> MOVE RIGHT
-Rule 50    moveStmt -> MOVE LEFT
-Rule 51    moveStmt -> MOVE DOWN
-Rule 52    moveStmt -> MOVE UP
-Rule 53    moveStmt -> MOVE expr , expr
-Rule 54    buyStmt -> BUY expr
-Rule 55    buyStmt -> BUY expr , expr , expr
-Rule 56    expr -> call
-Rule 57    expr -> - expr  [precedence=right, level=7]
-Rule 58    expr -> ! expr  [precedence=right, level=8]
-Rule 59    expr -> expr / expr  [precedence=left, level=6]
-Rule 60    expr -> expr * expr  [precedence=left, level=6]
-Rule 61    expr -> expr - expr  [precedence=left, level=5]
-Rule 62    expr -> expr + expr  [precedence=left, level=5]
-Rule 63    expr -> expr GREATER expr  [precedence=left, level=4]
-Rule 64    expr -> expr GREATEREQ expr  [precedence=left, level=4]
-Rule 65    expr -> expr LESSEQ expr  [precedence=left, level=4]
-Rule 66    expr -> expr LESS expr  [precedence=left, level=4]
-Rule 67    expr -> expr EQEQ expr  [precedence=left, level=3]
-Rule 68    expr -> expr NOTEQ expr  [precedence=left, level=3]
-Rule 69    expr -> expr AND expr  [precedence=left, level=2]
-Rule 70    expr -> expr OR expr  [precedence=left, level=1]
-Rule 71    call -> ID dotTail
-Rule 72    call -> primitiveValue
-Rule 73    call -> primary
-Rule 74    getter -> ID dotTail
-Rule 75    dotTail -> empty
-Rule 76    dotTail -> [ expr ] dotTail
-Rule 77    dotTail -> . idTail dotTail
-Rule 78    idTail -> listFunc
-Rule 79    idTail -> ID
-Rule 80    listFunc -> REVERSE
-Rule 81    listFunc -> POP
-Rule 82    listFunc -> PUSH expr
-Rule 83    listFunc -> SIZE
-Rule 84    primitiveValue -> FIND PEERS
-Rule 85    primitiveValue -> FIND OBJECTS
-Rule 86    primitiveValue -> RANDOM FROM expr TO expr
-Rule 87    primary -> ( expr )
-Rule 88    primary -> { bookItems }
-Rule 89    primary -> [ listItems ]
-Rule 90    primary -> STRING
-Rule 91    primary -> NUMBER
-Rule 92    primary -> FALSE
-Rule 93    primary -> TRUE
-Rule 94    listItems -> empty
-Rule 95    listItems -> expr , listItems
-Rule 96    bookItems -> empty
-Rule 97    bookItems -> STRING : ( listItems ) , bookItems
-Rule 98    type -> BOOK_TYPE
-Rule 99    type -> LIST_TYPE
-Rule 100   type -> STRING_TYPE
-Rule 101   type -> BOOL_TYPE
-Rule 102   type -> NUMBER_TYPE
-Rule 103   empty -> <empty>
+Rule 7     declaration -> exprStmt
+Rule 8     declaration -> behaveDecl
+Rule 9     declaration -> agentDecl
+Rule 10    declaration -> envDecl
+Rule 11    envDecl -> ENV ID { envBody }
+Rule 12    agentDecl -> AGENT ID { agentBody }
+Rule 13    behaveDecl -> BEHAVE ID { behaveBody }
+Rule 14    exprStmt -> expr SEP
+Rule 15    varDecl -> LET ID : type ASSIGN expr SEP
+Rule 16    varDecl -> LET ID : type SEP
+Rule 17    varAssign -> getter ASSIGN expr SEP
+Rule 18    envFunc -> PUT expr IN ID AT expr , expr SEP
+Rule 19    envFunc -> RUN ID WITH expr ITERATIONS SEP
+Rule 20    envFunc -> RUN ID SEP
+Rule 21    envFunc -> RESET ID SEP
+Rule 22    envBody -> varList
+Rule 23    agentBody -> varList
+Rule 24    behaveBody -> statementList
+Rule 25    varList -> empty
+Rule 26    varList -> varAssign varList
+Rule 27    varList -> varDecl varList
+Rule 28    statementList -> empty
+Rule 29    statementList -> statement statementList
+Rule 30    statement -> primFuncStmt
+Rule 31    statement -> incaseStmt
+Rule 32    statement -> foreachStmt
+Rule 33    statement -> repeatStmt
+Rule 34    statement -> varAssign
+Rule 35    statement -> varDecl
+Rule 36    statement -> exprStmt
+Rule 37    repeatStmt -> REPEAT WHEN expr { statementList }
+Rule 38    foreachStmt -> FOREACH ID IN expr { statementList }
+Rule 39    incaseStmt -> IN CASE expr { statementList } inothercaseStmt
+Rule 40    inothercaseStmt -> empty
+Rule 41    inothercaseStmt -> OTHERWISE { statementList }
+Rule 42    inothercaseStmt -> IN OTHER CASE expr { statementList } inothercaseStmt
+Rule 43    primFuncStmt -> PUT expr , expr SEP
+Rule 44    primFuncStmt -> PICK expr SEP
+Rule 45    primFuncStmt -> STOP SEP
+Rule 46    primFuncStmt -> RESTART BEHAVE SEP
+Rule 47    primFuncStmt -> SELL expr , expr , expr SEP
+Rule 48    primFuncStmt -> buyStmt SEP
+Rule 49    primFuncStmt -> moveStmt SEP
+Rule 50    primFuncStmt -> TALK expr SEP
+Rule 51    moveStmt -> MOVE RIGHT
+Rule 52    moveStmt -> MOVE LEFT
+Rule 53    moveStmt -> MOVE DOWN
+Rule 54    moveStmt -> MOVE UP
+Rule 55    moveStmt -> MOVE expr , expr
+Rule 56    buyStmt -> BUY expr
+Rule 57    buyStmt -> BUY expr , expr , expr
+Rule 58    expr -> call
+Rule 59    expr -> - expr  [precedence=right, level=7]
+Rule 60    expr -> ! expr  [precedence=right, level=8]
+Rule 61    expr -> expr / expr  [precedence=left, level=6]
+Rule 62    expr -> expr * expr  [precedence=left, level=6]
+Rule 63    expr -> expr - expr  [precedence=left, level=5]
+Rule 64    expr -> expr + expr  [precedence=left, level=5]
+Rule 65    expr -> expr GREATER expr  [precedence=left, level=4]
+Rule 66    expr -> expr GREATEREQ expr  [precedence=left, level=4]
+Rule 67    expr -> expr LESSEQ expr  [precedence=left, level=4]
+Rule 68    expr -> expr LESS expr  [precedence=left, level=4]
+Rule 69    expr -> expr EQEQ expr  [precedence=left, level=3]
+Rule 70    expr -> expr NOTEQ expr  [precedence=left, level=3]
+Rule 71    expr -> expr AND expr  [precedence=left, level=2]
+Rule 72    expr -> expr OR expr  [precedence=left, level=1]
+Rule 73    call -> ID dotTail
+Rule 74    call -> primitiveValue
+Rule 75    call -> primary
+Rule 76    getter -> ID dotTail
+Rule 77    dotTail -> empty
+Rule 78    dotTail -> [ expr ] dotTail
+Rule 79    dotTail -> . idTail dotTail
+Rule 80    idTail -> listFunc
+Rule 81    idTail -> ID
+Rule 82    listFunc -> REVERSE
+Rule 83    listFunc -> POP
+Rule 84    listFunc -> PUSH expr
+Rule 85    listFunc -> SIZE
+Rule 86    primitiveValue -> FIND PEERS
+Rule 87    primitiveValue -> FIND OBJECTS
+Rule 88    primitiveValue -> RANDOM FROM expr TO expr
+Rule 89    primary -> ( expr )
+Rule 90    primary -> { bookItems }
+Rule 91    primary -> [ listItems ]
+Rule 92    primary -> STRING
+Rule 93    primary -> NUMBER
+Rule 94    primary -> FALSE
+Rule 95    primary -> TRUE
+Rule 96    listItems -> empty
+Rule 97    listItems -> expr , listItems
+Rule 98    bookItems -> empty
+Rule 99    bookItems -> STRING : ( listItems ) , bookItems
+Rule 100   type -> BOOK_TYPE
+Rule 101   type -> LIST_TYPE
+Rule 102   type -> STRING_TYPE
+Rule 103   type -> BOOL_TYPE
+Rule 104   type -> NUMBER_TYPE
+Rule 105   empty -> <empty>
 ```
 
 ## Arquitectura del proyecto:

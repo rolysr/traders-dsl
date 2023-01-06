@@ -69,25 +69,21 @@ class TradersAgent:
         if amount < 1:
             return
 
-        try:
-            sale_price = agent.on_sale.get_price(name).value
-            sale_amount = agent.on_sale.get_amount(name).value
-            final_amount = min(sale_amount, amount,
-                               self.balance.value // sale_price)
+        sale_price = agent.on_sale.get_price(name).value
+        sale_amount = agent.on_sale.get_amount(name).value
+        final_amount = min(sale_amount, amount,
+                            self.balance.value // sale_price)
 
-            if self.balance.value >= sale_price*final_amount and final_amount > 0:
+        if self.balance.value >= sale_price*final_amount and final_amount > 0:
 
-                agent.on_sale.set_amount(
-                    name, Number(sale_amount - final_amount))
-                agent.balance.value += sale_price*final_amount
+            agent.on_sale.set_amount(
+                name, Number(sale_amount - final_amount))
+            agent.balance.value += sale_price*final_amount
 
-                self.balance.value -= sale_price*final_amount
-                actual_amount = self.on_keep.get_amount(name).value
-                self.on_keep.set_amount(
-                    name, Number(actual_amount + final_amount))
-
-        except:
-            pass
+            self.balance.value -= sale_price*final_amount
+            actual_amount = self.on_keep.get_amount(name).value
+            self.on_keep.set_amount(
+                name, Number(actual_amount + final_amount))
 
     def copy(self, other):
         self.balance = other.balance
