@@ -13,6 +13,7 @@ class Behavior:
         self.statement_list = statement_list
 
     def copy(self, other):
+        self.name = other.name
         self.statement_list = other.statement_list
 
     def __eq__(self, other):

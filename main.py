@@ -19,7 +19,12 @@ def exec_file():
 
         if checker.ok:
             program = Process(tree)
-            program.run()
+            try:
+                program.run()
+            except (ValueError, UnboundLocalError, NameError, IndexError, TypeError, Exception) as e:
+                print("Runtime error: {}".format(e))
+        else:
+            print("Semantic check failed before running.")
 
 
 if __name__ == "__main__":

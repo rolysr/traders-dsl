@@ -101,7 +101,7 @@ class TradersSemanticsChecker:
                     else:
                         var_name = varOp[1]
                         if var_name in ['balance', 'on_keep', 'on_sale', 'behavior', 'location']:
-                            raise AttributeError(
+                            raise NameError(
                                 'Redeclaring default agent attributes in {}'.format(varOp))
                         self.visit(varOp)
 
@@ -140,7 +140,7 @@ class TradersSemanticsChecker:
                     if varOp[0] == 'varAssign':
                         self.visit(varOp)
                     else:
-                        raise AttributeError(
+                        raise NameError(
                             'Env data type does not allow attribute declaration in {}'.format(varOp))  # for now
 
                 environment = TradersEnvironment(rows=self.env['rows'],

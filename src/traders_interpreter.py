@@ -41,42 +41,10 @@ class Process:
             self.env = env
         if tree is None:
             for line in self.tree:
-                try:
-                    result = self.evaluate(line)
-                except ValueError as e:
-                    print(e)
-                    break
-                except UnboundLocalError as e:
-                    print(e)
-                    break
-                except NameError as e:
-                    print(e)
-                    break
-                except IndexError as e:
-                    print(e)
-                    break
-                except TypeError as e:
-                    print(e)
-                    break
+                result = self.evaluate(line)
         else:
             for line in tree:
-                try:
-                    result = self.evaluate(line)
-                except ValueError as e:
-                    print(e)
-                    break
-                except UnboundLocalError as e:
-                    print(e)
-                    break
-                except NameError as e:
-                    print(e)
-                    break
-                except IndexError as e:
-                    print(e)
-                    break
-                except TypeError as e:
-                    print(e)
-                    break
+                result = self.evaluate(line)
         self.env = current_env
         return result
 
@@ -254,6 +222,9 @@ class Process:
                             checker.env_instance = deepcopy(self.env_instance)
 
                             checker.check()
+
+                            if not checker.ok:
+                                raise Exception("Semantic check failed when calling {} in {} statement".format(agent.behavior.name, parsed))
 
                         self.run(agent.behavior.statement_list)
 
