@@ -350,7 +350,7 @@ Para la primera de estas tareas se cuenta con la clase `Lexer`, la cual contiene
 Este módulo fue tomado de una [biblioteca](https://github.com/dabeaz/sly) que contiene ya implementada dichos algoritmos de *lexing* y *parsing*.
 
 ### Módulo `src`:
-Es el módulo principal del proyecto. Contiene tres principales clases que componen la base de funcionamiento del compilador: `TradersLexer`, `TradersParser` y `TradersInterpreter`.
+Es el módulo principal del proyecto. Contiene cuatro principales clases que componen la base de funcionamiento del compilador: `TradersLexer`, `TradersParser`, `TradersSemanticsChecker` y `Process`.
 
 - `TradersLexer`: 
     Hereda de la clase `Lexer` del módulo `sly`. Contiene las especificaciones de los token y palabras reservadas principales del proyecto. Contiene el método `tokenize(...)` encargado de identificar y separar los *tokens* del lenguaje.
@@ -358,5 +358,10 @@ Es el módulo principal del proyecto. Contiene tres principales clases que compo
 - `TradersParser`:
     Hereda de la clase `Parser` del módulo `sly`. Contiene la gramática del lenguaje y genera el autómata **LALR(1)** utilizado durante el proceso de *parsing*.
 
-- `TradersInterpreter`:
-    Constituye el intérprete del lenguaje. Permite la ejecución de cada uno de los procesos y funcionalidades del proyecto, además de que realiza las acciones relacionadas con el análisis semántico del proyecto.
+- `TradersSemanticsChecker`:
+    Es el encargado de realizar acciones de chequeo semántico en tiempo de compilación. Permite comprobar cuestiones relacionadas con la consistencia de tipos como la asignación correcta de valores a las variables, el uso de expresiones válidas de acuerdo a los operadores que influyen en esta.
+
+- `Process`:
+    Permite la ejecución de cada uno de los procesos y funcionalidades del proyecto, además de que realiza las acciones relacionadas con el análisis semántico del proyecto. Puede también ser utilizado como intérprete del lenguaje.
+
+## Funciones adicionales:
