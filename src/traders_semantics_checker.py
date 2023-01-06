@@ -179,7 +179,7 @@ class TradersSemanticsChecker:
                 if not parsed[1] in self.env:
                     raise Exception(
                         "{0} not found from {1} production.".format(parsed[1], parsed))
-                
+
                 env_instance = self.env[parsed[1]]
                 if not isinstance(env_instance, TradersEnvironment):
                     raise Exception(
@@ -195,7 +195,7 @@ class TradersSemanticsChecker:
                 if not parsed[1] in self.env:
                     raise Exception(
                         "{0} not found from {1} production.".format(parsed[1], parsed))
-                
+
                 env_instance = self.env[parsed[1]]
                 if not isinstance(env_instance, TradersEnvironment):
                     raise Exception(
@@ -211,7 +211,7 @@ class TradersSemanticsChecker:
                 if not parsed[1] in self.env:
                     raise Exception(
                         "{0} not found from {1} production.".format(parsed[1], parsed))
-                
+
                 env_instance = self.env[parsed[1]]
                 if not isinstance(env_instance, TradersEnvironment):
                     raise Exception(
@@ -308,6 +308,7 @@ class TradersSemanticsChecker:
                 return 'void'
 
             elif action == 'talk':
+                self.visit(parsed[1])
                 return 'void'
 
             elif action == 'random':
@@ -438,8 +439,9 @@ class TradersSemanticsChecker:
 
                 self.env = Env(outer=self.env)
 
-                if(type(iterable) == str and iterable == 'book'):
-                    self.env[iterator_name] = Entry({"product":"", "amount": Number(0), "price": Number(0)})
+                if (type(iterable) == str and iterable == 'book'):
+                    self.env[iterator_name] = Entry(
+                        {"product": "", "amount": Number(0), "price": Number(0)})
                 else:
                     self.env[iterator_name] = Any()
 

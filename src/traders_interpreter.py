@@ -209,6 +209,10 @@ class Process:
                 return None
 
             elif action == 'runEnv':
+                if not parsed[1] in self.env:
+                    raise Exception(
+                        "{0} not found from {1} production.".format(parsed[1], parsed))
+
                 env_instance = self.env[parsed[1]]
                 if not isinstance(env_instance, TradersEnvironment):
                     raise Exception(
@@ -249,9 +253,6 @@ class Process:
                             checker.actual_agent = deepcopy(self.actual_agent)
                             checker.env_instance = deepcopy(self.env_instance)
 
-                            checker.call_owner = deepcopy(self.call_owner)
-                            checker.is_protected = deepcopy(self.is_protected)
-
                             checker.check()
 
                         self.run(agent.behavior.statement_list)
@@ -265,8 +266,12 @@ class Process:
                 return None
 
             elif action == 'resetEnv':
+                if not parsed[1] in self.env:
+                    raise Exception(
+                        "{0} not found from {1} production.".format(parsed[1], parsed))
+
                 env_instance = self.env[parsed[1]]
-                if env_instance.type != 'env':
+                if not isinstance(env_instance, TradersEnvironment):
                     raise Exception(
                         "Reset statement must be called on an Environment instance.")
 
@@ -287,14 +292,20 @@ class Process:
                 row = self.evaluate(parsed[3])
                 column = self.evaluate(parsed[4])
 
+                if not (isinstance(row, Number) and isinstance(column, Number)):
+                    raise ValueError(
+                        "Wrong parameter types in {}".format(parsed))
+
                 # check if type is agent
                 if isinstance(obj, TradersAgent):
                     new_agent = deepcopy(obj)
                     env_instance.add_agent(new_agent, row, column)
-
                 # check if type is item
-                if isinstance(obj, Book):
+                elif isinstance(obj, Book):
                     env_instance.add_items(obj, row, column)
+                else:
+                    raise ValueError(
+                        "Wrong parameter types in {}".format(parsed))
                 return None
 
             elif action == 'restart':
@@ -410,6 +421,10 @@ class Process:
             elif action == 'moveStmt_0':
                 row = self.evaluate(parsed[1])
                 column = self.evaluate(parsed[2])
+
+                if not (isinstance(row, Number) and isinstance(column, Number)):
+                    raise ValueError(
+                        "Wrong parameter types in {}".format(parsed))
 
                 new_location = List("number", [row, column])
 

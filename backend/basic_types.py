@@ -69,6 +69,7 @@ class Bool:
             return 'bool'
         raise Exception("{} does not have any attribute.".format(self))
 
+
 class Any:
     def __init__(self) -> None:
         self.type = "any"

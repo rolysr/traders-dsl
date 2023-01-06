@@ -73,7 +73,7 @@ class TradersLexer(Lexer):
     ID['put'] = PUT
     ID['at'] = AT
     ID['talk'] = TALK
-    ID['with'] = WITH 
+    ID['with'] = WITH
     ID['iterations'] = ITERATIONS
     ID['from'] = FROM
     ID['to'] = TO
