@@ -30,6 +30,7 @@ class TradersSemanticsChecker:
         # Behave inner variables
         self.actual_agent = None
         self.env_instance = None
+        self.ok = True
 
     def check(self, tree=None, env={}):
         current_env = self.env
@@ -40,40 +41,16 @@ class TradersSemanticsChecker:
             for line in self.tree:
                 try:
                     result = self.visit(line)
-                except ValueError as e:
+                except (ValueError, UnboundLocalError, NameError, IndexError, TypeError, Exception) as e:
                     print(e)
-                    break
-                except UnboundLocalError as e:
-                    print(e)
-                    break
-                except NameError as e:
-                    print(e)
-                    break
-                except IndexError as e:
-                    print(e)
-                    break
-                except TypeError as e:
-                    print(e)
-                    break
+                    self.ok = False
         else:
             for line in tree:
                 try:
                     result = self.visit(line)
-                except ValueError as e:
+                except (ValueError, UnboundLocalError, NameError, IndexError, TypeError, Exception) as e:
                     print(e)
-                    break
-                except UnboundLocalError as e:
-                    print(e)
-                    break
-                except NameError as e:
-                    print(e)
-                    break
-                except IndexError as e:
-                    print(e)
-                    break
-                except TypeError as e:
-                    print(e)
-                    break
+                    self.ok = False
         self.env = current_env
         return result
 
