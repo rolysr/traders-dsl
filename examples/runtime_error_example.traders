@@ -1,0 +1,25 @@
+behave requiring_variables{
+    repeat when a > 0{
+        talk location;
+        move down;
+        a = a - 1;
+    }
+    talk location;
+}
+
+agent is_moving{
+    let a: number = 5;
+    behavior = requiring_variables;
+}
+
+agent is_crashing{
+    let aa: number = 5;
+    behavior = requiring_variables;
+}
+
+env test{
+    rows = 10;
+    agents = [is_moving, is_crashing, ];
+}
+
+run test with 10 iterations;

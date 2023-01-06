@@ -1,3 +1,29 @@
 let a: number = "Pepe";
 let x: string = 10;
 let a: number = 8;
+
+agent x1{
+    behavior = 1;
+    attr = 5;
+    balance = 10;
+    let y: number = 5;
+    let yy: number = "5";
+    let z: string = y + "5";
+    let x: number = balance;
+    let xx: list = balance;
+}
+
+env almost_ok{
+    rows = 5;
+    columns = 5;
+    number_iterations = 5;
+    log = 5;
+}
+
+env ok{
+    log = true;
+}
+
+let ok_str: string = "20";
+
+run ok with ok_str iterations;
