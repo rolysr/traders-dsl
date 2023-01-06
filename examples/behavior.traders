@@ -6,3 +6,19 @@ behave b1 {
         talk "Meh";
     }
 }
+
+agent saludador{
+    let a: number = 2;
+    behavior = b1;
+}
+
+agent burocrata{
+    let a: number = -1;
+    behavior = b1;
+}
+
+env s_b{
+    agents = [saludador, burocrata, ];
+}
+
+run s_b with 2 iterations;

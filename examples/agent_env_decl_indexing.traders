@@ -3,9 +3,9 @@ let dim2: list = [dim1, dim1, dim1, dim1, ];
 let x: number = 0; 
 
 behave xxx{
-    in case (location.get 0) > 0{
+    in case abc > 0{
         talk "sex";
-        location.get 0 = (location.get 0) - 1;
+        abc = abc - 1;
         restart behave;
     }
     otherwise
@@ -18,7 +18,7 @@ agent pepito {
     location = [1,2,];
     let atrr : string = "Pedro";
     let atrr2 : string = "Jose";
-    let abc : number;
+    let abc : number = 3;
     behavior = xxx;
     on_keep = {"carne" : (5, ), "mondongo" : (99999999, ), };
     on_sale = {"carne2" : (5, 100, ), "mondongo2" : (99999999, 1000, ), };
@@ -34,7 +34,7 @@ agent juan {
     balance = 5000;
     let atrr : string = "Pedro";
     let atrr2 : string = "Jose";
-    let abc : number;
+    let abc : number = 3;
     behavior = xxx;
     on_keep = {"carne" : (5, ), "mondongo" : (99999999, ), };
     on_sale = {"carne2" : (5, 100, ), "mondongo2" : (99999999, 1000, ), };
@@ -56,9 +56,9 @@ juan.abc = 5;
 juan.atrr = "Roberto";
 juan.atrr2 = "El profe";
 
-pepito.extra_attr.get 1.get 2 = pepito.extra_attr.get 1.get 2;
-pepito.extra_attr.get 0.get 3 = pepito.extra_attr.get 0.get 3;
-juan.extra_attr.get 1.get 2 = juan.extra_attr.get 1.get 2;
-juan.extra_attr.get 0.get 3 = juan.extra_attr.get 0.get 3; 
+pepito.extra_attr[1][2] = pepito.extra_attr[1][2];
+pepito.extra_attr[0][3] = pepito.extra_attr[0][3];
+juan.extra_attr[1][2] = juan.extra_attr[1][2];
+juan.extra_attr[0][3] = juan.extra_attr[0][3]; 
 
 run la_tinta with 3 iterations;

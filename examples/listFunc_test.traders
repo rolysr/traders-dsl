@@ -1,7 +1,19 @@
-let a: list = [3, 5, 1, ];
-a.push 5;
-talk a;
-a.reverse;
-talk a;
-a.pop;
-talk a;
+behave listFuncs{
+    let a: list = [3, 5, 1, ];
+    a.push 5;
+    talk a;
+    a.reverse;
+    talk a;
+    a.pop;
+    talk a;
+}
+
+agent funciona{
+    behavior = listFuncs;
+}
+
+env comprueba{
+    agents = [funciona, ];
+}
+
+run comprueba with 100 iterations;
