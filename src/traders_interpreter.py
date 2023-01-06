@@ -241,8 +241,6 @@ class Process:
                         self.env = inner_context
                         self.actual_agent = agent
 
-                        # print("xxx: {}".format(self.stringify(self.env['location'])))
-                        # print(self.should_return)
                         self.run(agent.behavior.statement_list)
 
                         # up to code getting back to actual context
@@ -301,8 +299,6 @@ class Process:
 
                 # up to add extra predefined variables
                 self.env = inner_context
-                # print(self.stringify(self.actual_agent.location))
-                # print(" ")
 
                 self.run(self.actual_agent.behavior.statement_list)
 
@@ -323,8 +319,8 @@ class Process:
                 if not (isinstance(produt_name, String) and isinstance(amount, Number) and isinstance(price, Number)):
                     return ValueError('Invalid values for sell operation')
 
-                on_keep = self.env['on_keep']
-                on_sale = self.env['on_sale']
+                on_keep = self.env.find('on_keep')
+                on_sale = self.env.find('on_sale')
 
                 if produt_name.value not in on_keep.value.keys() or amount.value < 1 or amount.value > on_keep.get_amount(produt_name).value or price.value < 0:
                     raise ValueError('Invalid values for sell operation')
@@ -386,8 +382,8 @@ class Process:
                 on_keep.set_amount(product_name, Number(
                     actual_amount.value - amount.value))
 
-                row = self.env['location'].get(0).value
-                column = self.env['location'].get(1).value
+                row = self.env.find('location').get(0).value
+                column = self.env.find('location').get(1).value
 
                 floor_amount = self.env_instance.matrix[(row, column)].get_amount(
                     product_name)
@@ -407,14 +403,14 @@ class Process:
 
                     self.env_instance.make_valid_position(new_location)
 
-                    self.env['location'].copy(new_location)
+                    self.env.find('location').copy(new_location)
                     return None
                 except:
                     raise Exception("Some error accoured when moving")
 
             elif action == 'moveStmt_1':
                 direction = parsed[1]
-                location = self.env['location']
+                location = self.env.find('location')
                 row = location.value[0]
                 column = location.value[1]
 
@@ -481,8 +477,8 @@ class Process:
                 return Number(ans)
 
             elif action == 'find':
-                row = self.env['location'].get(0).value
-                column = self.env['location'].get(1).value
+                row = self.env.find('location').get(0).value
+                column = self.env.find('location').get(1).value
 
                 if parsed[1] == 'objects':
                     return self.env_instance.matrix[(row, column)]
@@ -563,7 +559,7 @@ class Process:
                 owner = self.call_owner
                 is_protected = self.is_protected
 
-                if self.actual_agent is not None and owner is not None:  # Means we are inside a behave call
+                if self.actual_agent is not None and owner is not None:  # Means we are inside a behave call and the left side variable is owned
                     if owner is not self.actual_agent:
                         raise Exception(
                             'Illegal assignment, other agent assigment : {}'.format(parsed))
@@ -581,8 +577,12 @@ class Process:
             elif action == 'repeatStmt':
                 cond = self.evaluate(parsed[1])
                 while isinstance(cond, Bool) and cond.value:
+                    self.env = Env(outer = self.env)
+
                     self.run(parsed[2])
                     cond = self.evaluate(parsed[1])
+
+                    self.env = self.env.outer
                 return None
 
             elif action == 'foreachStmt':
