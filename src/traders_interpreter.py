@@ -395,18 +395,15 @@ class Process:
                 return self.evaluate(parsed[1])
 
             elif action == 'moveStmt_0':
-                try:
-                    row = self.evaluate(parsed[1])
-                    column = self.evaluate(parsed[2])
+                row = self.evaluate(parsed[1])
+                column = self.evaluate(parsed[2])
 
-                    new_location = List("number", [row, column])
+                new_location = List("number", [row, column])
 
-                    self.env_instance.make_valid_position(new_location)
+                self.env_instance.make_valid_position(new_location)
 
-                    self.env.find('location').copy(new_location)
-                    return None
-                except:
-                    raise Exception("Some error accoured when moving")
+                self.env.find('location').copy(new_location)
+                return None
 
             elif action == 'moveStmt_1':
                 direction = parsed[1]
