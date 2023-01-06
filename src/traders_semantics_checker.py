@@ -31,9 +31,6 @@ class TradersSemanticsChecker:
         self.actual_agent = None
         self.env_instance = None
 
-        self.call_owner = None
-        self.is_protected = False
-
     def check(self, tree=None, env={}):
         current_env = self.env
         result = None
@@ -117,16 +114,8 @@ class TradersSemanticsChecker:
             if action == 'call':
                 func = self.env.find(parsed[1])
                 if isinstance(func, Number) or isinstance(func, Bool) or isinstance(func, String) or isinstance(func, List) or isinstance(func, Book) or isinstance(func, Entry) or isinstance(func, TradersAgent) or isinstance(func, TradersEnvironment) or isinstance(func, Behavior):
-                    (ans, (self.call_owner, self.is_protected)
-                     ) = func.get(parsed[2], self)
-                    if self.actual_agent is not None:
-                        if parsed[1] in ['balance', 'on_keep', 'on_sale', 'location']:
-                            self.call_owner = self.actual_agent
-                            self.is_protected = True
-                        if parsed[1] in self.actual_agent.attributes.keys():
-                            self.call_owner = self.actual_agent
-                            self.is_protected = False
-                    return (True, ans.type)
+                    ans = func.get_check(parsed[2], self)
+                    return ans
 
                 raise Exception("Error while resolving {}.".format(parsed))
 
@@ -146,19 +135,19 @@ class TradersSemanticsChecker:
 
                 self.env.update({'balance': Number(0)})
                 self.env.update({'behavior': Behavior("unknown_behavior", ())})
-                self.env.update({'on_keep': Book((1, 'list', 'number'), {})})
-                self.env.update({'on_sale': Book((2, 'list', 'number'), {})})
+                self.env.update({'on_keep': Book('number', {})})
+                self.env.update({'on_sale': Book('number', {})})
                 self.env.update(
                     {'location': List(element_type='number', value=[Number(0), Number(0)])})
 
                 for varOp in body[1]:
                     if varOp[0] == 'varAssign':
-                        pass
+                        self.visit(varOp)
                     else:
                         var_name = varOp[1]
                         if var_name in ['balance', 'on_keep', 'on_sale', 'behavior', 'location']:
                             raise AttributeError(
-                                'Redeclaring default agent attributes.')
+                                'Redeclaring default agent attributes in {}'.format(varOp))
 
                 attributes = {}
                 for attr in self.env.keys():
@@ -173,7 +162,7 @@ class TradersSemanticsChecker:
                                      attributes=attributes)
                 self.env = self.env.outer
                 self.env.update({id: agent})
-                return (True, ())
+                return 'void'
 
             elif action == 'env':
                 id = parsed[1]
@@ -193,10 +182,10 @@ class TradersSemanticsChecker:
 
                 for varOp in body[1]:
                     if varOp[0] == 'varAssign':
-                        pass
+                        self.visit(varOp)
                     else:
                         raise AttributeError(
-                            'Env data type does not allow attribute declaration.')  # for now
+                            'Env data type does not allow attribute declaration in {}'.format(varOp))  # for now
 
                 environment = TradersEnvironment(rows=self.env['rows'],
                                                  columns=self.env['columns'],
@@ -205,7 +194,7 @@ class TradersSemanticsChecker:
                                                  agents=self.env['agents'])
                 self.env = self.env.outer
                 self.env.update({id: environment})
-                return (True, ())
+                return 'void'
 
             elif action == 'runEnv':
                 env_instance = self.env[parsed[1]]
@@ -216,33 +205,6 @@ class TradersSemanticsChecker:
                 if len(parsed) == 3 and self.visit(parsed[2]) != 'number':
                     raise Exception("Iterations param must be a number in {}".format(parsed))
 
-                agents = env_instance.agents.value
-                self.env_instance = env_instance
-
-                for agent in agents:
-                    inner_context = Env()
-                    actual_context = self.env
-
-                    # building inner context
-                    inner_context.update({'balance': agent.balance})
-                    inner_context.update({'on_keep': agent.on_keep})
-                    inner_context.update({'on_sale': agent.on_sale})
-                    inner_context.update({'location': agent.location})
-                    for attr in agent.attributes.keys():
-                        inner_context.update(
-                            {attr: agent.attributes[attr]})
-                    # up to add extra predefined variables
-                    self.env = inner_context
-                    self.actual_agent = agent
-
-                    self.check(agent.behavior.statement_list)
-
-                    # up to code getting back to actual context
-                    self.should_return = False
-                    self.env = actual_context
-                    self.actual_agent = None
-
-                self.env_instance = None
                 return 'void'
 
             elif action == 'resetEnv':
@@ -426,19 +388,6 @@ class TradersSemanticsChecker:
 
             elif action == 'varAssign':
                 var = self.visit(parsed[1])
-
-                owner = self.call_owner
-                is_protected = self.is_protected
-
-                # Means we are inside a behave call and the left side variable is owned
-                if self.actual_agent is not None and owner is not None:
-                    if owner is not self.actual_agent:
-                        raise Exception(
-                            'Illegal assignment, other agent assigment in {0}'.format(parsed))
-                    if is_protected:
-                        raise Exception(
-                            'Illegal assignment, protected attributes assignment in {0}'.format(parsed))
-
                 result = self.visit(parsed[2])
                 if result != var:
                     raise ValueError("Mismatching types in {0}".format(parsed))

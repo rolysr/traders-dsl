@@ -8,6 +8,7 @@ from backend.behavior import *
 from backend.book import *
 from backend.environment import *
 from backend.env import *
+from src.traders_semantics_checker import TradersSemanticsChecker
 
 
 class Process:
@@ -240,6 +241,18 @@ class Process:
                         # up to add extra predefined variables
                         self.env = inner_context
                         self.actual_agent = agent
+
+                        if iter == 0:
+                            checker = TradersSemanticsChecker(
+                                tree=agent.behavior.statement_list)
+                            checker.env = deepcopy(self.env)
+                            checker.actual_agent = deepcopy(self.actual_agent)
+                            checker.env_instance = deepcopy(self.env_instance)
+
+                            checker.call_owner = deepcopy(self.call_owner)
+                            checker.is_protected = deepcopy(self.is_protected)
+
+                            checker.check()
 
                         self.run(agent.behavior.statement_list)
 

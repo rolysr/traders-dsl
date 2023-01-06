@@ -82,6 +82,11 @@ class Book:
             return (self, (None, False))
         raise Exception("{} does not have any attribute.".format(self))
 
+    def get_check(self, dotTail, process):
+        if len(dotTail) == 0:
+            return 'book'
+        raise Exception("{} does not have any attribute.".format(self))
+
 
 class Entry:
     def __init__(self, attributes) -> None:
@@ -99,6 +104,19 @@ class Entry:
         else:
             raise Exception("{} must be an attribute of {}".format(id, self))
         return ans.get(dotTail[2], process)
+
+    def get_check(self, dotTail, process):
+        if len(dotTail) == 0:
+            return 'entry'
+        id = dotTail[1][1]
+        if id in self.attributes:
+            if id == "product":
+                ans = String(self.attributes[id])
+            else:
+                ans = self.attributes[id]
+        else:
+            raise Exception("{} must be an attribute of {}".format(id, self))
+        return ans.get_check(dotTail[2], process)
 
 
 def convert_book_to_entry_list(book: Book) -> list:

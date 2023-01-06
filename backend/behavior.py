@@ -24,3 +24,8 @@ class Behavior:
         if len(dotTail) == 0:
             return (self, (None, False))
         raise Exception("{} does not have any attribute.".format(self))
+
+    def get_check(self, dotTail, process):
+        if len(dotTail) == 0:
+            return 'behave'
+        raise Exception("{} does not have any attribute.".format(self))

@@ -16,6 +16,11 @@ class Number:
             return (self, (None, False))
         raise Exception("{} does not have any attribute.".format(self))
 
+    def get_check(self, dotTail, process):
+        if len(dotTail) == 0:
+            return 'number'
+        raise Exception("{} does not have any attribute.".format(self))
+
 
 class String:
     def __init__(self, value: str) -> None:
@@ -35,6 +40,11 @@ class String:
             return (self, (None, False))
         raise Exception("{} does not have any attribute.".format(self))
 
+    def get_check(self, dotTail, process):
+        if len(dotTail) == 0:
+            return 'string'
+        raise Exception("{} does not have any attribute.".format(self))
+
 
 class Bool:
     def __init__(self, value: bool) -> None:
@@ -52,4 +62,9 @@ class Bool:
     def get(self, dotTail, process):
         if len(dotTail) == 0:
             return (self, (None, False))
+        raise Exception("{} does not have any attribute.".format(self))
+
+    def get_check(self, dotTail, process):
+        if len(dotTail) == 0:
+            return 'bool'
         raise Exception("{} does not have any attribute.".format(self))

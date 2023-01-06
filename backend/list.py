@@ -87,3 +87,36 @@ class List:
         else:
             raise Exception("{} must be an attribute of {}".format(id, self))
         return ans.get(dotTail[2], process)
+
+    def get_check(self, dotTail, process=None):
+        if len(dotTail) == 0:
+            return 'list'
+
+        ans = None
+        if dotTail[1][0] == 'idTail_1':
+            listFunc = dotTail[1][1][0]
+            if listFunc == 'size':
+                ans = Number(0)
+
+            elif listFunc == 'get':
+                index = process.visit(dotTail[1][1][1])
+                if index != 'number':
+                    raise Exception("Index value must be a number in {}".format(dotTail))
+                
+                return 'any'
+
+            elif listFunc == 'push':
+                new_element = process.visit(dotTail[1][1][1])
+                if (type(self.type[1]) != tuple and new_element != self.type[1]) or (type(self.type[1]) == tuple and new_element != self.type[1][0]):
+                    raise ValueError("Invalid element type in ".format(dotTail))
+
+                ans = self
+
+            elif listFunc == 'pop':
+                ans = self
+
+            elif listFunc == 'reverse':
+                ans = self
+        else:
+            raise Exception("{} must be an attribute of {}".format(id, self))
+        return ans.get_check(dotTail[2], process)
