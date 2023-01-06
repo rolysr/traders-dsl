@@ -110,7 +110,7 @@ class List:
                 new_element = process.visit(dotTail[1][1][1])
                 if (type(self.type[1]) != tuple and new_element != self.type[1]) or (type(self.type[1]) == tuple and new_element != self.type[1][0]):
                     raise ValueError(
-                        "Invalid element type in ".format(dotTail))
+                        "Invalid element type in {}".format(dotTail))
 
                 ans = self
 

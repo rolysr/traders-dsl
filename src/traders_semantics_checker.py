@@ -77,28 +77,6 @@ class TradersSemanticsChecker:
         self.env = current_env
         return result
 
-    def stringify(self, expr):
-        """
-        Preparing values for printing
-        """
-        if type(expr) in {Number, Bool, String}:
-            return str(expr.value)
-        if type(expr) == List:
-            ans = "["
-            for item in expr.value:
-                ans += self.stringify(item)+", "
-            ans += "]"
-            return ans
-        if type(expr) == Book:
-            ans = "{"
-            for item in expr.value.keys():
-                ans += item+" : "+self.stringify(expr.value[item])+", "
-            ans += "}"
-            return ans
-        elif expr is None:
-            return "nil"
-        return str(expr)
-
     def visit(self, parsed):
         """
         Evaluating a parsed tree/tuple/expression
@@ -198,8 +176,12 @@ class TradersSemanticsChecker:
                 return 'void'
 
             elif action == 'runEnv':
+                if not parsed[1] in self.env:
+                    raise Exception(
+                        "{0} not found from {1} production.".format(parsed[1], parsed))
+                
                 env_instance = self.env[parsed[1]]
-                if env_instance not in ['env', 'any']:
+                if not isinstance(env_instance, TradersEnvironment):
                     raise Exception(
                         "Run statement must be called on an Environment instance in {}".format(parsed))
 
@@ -210,8 +192,12 @@ class TradersSemanticsChecker:
                 return 'void'
 
             elif action == 'resetEnv':
+                if not parsed[1] in self.env:
+                    raise Exception(
+                        "{0} not found from {1} production.".format(parsed[1], parsed))
+                
                 env_instance = self.env[parsed[1]]
-                if env_instance not in ['env', 'any']:
+                if not isinstance(env_instance, TradersEnvironment):
                     raise Exception(
                         "Reset statement must be called on an Environment instance in {}".format(parsed))
 
@@ -222,10 +208,14 @@ class TradersSemanticsChecker:
                 obj_type = self.visit(parsed[2])
 
                 # get environment instance
-                env_instance = self.env[parsed[1]]
-                if env_instance not in ['env', 'any']:
+                if not parsed[1] in self.env:
                     raise Exception(
-                        "Put statement must be called on an Environment instance.")
+                        "{0} not found from {1} production.".format(parsed[1], parsed))
+                
+                env_instance = self.env[parsed[1]]
+                if not isinstance(env_instance, TradersEnvironment):
+                    raise Exception(
+                        "Put statement must be called on an Environment instance in {}".format(parsed))
 
                 # get location
                 row = self.visit(parsed[3])
@@ -331,7 +321,9 @@ class TradersSemanticsChecker:
                 return 'number'
 
             elif action == 'find':
-                return 'void'
+                if parsed[1] == 'objects':
+                    return 'book'
+                return ('list', 'agent')
 
             elif action == 'primary_bool':
                 return 'bool'
@@ -403,7 +395,7 @@ class TradersSemanticsChecker:
                 elif parsed[2] == "string":
                     instance = String("")
                 elif parsed[2] == "list":
-                    instance = List(element_type=value, value=[])
+                    instance = List(element_type=value[1], value=[])
                 elif parsed[2] == "book":
                     instance = Book((1, 'list', 'number'), {})
 
@@ -425,7 +417,11 @@ class TradersSemanticsChecker:
                     raise ValueError(
                         "Repeat statements must contain bool conditions in {}".format(parsed))
 
+                self.env = Env(outer=self.env)
+
                 self.check(parsed[2])  # Only checked once
+
+                self.env = self.env.outer
 
                 return 'void'
 
@@ -440,7 +436,16 @@ class TradersSemanticsChecker:
                     raise Exception(
                         "Unsupported iterable type: {0} in {1}".format(iterable, parsed))
 
+                self.env = Env(outer=self.env)
+
+                if(type(iterable) == str and iterable == 'book'):
+                    self.env[iterator_name] = Entry({"product":"", "amount": Number(0), "price": Number(0)})
+                else:
+                    self.env[iterator_name] = Any()
+
                 self.check(parsed[3])  # Only checked once
+
+                self.env = self.env.outer
 
                 return 'void'
 
@@ -518,4 +523,8 @@ class TradersSemanticsChecker:
                     "unsupported operand type(s) for negation: {0} in {1}".format(result, parsed))
 
             else:
+                # If the production is not of one of the above types, then try this:
+                if len(parsed) > 0 and type(parsed[0]) == tuple:
+                    return self.check(parsed)
+
                 raise Exception("Unknown production: {}".format(parsed))
