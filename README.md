@@ -359,9 +359,17 @@ Es el módulo principal del proyecto. Contiene cuatro principales clases que com
     Hereda de la clase `Parser` del módulo `sly`. Contiene la gramática del lenguaje y genera el autómata **LALR(1)** utilizado durante el proceso de *parsing*.
 
 - `TradersSemanticsChecker`:
-    Es el encargado de realizar acciones de chequeo semántico en tiempo de compilación. Permite comprobar cuestiones relacionadas con la consistencia de tipos como la asignación correcta de valores a las variables, el uso de expresiones válidas de acuerdo a los operadores que influyen en esta.
+    Es el encargado de realizar acciones de chequeo semántico en tiempo de compilación. Permite comprobar cuestiones relacionadas con la consistencia de tipos como la asignación correcta de valores a las variables, el uso de expresiones válidas de acuerdo a los operadores que influyen en esta, entre otras cuestiones.
 
 - `Process`:
     Permite la ejecución de cada uno de los procesos y funcionalidades del proyecto, además de que realiza las acciones relacionadas con el análisis semántico del proyecto. Puede también ser utilizado como intérprete del lenguaje.
 
 ## Funciones adicionales:
+Cada vez que se ejecuta un script del **DSL**, se genera un archivo denominado `aiuda.pofavo` en la carpeta principal del proyecto que contiene una serie de especificaciones que ayudan a aquellos que usan el lenguaje a encontrar/corregir errores con más facilidad en el mismo. Algunas de las informaciones que este contiene son:
+
+- Conjunto de reglas de la gramática.
+- Terminales no utilizados.
+- Por cada terminal, las reglas en las que aparece.
+- Por cada no terminal, las reglas en las que aparece.
+- Los estados del autómata **LALR(1)** con varias especificaciones.
+- Los conflictos con cada *token* por cada estado y la operación finalmente decidida (*shift* o *reduce*). 
